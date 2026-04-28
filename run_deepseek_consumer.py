@@ -64,5 +64,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-# git config --global user.name "qiwei.liu"
-# git config --global user.email "qiwei.liu@zhiyuncrm.com"
