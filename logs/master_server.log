@@ -1,0 +1,2266 @@
+2026-04-24 14:52:40,062 - __main__ - INFO - starting integrated API and dispatcher service on 127.0.0.1:8000
+2026-04-24 14:52:40,375 - __main__ - ERROR - dispatch failed
+Traceback (most recent call last):
+  File "D:\python\craw-platform\platform\main_server.py", line 131, in run_dispatch_loop
+    dispatched = dispatcher.dispatch_once(limit=limit)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\dispatcher\master_dispatcher.py", line 71, in dispatch_once
+    task_id = self.db_store.create_task_record(unit)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\store\db_store.py", line 58, in create_task_record
+    cursor.execute(sql, params)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 153, in execute
+    result = self._query(query)
+             ^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 575, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 826, in _read_query_result
+    result.read()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 1203, in read
+    first_packet = self.connection._read_packet()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 782, in _read_packet
+    packet.raise_for_error()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\err.py", line 150, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.DataError: (1264, "Out of range value for column 'product_llm_task_id' at row 1")
+2026-04-24 14:52:45,430 - __main__ - ERROR - dispatch failed
+Traceback (most recent call last):
+  File "D:\python\craw-platform\platform\main_server.py", line 131, in run_dispatch_loop
+    dispatched = dispatcher.dispatch_once(limit=limit)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\dispatcher\master_dispatcher.py", line 71, in dispatch_once
+    task_id = self.db_store.create_task_record(unit)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\store\db_store.py", line 58, in create_task_record
+    cursor.execute(sql, params)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 153, in execute
+    result = self._query(query)
+             ^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 575, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 826, in _read_query_result
+    result.read()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 1203, in read
+    first_packet = self.connection._read_packet()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 782, in _read_packet
+    packet.raise_for_error()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\err.py", line 150, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.DataError: (1264, "Out of range value for column 'product_llm_task_id' at row 1")
+2026-04-24 14:53:49,068 - __main__ - INFO - starting integrated API and dispatcher service on 127.0.0.1:8000
+2026-04-24 14:53:49,249 - __main__ - ERROR - dispatch failed
+Traceback (most recent call last):
+  File "D:\python\craw-platform\platform\main_server.py", line 131, in run_dispatch_loop
+    dispatched = dispatcher.dispatch_once(limit=limit)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\dispatcher\master_dispatcher.py", line 71, in dispatch_once
+    task_id = self.db_store.create_task_record(unit)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\store\db_store.py", line 58, in create_task_record
+    cursor.execute(sql, params)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 153, in execute
+    result = self._query(query)
+             ^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 575, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 826, in _read_query_result
+    result.read()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 1203, in read
+    first_packet = self.connection._read_packet()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 782, in _read_packet
+    packet.raise_for_error()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\err.py", line 150, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.DataError: (1264, "Out of range value for column 'product_llm_task_id' at row 1")
+2026-04-24 14:53:54,295 - __main__ - ERROR - dispatch failed
+Traceback (most recent call last):
+  File "D:\python\craw-platform\platform\main_server.py", line 131, in run_dispatch_loop
+    dispatched = dispatcher.dispatch_once(limit=limit)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\dispatcher\master_dispatcher.py", line 71, in dispatch_once
+    task_id = self.db_store.create_task_record(unit)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\store\db_store.py", line 58, in create_task_record
+    cursor.execute(sql, params)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 153, in execute
+    result = self._query(query)
+             ^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 575, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 826, in _read_query_result
+    result.read()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 1203, in read
+    first_packet = self.connection._read_packet()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 782, in _read_packet
+    packet.raise_for_error()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\err.py", line 150, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.DataError: (1264, "Out of range value for column 'product_llm_task_id' at row 1")
+2026-04-24 14:53:59,316 - __main__ - ERROR - dispatch failed
+Traceback (most recent call last):
+  File "D:\python\craw-platform\platform\main_server.py", line 131, in run_dispatch_loop
+    dispatched = dispatcher.dispatch_once(limit=limit)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\dispatcher\master_dispatcher.py", line 71, in dispatch_once
+    task_id = self.db_store.create_task_record(unit)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\store\db_store.py", line 58, in create_task_record
+    cursor.execute(sql, params)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 153, in execute
+    result = self._query(query)
+             ^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 575, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 826, in _read_query_result
+    result.read()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 1203, in read
+    first_packet = self.connection._read_packet()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 782, in _read_packet
+    packet.raise_for_error()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\err.py", line 150, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.DataError: (1264, "Out of range value for column 'product_llm_task_id' at row 1")
+2026-04-24 14:54:04,350 - __main__ - ERROR - dispatch failed
+Traceback (most recent call last):
+  File "D:\python\craw-platform\platform\main_server.py", line 131, in run_dispatch_loop
+    dispatched = dispatcher.dispatch_once(limit=limit)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\dispatcher\master_dispatcher.py", line 71, in dispatch_once
+    task_id = self.db_store.create_task_record(unit)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\store\db_store.py", line 58, in create_task_record
+    cursor.execute(sql, params)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 153, in execute
+    result = self._query(query)
+             ^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 575, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 826, in _read_query_result
+    result.read()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 1203, in read
+    first_packet = self.connection._read_packet()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 782, in _read_packet
+    packet.raise_for_error()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\err.py", line 150, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.DataError: (1264, "Out of range value for column 'product_llm_task_id' at row 1")
+2026-04-24 14:54:09,381 - __main__ - ERROR - dispatch failed
+Traceback (most recent call last):
+  File "D:\python\craw-platform\platform\main_server.py", line 131, in run_dispatch_loop
+    dispatched = dispatcher.dispatch_once(limit=limit)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\dispatcher\master_dispatcher.py", line 71, in dispatch_once
+    task_id = self.db_store.create_task_record(unit)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\store\db_store.py", line 58, in create_task_record
+    cursor.execute(sql, params)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 153, in execute
+    result = self._query(query)
+             ^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 575, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 826, in _read_query_result
+    result.read()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 1203, in read
+    first_packet = self.connection._read_packet()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 782, in _read_packet
+    packet.raise_for_error()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\err.py", line 150, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.DataError: (1264, "Out of range value for column 'product_llm_task_id' at row 1")
+2026-04-24 14:54:14,410 - __main__ - ERROR - dispatch failed
+Traceback (most recent call last):
+  File "D:\python\craw-platform\platform\main_server.py", line 131, in run_dispatch_loop
+    dispatched = dispatcher.dispatch_once(limit=limit)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\dispatcher\master_dispatcher.py", line 71, in dispatch_once
+    task_id = self.db_store.create_task_record(unit)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\store\db_store.py", line 58, in create_task_record
+    cursor.execute(sql, params)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 153, in execute
+    result = self._query(query)
+             ^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 575, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 826, in _read_query_result
+    result.read()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 1203, in read
+    first_packet = self.connection._read_packet()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 782, in _read_packet
+    packet.raise_for_error()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\err.py", line 150, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.DataError: (1264, "Out of range value for column 'product_llm_task_id' at row 1")
+2026-04-24 14:54:19,575 - __main__ - ERROR - dispatch failed
+Traceback (most recent call last):
+  File "D:\python\craw-platform\platform\main_server.py", line 131, in run_dispatch_loop
+    dispatched = dispatcher.dispatch_once(limit=limit)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\dispatcher\master_dispatcher.py", line 71, in dispatch_once
+    task_id = self.db_store.create_task_record(unit)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\store\db_store.py", line 58, in create_task_record
+    cursor.execute(sql, params)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 153, in execute
+    result = self._query(query)
+             ^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 575, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 826, in _read_query_result
+    result.read()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 1203, in read
+    first_packet = self.connection._read_packet()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 782, in _read_packet
+    packet.raise_for_error()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\err.py", line 150, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.DataError: (1264, "Out of range value for column 'product_llm_task_id' at row 1")
+2026-04-24 14:54:24,599 - __main__ - ERROR - dispatch failed
+Traceback (most recent call last):
+  File "D:\python\craw-platform\platform\main_server.py", line 131, in run_dispatch_loop
+    dispatched = dispatcher.dispatch_once(limit=limit)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\dispatcher\master_dispatcher.py", line 71, in dispatch_once
+    task_id = self.db_store.create_task_record(unit)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\store\db_store.py", line 58, in create_task_record
+    cursor.execute(sql, params)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 153, in execute
+    result = self._query(query)
+             ^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 575, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 826, in _read_query_result
+    result.read()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 1203, in read
+    first_packet = self.connection._read_packet()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 782, in _read_packet
+    packet.raise_for_error()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\err.py", line 150, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.DataError: (1264, "Out of range value for column 'product_llm_task_id' at row 1")
+2026-04-24 14:54:29,629 - __main__ - ERROR - dispatch failed
+Traceback (most recent call last):
+  File "D:\python\craw-platform\platform\main_server.py", line 131, in run_dispatch_loop
+    dispatched = dispatcher.dispatch_once(limit=limit)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\dispatcher\master_dispatcher.py", line 71, in dispatch_once
+    task_id = self.db_store.create_task_record(unit)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\store\db_store.py", line 58, in create_task_record
+    cursor.execute(sql, params)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 153, in execute
+    result = self._query(query)
+             ^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 575, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 826, in _read_query_result
+    result.read()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 1203, in read
+    first_packet = self.connection._read_packet()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 782, in _read_packet
+    packet.raise_for_error()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\err.py", line 150, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.DataError: (1264, "Out of range value for column 'product_llm_task_id' at row 1")
+2026-04-24 14:54:34,671 - __main__ - ERROR - dispatch failed
+Traceback (most recent call last):
+  File "D:\python\craw-platform\platform\main_server.py", line 131, in run_dispatch_loop
+    dispatched = dispatcher.dispatch_once(limit=limit)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\dispatcher\master_dispatcher.py", line 71, in dispatch_once
+    task_id = self.db_store.create_task_record(unit)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\store\db_store.py", line 58, in create_task_record
+    cursor.execute(sql, params)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 153, in execute
+    result = self._query(query)
+             ^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 575, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 826, in _read_query_result
+    result.read()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 1203, in read
+    first_packet = self.connection._read_packet()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 782, in _read_packet
+    packet.raise_for_error()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\err.py", line 150, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.DataError: (1264, "Out of range value for column 'product_llm_task_id' at row 1")
+2026-04-24 14:54:39,705 - __main__ - ERROR - dispatch failed
+Traceback (most recent call last):
+  File "D:\python\craw-platform\platform\main_server.py", line 131, in run_dispatch_loop
+    dispatched = dispatcher.dispatch_once(limit=limit)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\dispatcher\master_dispatcher.py", line 71, in dispatch_once
+    task_id = self.db_store.create_task_record(unit)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\store\db_store.py", line 58, in create_task_record
+    cursor.execute(sql, params)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 153, in execute
+    result = self._query(query)
+             ^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 575, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 826, in _read_query_result
+    result.read()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 1203, in read
+    first_packet = self.connection._read_packet()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 782, in _read_packet
+    packet.raise_for_error()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\err.py", line 150, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.DataError: (1264, "Out of range value for column 'product_llm_task_id' at row 1")
+2026-04-24 14:54:44,738 - __main__ - ERROR - dispatch failed
+Traceback (most recent call last):
+  File "D:\python\craw-platform\platform\main_server.py", line 131, in run_dispatch_loop
+    dispatched = dispatcher.dispatch_once(limit=limit)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\dispatcher\master_dispatcher.py", line 71, in dispatch_once
+    task_id = self.db_store.create_task_record(unit)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\store\db_store.py", line 58, in create_task_record
+    cursor.execute(sql, params)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 153, in execute
+    result = self._query(query)
+             ^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 575, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 826, in _read_query_result
+    result.read()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 1203, in read
+    first_packet = self.connection._read_packet()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 782, in _read_packet
+    packet.raise_for_error()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\err.py", line 150, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.DataError: (1264, "Out of range value for column 'product_llm_task_id' at row 1")
+2026-04-24 14:54:49,759 - __main__ - ERROR - dispatch failed
+Traceback (most recent call last):
+  File "D:\python\craw-platform\platform\main_server.py", line 131, in run_dispatch_loop
+    dispatched = dispatcher.dispatch_once(limit=limit)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\dispatcher\master_dispatcher.py", line 71, in dispatch_once
+    task_id = self.db_store.create_task_record(unit)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\store\db_store.py", line 58, in create_task_record
+    cursor.execute(sql, params)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 153, in execute
+    result = self._query(query)
+             ^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 575, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 826, in _read_query_result
+    result.read()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 1203, in read
+    first_packet = self.connection._read_packet()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 782, in _read_packet
+    packet.raise_for_error()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\err.py", line 150, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.DataError: (1264, "Out of range value for column 'product_llm_task_id' at row 1")
+2026-04-24 14:54:54,782 - __main__ - ERROR - dispatch failed
+Traceback (most recent call last):
+  File "D:\python\craw-platform\platform\main_server.py", line 131, in run_dispatch_loop
+    dispatched = dispatcher.dispatch_once(limit=limit)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\dispatcher\master_dispatcher.py", line 71, in dispatch_once
+    task_id = self.db_store.create_task_record(unit)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\store\db_store.py", line 58, in create_task_record
+    cursor.execute(sql, params)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 153, in execute
+    result = self._query(query)
+             ^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 575, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 826, in _read_query_result
+    result.read()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 1203, in read
+    first_packet = self.connection._read_packet()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 782, in _read_packet
+    packet.raise_for_error()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\err.py", line 150, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.DataError: (1264, "Out of range value for column 'product_llm_task_id' at row 1")
+2026-04-24 14:54:59,814 - __main__ - ERROR - dispatch failed
+Traceback (most recent call last):
+  File "D:\python\craw-platform\platform\main_server.py", line 131, in run_dispatch_loop
+    dispatched = dispatcher.dispatch_once(limit=limit)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\dispatcher\master_dispatcher.py", line 71, in dispatch_once
+    task_id = self.db_store.create_task_record(unit)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\store\db_store.py", line 58, in create_task_record
+    cursor.execute(sql, params)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 153, in execute
+    result = self._query(query)
+             ^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 575, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 826, in _read_query_result
+    result.read()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 1203, in read
+    first_packet = self.connection._read_packet()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 782, in _read_packet
+    packet.raise_for_error()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\err.py", line 150, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.DataError: (1264, "Out of range value for column 'product_llm_task_id' at row 1")
+2026-04-24 14:55:04,838 - __main__ - ERROR - dispatch failed
+Traceback (most recent call last):
+  File "D:\python\craw-platform\platform\main_server.py", line 131, in run_dispatch_loop
+    dispatched = dispatcher.dispatch_once(limit=limit)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\dispatcher\master_dispatcher.py", line 71, in dispatch_once
+    task_id = self.db_store.create_task_record(unit)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\store\db_store.py", line 58, in create_task_record
+    cursor.execute(sql, params)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 153, in execute
+    result = self._query(query)
+             ^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 575, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 826, in _read_query_result
+    result.read()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 1203, in read
+    first_packet = self.connection._read_packet()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 782, in _read_packet
+    packet.raise_for_error()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\err.py", line 150, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.DataError: (1264, "Out of range value for column 'product_llm_task_id' at row 1")
+2026-04-24 14:55:09,863 - __main__ - ERROR - dispatch failed
+Traceback (most recent call last):
+  File "D:\python\craw-platform\platform\main_server.py", line 131, in run_dispatch_loop
+    dispatched = dispatcher.dispatch_once(limit=limit)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\dispatcher\master_dispatcher.py", line 71, in dispatch_once
+    task_id = self.db_store.create_task_record(unit)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\store\db_store.py", line 58, in create_task_record
+    cursor.execute(sql, params)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 153, in execute
+    result = self._query(query)
+             ^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 575, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 826, in _read_query_result
+    result.read()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 1203, in read
+    first_packet = self.connection._read_packet()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 782, in _read_packet
+    packet.raise_for_error()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\err.py", line 150, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.DataError: (1264, "Out of range value for column 'product_llm_task_id' at row 1")
+2026-04-24 14:55:14,888 - __main__ - ERROR - dispatch failed
+Traceback (most recent call last):
+  File "D:\python\craw-platform\platform\main_server.py", line 131, in run_dispatch_loop
+    dispatched = dispatcher.dispatch_once(limit=limit)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\dispatcher\master_dispatcher.py", line 71, in dispatch_once
+    task_id = self.db_store.create_task_record(unit)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\store\db_store.py", line 58, in create_task_record
+    cursor.execute(sql, params)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 153, in execute
+    result = self._query(query)
+             ^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 575, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 826, in _read_query_result
+    result.read()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 1203, in read
+    first_packet = self.connection._read_packet()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 782, in _read_packet
+    packet.raise_for_error()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\err.py", line 150, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.DataError: (1264, "Out of range value for column 'product_llm_task_id' at row 1")
+2026-04-24 14:55:19,912 - __main__ - ERROR - dispatch failed
+Traceback (most recent call last):
+  File "D:\python\craw-platform\platform\main_server.py", line 131, in run_dispatch_loop
+    dispatched = dispatcher.dispatch_once(limit=limit)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\dispatcher\master_dispatcher.py", line 71, in dispatch_once
+    task_id = self.db_store.create_task_record(unit)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\store\db_store.py", line 58, in create_task_record
+    cursor.execute(sql, params)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 153, in execute
+    result = self._query(query)
+             ^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 575, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 826, in _read_query_result
+    result.read()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 1203, in read
+    first_packet = self.connection._read_packet()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 782, in _read_packet
+    packet.raise_for_error()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\err.py", line 150, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.DataError: (1264, "Out of range value for column 'product_llm_task_id' at row 1")
+2026-04-24 14:55:24,948 - __main__ - ERROR - dispatch failed
+Traceback (most recent call last):
+  File "D:\python\craw-platform\platform\main_server.py", line 131, in run_dispatch_loop
+    dispatched = dispatcher.dispatch_once(limit=limit)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\dispatcher\master_dispatcher.py", line 71, in dispatch_once
+    task_id = self.db_store.create_task_record(unit)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\store\db_store.py", line 58, in create_task_record
+    cursor.execute(sql, params)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 153, in execute
+    result = self._query(query)
+             ^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 575, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 826, in _read_query_result
+    result.read()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 1203, in read
+    first_packet = self.connection._read_packet()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 782, in _read_packet
+    packet.raise_for_error()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\err.py", line 150, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.DataError: (1264, "Out of range value for column 'product_llm_task_id' at row 1")
+2026-04-24 14:55:29,997 - __main__ - ERROR - dispatch failed
+Traceback (most recent call last):
+  File "D:\python\craw-platform\platform\main_server.py", line 131, in run_dispatch_loop
+    dispatched = dispatcher.dispatch_once(limit=limit)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\dispatcher\master_dispatcher.py", line 71, in dispatch_once
+    task_id = self.db_store.create_task_record(unit)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\store\db_store.py", line 58, in create_task_record
+    cursor.execute(sql, params)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 153, in execute
+    result = self._query(query)
+             ^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 575, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 826, in _read_query_result
+    result.read()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 1203, in read
+    first_packet = self.connection._read_packet()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 782, in _read_packet
+    packet.raise_for_error()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\err.py", line 150, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.DataError: (1264, "Out of range value for column 'product_llm_task_id' at row 1")
+2026-04-24 14:55:35,015 - __main__ - ERROR - dispatch failed
+Traceback (most recent call last):
+  File "D:\python\craw-platform\platform\main_server.py", line 131, in run_dispatch_loop
+    dispatched = dispatcher.dispatch_once(limit=limit)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\dispatcher\master_dispatcher.py", line 71, in dispatch_once
+    task_id = self.db_store.create_task_record(unit)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\store\db_store.py", line 58, in create_task_record
+    cursor.execute(sql, params)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 153, in execute
+    result = self._query(query)
+             ^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 575, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 826, in _read_query_result
+    result.read()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 1203, in read
+    first_packet = self.connection._read_packet()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 782, in _read_packet
+    packet.raise_for_error()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\err.py", line 150, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.DataError: (1264, "Out of range value for column 'product_llm_task_id' at row 1")
+2026-04-24 14:55:40,044 - __main__ - ERROR - dispatch failed
+Traceback (most recent call last):
+  File "D:\python\craw-platform\platform\main_server.py", line 131, in run_dispatch_loop
+    dispatched = dispatcher.dispatch_once(limit=limit)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\dispatcher\master_dispatcher.py", line 71, in dispatch_once
+    task_id = self.db_store.create_task_record(unit)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\store\db_store.py", line 58, in create_task_record
+    cursor.execute(sql, params)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 153, in execute
+    result = self._query(query)
+             ^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 575, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 826, in _read_query_result
+    result.read()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 1203, in read
+    first_packet = self.connection._read_packet()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 782, in _read_packet
+    packet.raise_for_error()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\err.py", line 150, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.DataError: (1264, "Out of range value for column 'product_llm_task_id' at row 1")
+2026-04-24 14:55:45,085 - __main__ - ERROR - dispatch failed
+Traceback (most recent call last):
+  File "D:\python\craw-platform\platform\main_server.py", line 131, in run_dispatch_loop
+    dispatched = dispatcher.dispatch_once(limit=limit)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\dispatcher\master_dispatcher.py", line 71, in dispatch_once
+    task_id = self.db_store.create_task_record(unit)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\store\db_store.py", line 58, in create_task_record
+    cursor.execute(sql, params)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 153, in execute
+    result = self._query(query)
+             ^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 575, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 826, in _read_query_result
+    result.read()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 1203, in read
+    first_packet = self.connection._read_packet()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 782, in _read_packet
+    packet.raise_for_error()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\err.py", line 150, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.DataError: (1264, "Out of range value for column 'product_llm_task_id' at row 1")
+2026-04-24 14:55:50,127 - __main__ - ERROR - dispatch failed
+Traceback (most recent call last):
+  File "D:\python\craw-platform\platform\main_server.py", line 131, in run_dispatch_loop
+    dispatched = dispatcher.dispatch_once(limit=limit)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\dispatcher\master_dispatcher.py", line 71, in dispatch_once
+    task_id = self.db_store.create_task_record(unit)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\store\db_store.py", line 58, in create_task_record
+    cursor.execute(sql, params)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 153, in execute
+    result = self._query(query)
+             ^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 575, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 826, in _read_query_result
+    result.read()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 1203, in read
+    first_packet = self.connection._read_packet()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 782, in _read_packet
+    packet.raise_for_error()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\err.py", line 150, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.DataError: (1264, "Out of range value for column 'product_llm_task_id' at row 1")
+2026-04-24 14:55:55,157 - __main__ - ERROR - dispatch failed
+Traceback (most recent call last):
+  File "D:\python\craw-platform\platform\main_server.py", line 131, in run_dispatch_loop
+    dispatched = dispatcher.dispatch_once(limit=limit)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\dispatcher\master_dispatcher.py", line 71, in dispatch_once
+    task_id = self.db_store.create_task_record(unit)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\store\db_store.py", line 58, in create_task_record
+    cursor.execute(sql, params)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 153, in execute
+    result = self._query(query)
+             ^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 575, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 826, in _read_query_result
+    result.read()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 1203, in read
+    first_packet = self.connection._read_packet()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 782, in _read_packet
+    packet.raise_for_error()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\err.py", line 150, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.DataError: (1264, "Out of range value for column 'product_llm_task_id' at row 1")
+2026-04-24 14:56:00,180 - __main__ - ERROR - dispatch failed
+Traceback (most recent call last):
+  File "D:\python\craw-platform\platform\main_server.py", line 131, in run_dispatch_loop
+    dispatched = dispatcher.dispatch_once(limit=limit)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\dispatcher\master_dispatcher.py", line 71, in dispatch_once
+    task_id = self.db_store.create_task_record(unit)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\store\db_store.py", line 58, in create_task_record
+    cursor.execute(sql, params)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 153, in execute
+    result = self._query(query)
+             ^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 575, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 826, in _read_query_result
+    result.read()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 1203, in read
+    first_packet = self.connection._read_packet()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 782, in _read_packet
+    packet.raise_for_error()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\err.py", line 150, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.DataError: (1264, "Out of range value for column 'product_llm_task_id' at row 1")
+2026-04-24 14:56:05,205 - __main__ - ERROR - dispatch failed
+Traceback (most recent call last):
+  File "D:\python\craw-platform\platform\main_server.py", line 131, in run_dispatch_loop
+    dispatched = dispatcher.dispatch_once(limit=limit)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\dispatcher\master_dispatcher.py", line 71, in dispatch_once
+    task_id = self.db_store.create_task_record(unit)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\store\db_store.py", line 58, in create_task_record
+    cursor.execute(sql, params)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 153, in execute
+    result = self._query(query)
+             ^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 575, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 826, in _read_query_result
+    result.read()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 1203, in read
+    first_packet = self.connection._read_packet()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 782, in _read_packet
+    packet.raise_for_error()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\err.py", line 150, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.DataError: (1264, "Out of range value for column 'product_llm_task_id' at row 1")
+2026-04-24 14:56:10,341 - __main__ - ERROR - dispatch failed
+Traceback (most recent call last):
+  File "D:\python\craw-platform\platform\main_server.py", line 131, in run_dispatch_loop
+    dispatched = dispatcher.dispatch_once(limit=limit)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\dispatcher\master_dispatcher.py", line 71, in dispatch_once
+    task_id = self.db_store.create_task_record(unit)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\store\db_store.py", line 58, in create_task_record
+    cursor.execute(sql, params)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 153, in execute
+    result = self._query(query)
+             ^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 575, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 826, in _read_query_result
+    result.read()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 1203, in read
+    first_packet = self.connection._read_packet()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 782, in _read_packet
+    packet.raise_for_error()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\err.py", line 150, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.DataError: (1264, "Out of range value for column 'product_llm_task_id' at row 1")
+2026-04-24 14:56:15,376 - __main__ - ERROR - dispatch failed
+Traceback (most recent call last):
+  File "D:\python\craw-platform\platform\main_server.py", line 131, in run_dispatch_loop
+    dispatched = dispatcher.dispatch_once(limit=limit)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\dispatcher\master_dispatcher.py", line 71, in dispatch_once
+    task_id = self.db_store.create_task_record(unit)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\store\db_store.py", line 58, in create_task_record
+    cursor.execute(sql, params)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 153, in execute
+    result = self._query(query)
+             ^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 575, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 826, in _read_query_result
+    result.read()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 1203, in read
+    first_packet = self.connection._read_packet()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 782, in _read_packet
+    packet.raise_for_error()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\err.py", line 150, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.DataError: (1264, "Out of range value for column 'product_llm_task_id' at row 1")
+2026-04-24 14:56:20,397 - __main__ - ERROR - dispatch failed
+Traceback (most recent call last):
+  File "D:\python\craw-platform\platform\main_server.py", line 131, in run_dispatch_loop
+    dispatched = dispatcher.dispatch_once(limit=limit)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\dispatcher\master_dispatcher.py", line 71, in dispatch_once
+    task_id = self.db_store.create_task_record(unit)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\store\db_store.py", line 58, in create_task_record
+    cursor.execute(sql, params)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 153, in execute
+    result = self._query(query)
+             ^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 575, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 826, in _read_query_result
+    result.read()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 1203, in read
+    first_packet = self.connection._read_packet()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 782, in _read_packet
+    packet.raise_for_error()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\err.py", line 150, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.DataError: (1264, "Out of range value for column 'product_llm_task_id' at row 1")
+2026-04-24 14:56:25,417 - __main__ - ERROR - dispatch failed
+Traceback (most recent call last):
+  File "D:\python\craw-platform\platform\main_server.py", line 131, in run_dispatch_loop
+    dispatched = dispatcher.dispatch_once(limit=limit)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\dispatcher\master_dispatcher.py", line 71, in dispatch_once
+    task_id = self.db_store.create_task_record(unit)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\store\db_store.py", line 58, in create_task_record
+    cursor.execute(sql, params)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 153, in execute
+    result = self._query(query)
+             ^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 575, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 826, in _read_query_result
+    result.read()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 1203, in read
+    first_packet = self.connection._read_packet()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 782, in _read_packet
+    packet.raise_for_error()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\err.py", line 150, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.DataError: (1264, "Out of range value for column 'product_llm_task_id' at row 1")
+2026-04-24 14:56:30,447 - __main__ - ERROR - dispatch failed
+Traceback (most recent call last):
+  File "D:\python\craw-platform\platform\main_server.py", line 131, in run_dispatch_loop
+    dispatched = dispatcher.dispatch_once(limit=limit)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\dispatcher\master_dispatcher.py", line 71, in dispatch_once
+    task_id = self.db_store.create_task_record(unit)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\store\db_store.py", line 58, in create_task_record
+    cursor.execute(sql, params)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 153, in execute
+    result = self._query(query)
+             ^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 575, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 826, in _read_query_result
+    result.read()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 1203, in read
+    first_packet = self.connection._read_packet()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 782, in _read_packet
+    packet.raise_for_error()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\err.py", line 150, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.DataError: (1264, "Out of range value for column 'product_llm_task_id' at row 1")
+2026-04-24 14:56:35,494 - __main__ - ERROR - dispatch failed
+Traceback (most recent call last):
+  File "D:\python\craw-platform\platform\main_server.py", line 131, in run_dispatch_loop
+    dispatched = dispatcher.dispatch_once(limit=limit)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\dispatcher\master_dispatcher.py", line 71, in dispatch_once
+    task_id = self.db_store.create_task_record(unit)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\store\db_store.py", line 58, in create_task_record
+    cursor.execute(sql, params)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 153, in execute
+    result = self._query(query)
+             ^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 575, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 826, in _read_query_result
+    result.read()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 1203, in read
+    first_packet = self.connection._read_packet()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 782, in _read_packet
+    packet.raise_for_error()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\err.py", line 150, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.DataError: (1264, "Out of range value for column 'product_llm_task_id' at row 1")
+2026-04-24 14:56:40,521 - __main__ - ERROR - dispatch failed
+Traceback (most recent call last):
+  File "D:\python\craw-platform\platform\main_server.py", line 131, in run_dispatch_loop
+    dispatched = dispatcher.dispatch_once(limit=limit)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\dispatcher\master_dispatcher.py", line 71, in dispatch_once
+    task_id = self.db_store.create_task_record(unit)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\store\db_store.py", line 58, in create_task_record
+    cursor.execute(sql, params)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 153, in execute
+    result = self._query(query)
+             ^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 575, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 826, in _read_query_result
+    result.read()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 1203, in read
+    first_packet = self.connection._read_packet()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 782, in _read_packet
+    packet.raise_for_error()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\err.py", line 150, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.DataError: (1264, "Out of range value for column 'product_llm_task_id' at row 1")
+2026-04-24 14:56:45,542 - __main__ - ERROR - dispatch failed
+Traceback (most recent call last):
+  File "D:\python\craw-platform\platform\main_server.py", line 131, in run_dispatch_loop
+    dispatched = dispatcher.dispatch_once(limit=limit)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\dispatcher\master_dispatcher.py", line 71, in dispatch_once
+    task_id = self.db_store.create_task_record(unit)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\store\db_store.py", line 58, in create_task_record
+    cursor.execute(sql, params)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 153, in execute
+    result = self._query(query)
+             ^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 575, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 826, in _read_query_result
+    result.read()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 1203, in read
+    first_packet = self.connection._read_packet()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 782, in _read_packet
+    packet.raise_for_error()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\err.py", line 150, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.DataError: (1264, "Out of range value for column 'product_llm_task_id' at row 1")
+2026-04-24 14:56:50,561 - __main__ - ERROR - dispatch failed
+Traceback (most recent call last):
+  File "D:\python\craw-platform\platform\main_server.py", line 131, in run_dispatch_loop
+    dispatched = dispatcher.dispatch_once(limit=limit)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\dispatcher\master_dispatcher.py", line 71, in dispatch_once
+    task_id = self.db_store.create_task_record(unit)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\store\db_store.py", line 58, in create_task_record
+    cursor.execute(sql, params)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 153, in execute
+    result = self._query(query)
+             ^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 575, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 826, in _read_query_result
+    result.read()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 1203, in read
+    first_packet = self.connection._read_packet()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 782, in _read_packet
+    packet.raise_for_error()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\err.py", line 150, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.DataError: (1264, "Out of range value for column 'product_llm_task_id' at row 1")
+2026-04-24 14:56:55,581 - __main__ - ERROR - dispatch failed
+Traceback (most recent call last):
+  File "D:\python\craw-platform\platform\main_server.py", line 131, in run_dispatch_loop
+    dispatched = dispatcher.dispatch_once(limit=limit)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\dispatcher\master_dispatcher.py", line 71, in dispatch_once
+    task_id = self.db_store.create_task_record(unit)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\store\db_store.py", line 58, in create_task_record
+    cursor.execute(sql, params)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 153, in execute
+    result = self._query(query)
+             ^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 575, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 826, in _read_query_result
+    result.read()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 1203, in read
+    first_packet = self.connection._read_packet()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 782, in _read_packet
+    packet.raise_for_error()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\err.py", line 150, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.DataError: (1264, "Out of range value for column 'product_llm_task_id' at row 1")
+2026-04-24 14:57:00,595 - __main__ - ERROR - dispatch failed
+Traceback (most recent call last):
+  File "D:\python\craw-platform\platform\main_server.py", line 131, in run_dispatch_loop
+    dispatched = dispatcher.dispatch_once(limit=limit)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\dispatcher\master_dispatcher.py", line 71, in dispatch_once
+    task_id = self.db_store.create_task_record(unit)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\store\db_store.py", line 58, in create_task_record
+    cursor.execute(sql, params)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 153, in execute
+    result = self._query(query)
+             ^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 575, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 826, in _read_query_result
+    result.read()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 1203, in read
+    first_packet = self.connection._read_packet()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 782, in _read_packet
+    packet.raise_for_error()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\err.py", line 150, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.DataError: (1264, "Out of range value for column 'product_llm_task_id' at row 1")
+2026-04-24 14:57:05,613 - __main__ - ERROR - dispatch failed
+Traceback (most recent call last):
+  File "D:\python\craw-platform\platform\main_server.py", line 131, in run_dispatch_loop
+    dispatched = dispatcher.dispatch_once(limit=limit)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\dispatcher\master_dispatcher.py", line 71, in dispatch_once
+    task_id = self.db_store.create_task_record(unit)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\store\db_store.py", line 58, in create_task_record
+    cursor.execute(sql, params)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 153, in execute
+    result = self._query(query)
+             ^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 575, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 826, in _read_query_result
+    result.read()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 1203, in read
+    first_packet = self.connection._read_packet()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 782, in _read_packet
+    packet.raise_for_error()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\err.py", line 150, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.DataError: (1264, "Out of range value for column 'product_llm_task_id' at row 1")
+2026-04-24 14:57:10,640 - __main__ - ERROR - dispatch failed
+Traceback (most recent call last):
+  File "D:\python\craw-platform\platform\main_server.py", line 131, in run_dispatch_loop
+    dispatched = dispatcher.dispatch_once(limit=limit)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\dispatcher\master_dispatcher.py", line 71, in dispatch_once
+    task_id = self.db_store.create_task_record(unit)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\store\db_store.py", line 58, in create_task_record
+    cursor.execute(sql, params)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 153, in execute
+    result = self._query(query)
+             ^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 575, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 826, in _read_query_result
+    result.read()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 1203, in read
+    first_packet = self.connection._read_packet()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 782, in _read_packet
+    packet.raise_for_error()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\err.py", line 150, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.DataError: (1264, "Out of range value for column 'product_llm_task_id' at row 1")
+2026-04-24 14:57:15,658 - __main__ - ERROR - dispatch failed
+Traceback (most recent call last):
+  File "D:\python\craw-platform\platform\main_server.py", line 131, in run_dispatch_loop
+    dispatched = dispatcher.dispatch_once(limit=limit)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\dispatcher\master_dispatcher.py", line 71, in dispatch_once
+    task_id = self.db_store.create_task_record(unit)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\store\db_store.py", line 58, in create_task_record
+    cursor.execute(sql, params)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 153, in execute
+    result = self._query(query)
+             ^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 575, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 826, in _read_query_result
+    result.read()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 1203, in read
+    first_packet = self.connection._read_packet()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 782, in _read_packet
+    packet.raise_for_error()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\err.py", line 150, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.DataError: (1264, "Out of range value for column 'product_llm_task_id' at row 1")
+2026-04-24 14:57:20,683 - __main__ - ERROR - dispatch failed
+Traceback (most recent call last):
+  File "D:\python\craw-platform\platform\main_server.py", line 131, in run_dispatch_loop
+    dispatched = dispatcher.dispatch_once(limit=limit)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\dispatcher\master_dispatcher.py", line 71, in dispatch_once
+    task_id = self.db_store.create_task_record(unit)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\store\db_store.py", line 58, in create_task_record
+    cursor.execute(sql, params)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 153, in execute
+    result = self._query(query)
+             ^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 575, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 826, in _read_query_result
+    result.read()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 1203, in read
+    first_packet = self.connection._read_packet()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 782, in _read_packet
+    packet.raise_for_error()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\err.py", line 150, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.DataError: (1264, "Out of range value for column 'product_llm_task_id' at row 1")
+2026-04-24 14:57:25,710 - __main__ - ERROR - dispatch failed
+Traceback (most recent call last):
+  File "D:\python\craw-platform\platform\main_server.py", line 131, in run_dispatch_loop
+    dispatched = dispatcher.dispatch_once(limit=limit)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\dispatcher\master_dispatcher.py", line 71, in dispatch_once
+    task_id = self.db_store.create_task_record(unit)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\store\db_store.py", line 58, in create_task_record
+    cursor.execute(sql, params)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 153, in execute
+    result = self._query(query)
+             ^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 575, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 826, in _read_query_result
+    result.read()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 1203, in read
+    first_packet = self.connection._read_packet()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 782, in _read_packet
+    packet.raise_for_error()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\err.py", line 150, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.DataError: (1264, "Out of range value for column 'product_llm_task_id' at row 1")
+2026-04-24 14:57:30,738 - __main__ - ERROR - dispatch failed
+Traceback (most recent call last):
+  File "D:\python\craw-platform\platform\main_server.py", line 131, in run_dispatch_loop
+    dispatched = dispatcher.dispatch_once(limit=limit)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\dispatcher\master_dispatcher.py", line 71, in dispatch_once
+    task_id = self.db_store.create_task_record(unit)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\store\db_store.py", line 58, in create_task_record
+    cursor.execute(sql, params)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 153, in execute
+    result = self._query(query)
+             ^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 575, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 826, in _read_query_result
+    result.read()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 1203, in read
+    first_packet = self.connection._read_packet()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 782, in _read_packet
+    packet.raise_for_error()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\err.py", line 150, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.DataError: (1264, "Out of range value for column 'product_llm_task_id' at row 1")
+2026-04-24 14:57:35,789 - __main__ - ERROR - dispatch failed
+Traceback (most recent call last):
+  File "D:\python\craw-platform\platform\main_server.py", line 131, in run_dispatch_loop
+    dispatched = dispatcher.dispatch_once(limit=limit)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\dispatcher\master_dispatcher.py", line 71, in dispatch_once
+    task_id = self.db_store.create_task_record(unit)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\store\db_store.py", line 58, in create_task_record
+    cursor.execute(sql, params)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 153, in execute
+    result = self._query(query)
+             ^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 575, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 826, in _read_query_result
+    result.read()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 1203, in read
+    first_packet = self.connection._read_packet()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 782, in _read_packet
+    packet.raise_for_error()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\err.py", line 150, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.DataError: (1264, "Out of range value for column 'product_llm_task_id' at row 1")
+2026-04-24 14:57:40,806 - __main__ - ERROR - dispatch failed
+Traceback (most recent call last):
+  File "D:\python\craw-platform\platform\main_server.py", line 131, in run_dispatch_loop
+    dispatched = dispatcher.dispatch_once(limit=limit)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\dispatcher\master_dispatcher.py", line 71, in dispatch_once
+    task_id = self.db_store.create_task_record(unit)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\store\db_store.py", line 58, in create_task_record
+    cursor.execute(sql, params)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 153, in execute
+    result = self._query(query)
+             ^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 575, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 826, in _read_query_result
+    result.read()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 1203, in read
+    first_packet = self.connection._read_packet()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 782, in _read_packet
+    packet.raise_for_error()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\err.py", line 150, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.DataError: (1264, "Out of range value for column 'product_llm_task_id' at row 1")
+2026-04-24 14:57:45,828 - __main__ - ERROR - dispatch failed
+Traceback (most recent call last):
+  File "D:\python\craw-platform\platform\main_server.py", line 131, in run_dispatch_loop
+    dispatched = dispatcher.dispatch_once(limit=limit)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\dispatcher\master_dispatcher.py", line 71, in dispatch_once
+    task_id = self.db_store.create_task_record(unit)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\store\db_store.py", line 58, in create_task_record
+    cursor.execute(sql, params)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 153, in execute
+    result = self._query(query)
+             ^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 575, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 826, in _read_query_result
+    result.read()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 1203, in read
+    first_packet = self.connection._read_packet()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 782, in _read_packet
+    packet.raise_for_error()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\err.py", line 150, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.DataError: (1264, "Out of range value for column 'product_llm_task_id' at row 1")
+2026-04-24 14:57:50,857 - __main__ - ERROR - dispatch failed
+Traceback (most recent call last):
+  File "D:\python\craw-platform\platform\main_server.py", line 131, in run_dispatch_loop
+    dispatched = dispatcher.dispatch_once(limit=limit)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\dispatcher\master_dispatcher.py", line 71, in dispatch_once
+    task_id = self.db_store.create_task_record(unit)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\store\db_store.py", line 58, in create_task_record
+    cursor.execute(sql, params)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 153, in execute
+    result = self._query(query)
+             ^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 575, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 826, in _read_query_result
+    result.read()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 1203, in read
+    first_packet = self.connection._read_packet()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 782, in _read_packet
+    packet.raise_for_error()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\err.py", line 150, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.DataError: (1264, "Out of range value for column 'product_llm_task_id' at row 1")
+2026-04-24 14:57:55,878 - __main__ - ERROR - dispatch failed
+Traceback (most recent call last):
+  File "D:\python\craw-platform\platform\main_server.py", line 131, in run_dispatch_loop
+    dispatched = dispatcher.dispatch_once(limit=limit)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\dispatcher\master_dispatcher.py", line 71, in dispatch_once
+    task_id = self.db_store.create_task_record(unit)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\store\db_store.py", line 58, in create_task_record
+    cursor.execute(sql, params)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 153, in execute
+    result = self._query(query)
+             ^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 575, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 826, in _read_query_result
+    result.read()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 1203, in read
+    first_packet = self.connection._read_packet()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 782, in _read_packet
+    packet.raise_for_error()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\err.py", line 150, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.DataError: (1264, "Out of range value for column 'product_llm_task_id' at row 1")
+2026-04-24 14:58:00,920 - __main__ - ERROR - dispatch failed
+Traceback (most recent call last):
+  File "D:\python\craw-platform\platform\main_server.py", line 131, in run_dispatch_loop
+    dispatched = dispatcher.dispatch_once(limit=limit)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\dispatcher\master_dispatcher.py", line 71, in dispatch_once
+    task_id = self.db_store.create_task_record(unit)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\store\db_store.py", line 58, in create_task_record
+    cursor.execute(sql, params)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 153, in execute
+    result = self._query(query)
+             ^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 575, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 826, in _read_query_result
+    result.read()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 1203, in read
+    first_packet = self.connection._read_packet()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 782, in _read_packet
+    packet.raise_for_error()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\err.py", line 150, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.DataError: (1264, "Out of range value for column 'product_llm_task_id' at row 1")
+2026-04-24 14:58:05,936 - __main__ - ERROR - dispatch failed
+Traceback (most recent call last):
+  File "D:\python\craw-platform\platform\main_server.py", line 131, in run_dispatch_loop
+    dispatched = dispatcher.dispatch_once(limit=limit)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\dispatcher\master_dispatcher.py", line 71, in dispatch_once
+    task_id = self.db_store.create_task_record(unit)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\store\db_store.py", line 58, in create_task_record
+    cursor.execute(sql, params)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 153, in execute
+    result = self._query(query)
+             ^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 575, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 826, in _read_query_result
+    result.read()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 1203, in read
+    first_packet = self.connection._read_packet()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 782, in _read_packet
+    packet.raise_for_error()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\err.py", line 150, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.DataError: (1264, "Out of range value for column 'product_llm_task_id' at row 1")
+2026-04-24 14:58:10,975 - __main__ - ERROR - dispatch failed
+Traceback (most recent call last):
+  File "D:\python\craw-platform\platform\main_server.py", line 131, in run_dispatch_loop
+    dispatched = dispatcher.dispatch_once(limit=limit)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\dispatcher\master_dispatcher.py", line 71, in dispatch_once
+    task_id = self.db_store.create_task_record(unit)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\store\db_store.py", line 58, in create_task_record
+    cursor.execute(sql, params)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 153, in execute
+    result = self._query(query)
+             ^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 575, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 826, in _read_query_result
+    result.read()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 1203, in read
+    first_packet = self.connection._read_packet()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 782, in _read_packet
+    packet.raise_for_error()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\err.py", line 150, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.DataError: (1264, "Out of range value for column 'product_llm_task_id' at row 1")
+2026-04-24 14:58:15,999 - __main__ - ERROR - dispatch failed
+Traceback (most recent call last):
+  File "D:\python\craw-platform\platform\main_server.py", line 131, in run_dispatch_loop
+    dispatched = dispatcher.dispatch_once(limit=limit)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\dispatcher\master_dispatcher.py", line 71, in dispatch_once
+    task_id = self.db_store.create_task_record(unit)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\store\db_store.py", line 58, in create_task_record
+    cursor.execute(sql, params)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 153, in execute
+    result = self._query(query)
+             ^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 575, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 826, in _read_query_result
+    result.read()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 1203, in read
+    first_packet = self.connection._read_packet()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 782, in _read_packet
+    packet.raise_for_error()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\err.py", line 150, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.DataError: (1265, "Data truncated for column 'question_id' at row 1")
+2026-04-24 14:58:21,015 - __main__ - ERROR - dispatch failed
+Traceback (most recent call last):
+  File "D:\python\craw-platform\platform\main_server.py", line 131, in run_dispatch_loop
+    dispatched = dispatcher.dispatch_once(limit=limit)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\dispatcher\master_dispatcher.py", line 71, in dispatch_once
+    task_id = self.db_store.create_task_record(unit)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\store\db_store.py", line 58, in create_task_record
+    cursor.execute(sql, params)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 153, in execute
+    result = self._query(query)
+             ^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 575, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 826, in _read_query_result
+    result.read()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 1203, in read
+    first_packet = self.connection._read_packet()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 782, in _read_packet
+    packet.raise_for_error()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\err.py", line 150, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.DataError: (1265, "Data truncated for column 'question_id' at row 1")
+2026-04-24 14:58:26,030 - __main__ - ERROR - dispatch failed
+Traceback (most recent call last):
+  File "D:\python\craw-platform\platform\main_server.py", line 131, in run_dispatch_loop
+    dispatched = dispatcher.dispatch_once(limit=limit)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\dispatcher\master_dispatcher.py", line 71, in dispatch_once
+    task_id = self.db_store.create_task_record(unit)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\store\db_store.py", line 58, in create_task_record
+    cursor.execute(sql, params)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 153, in execute
+    result = self._query(query)
+             ^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 575, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 826, in _read_query_result
+    result.read()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 1203, in read
+    first_packet = self.connection._read_packet()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 782, in _read_packet
+    packet.raise_for_error()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\err.py", line 150, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.DataError: (1265, "Data truncated for column 'question_id' at row 1")
+2026-04-24 14:58:31,058 - __main__ - ERROR - dispatch failed
+Traceback (most recent call last):
+  File "D:\python\craw-platform\platform\main_server.py", line 131, in run_dispatch_loop
+    dispatched = dispatcher.dispatch_once(limit=limit)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\dispatcher\master_dispatcher.py", line 71, in dispatch_once
+    task_id = self.db_store.create_task_record(unit)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\store\db_store.py", line 58, in create_task_record
+    cursor.execute(sql, params)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 153, in execute
+    result = self._query(query)
+             ^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 575, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 826, in _read_query_result
+    result.read()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 1203, in read
+    first_packet = self.connection._read_packet()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 782, in _read_packet
+    packet.raise_for_error()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\err.py", line 150, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.DataError: (1265, "Data truncated for column 'question_id' at row 1")
+2026-04-24 14:58:37,044 - __main__ - INFO - starting integrated API and dispatcher service on 127.0.0.1:8000
+2026-04-24 14:58:37,166 - __main__ - ERROR - dispatch failed
+Traceback (most recent call last):
+  File "D:\python\craw-platform\platform\main_server.py", line 131, in run_dispatch_loop
+    dispatched = dispatcher.dispatch_once(limit=limit)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\dispatcher\master_dispatcher.py", line 71, in dispatch_once
+    task_id = self.db_store.create_task_record(unit)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\store\db_store.py", line 58, in create_task_record
+    cursor.execute(sql, params)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 153, in execute
+    result = self._query(query)
+             ^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 575, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 826, in _read_query_result
+    result.read()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 1203, in read
+    first_packet = self.connection._read_packet()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 782, in _read_packet
+    packet.raise_for_error()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\err.py", line 150, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.DataError: (1265, "Data truncated for column 'question_id' at row 1")
+2026-04-24 14:58:42,230 - __main__ - ERROR - dispatch failed
+Traceback (most recent call last):
+  File "D:\python\craw-platform\platform\main_server.py", line 131, in run_dispatch_loop
+    dispatched = dispatcher.dispatch_once(limit=limit)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\dispatcher\master_dispatcher.py", line 71, in dispatch_once
+    task_id = self.db_store.create_task_record(unit)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\store\db_store.py", line 58, in create_task_record
+    cursor.execute(sql, params)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 153, in execute
+    result = self._query(query)
+             ^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 575, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 826, in _read_query_result
+    result.read()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 1203, in read
+    first_packet = self.connection._read_packet()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 782, in _read_packet
+    packet.raise_for_error()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\err.py", line 150, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.DataError: (1265, "Data truncated for column 'question_id' at row 1")
+2026-04-24 14:58:47,256 - __main__ - ERROR - dispatch failed
+Traceback (most recent call last):
+  File "D:\python\craw-platform\platform\main_server.py", line 131, in run_dispatch_loop
+    dispatched = dispatcher.dispatch_once(limit=limit)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\dispatcher\master_dispatcher.py", line 71, in dispatch_once
+    task_id = self.db_store.create_task_record(unit)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\store\db_store.py", line 58, in create_task_record
+    cursor.execute(sql, params)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 153, in execute
+    result = self._query(query)
+             ^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 575, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 826, in _read_query_result
+    result.read()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 1203, in read
+    first_packet = self.connection._read_packet()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 782, in _read_packet
+    packet.raise_for_error()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\err.py", line 150, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.DataError: (1265, "Data truncated for column 'question_id' at row 1")
+2026-04-24 14:58:52,306 - __main__ - ERROR - dispatch failed
+Traceback (most recent call last):
+  File "D:\python\craw-platform\platform\main_server.py", line 131, in run_dispatch_loop
+    dispatched = dispatcher.dispatch_once(limit=limit)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\dispatcher\master_dispatcher.py", line 71, in dispatch_once
+    task_id = self.db_store.create_task_record(unit)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\store\db_store.py", line 58, in create_task_record
+    cursor.execute(sql, params)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 153, in execute
+    result = self._query(query)
+             ^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 575, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 826, in _read_query_result
+    result.read()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 1203, in read
+    first_packet = self.connection._read_packet()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 782, in _read_packet
+    packet.raise_for_error()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\err.py", line 150, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.DataError: (1265, "Data truncated for column 'question_id' at row 1")
+2026-04-24 14:58:57,323 - __main__ - ERROR - dispatch failed
+Traceback (most recent call last):
+  File "D:\python\craw-platform\platform\main_server.py", line 131, in run_dispatch_loop
+    dispatched = dispatcher.dispatch_once(limit=limit)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\dispatcher\master_dispatcher.py", line 71, in dispatch_once
+    task_id = self.db_store.create_task_record(unit)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\store\db_store.py", line 58, in create_task_record
+    cursor.execute(sql, params)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 153, in execute
+    result = self._query(query)
+             ^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 575, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 826, in _read_query_result
+    result.read()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 1203, in read
+    first_packet = self.connection._read_packet()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 782, in _read_packet
+    packet.raise_for_error()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\err.py", line 150, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.DataError: (1265, "Data truncated for column 'question_id' at row 1")
+2026-04-24 14:59:02,339 - __main__ - ERROR - dispatch failed
+Traceback (most recent call last):
+  File "D:\python\craw-platform\platform\main_server.py", line 131, in run_dispatch_loop
+    dispatched = dispatcher.dispatch_once(limit=limit)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\dispatcher\master_dispatcher.py", line 71, in dispatch_once
+    task_id = self.db_store.create_task_record(unit)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\store\db_store.py", line 58, in create_task_record
+    cursor.execute(sql, params)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 153, in execute
+    result = self._query(query)
+             ^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 575, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 826, in _read_query_result
+    result.read()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 1203, in read
+    first_packet = self.connection._read_packet()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 782, in _read_packet
+    packet.raise_for_error()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\err.py", line 150, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.DataError: (1265, "Data truncated for column 'question_id' at row 1")
+2026-04-24 14:59:07,389 - __main__ - ERROR - dispatch failed
+Traceback (most recent call last):
+  File "D:\python\craw-platform\platform\main_server.py", line 131, in run_dispatch_loop
+    dispatched = dispatcher.dispatch_once(limit=limit)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\dispatcher\master_dispatcher.py", line 71, in dispatch_once
+    task_id = self.db_store.create_task_record(unit)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\store\db_store.py", line 58, in create_task_record
+    cursor.execute(sql, params)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 153, in execute
+    result = self._query(query)
+             ^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 575, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 826, in _read_query_result
+    result.read()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 1203, in read
+    first_packet = self.connection._read_packet()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 782, in _read_packet
+    packet.raise_for_error()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\err.py", line 150, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.DataError: (1265, "Data truncated for column 'question_id' at row 1")
+2026-04-24 14:59:12,435 - __main__ - ERROR - dispatch failed
+Traceback (most recent call last):
+  File "D:\python\craw-platform\platform\main_server.py", line 131, in run_dispatch_loop
+    dispatched = dispatcher.dispatch_once(limit=limit)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\dispatcher\master_dispatcher.py", line 71, in dispatch_once
+    task_id = self.db_store.create_task_record(unit)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\store\db_store.py", line 58, in create_task_record
+    cursor.execute(sql, params)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 153, in execute
+    result = self._query(query)
+             ^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 575, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 826, in _read_query_result
+    result.read()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 1203, in read
+    first_packet = self.connection._read_packet()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 782, in _read_packet
+    packet.raise_for_error()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\err.py", line 150, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.DataError: (1265, "Data truncated for column 'question_id' at row 1")
+2026-04-24 14:59:17,455 - __main__ - ERROR - dispatch failed
+Traceback (most recent call last):
+  File "D:\python\craw-platform\platform\main_server.py", line 131, in run_dispatch_loop
+    dispatched = dispatcher.dispatch_once(limit=limit)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\dispatcher\master_dispatcher.py", line 71, in dispatch_once
+    task_id = self.db_store.create_task_record(unit)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\store\db_store.py", line 58, in create_task_record
+    cursor.execute(sql, params)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 153, in execute
+    result = self._query(query)
+             ^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 575, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 826, in _read_query_result
+    result.read()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 1203, in read
+    first_packet = self.connection._read_packet()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 782, in _read_packet
+    packet.raise_for_error()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\err.py", line 150, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.DataError: (1265, "Data truncated for column 'question_id' at row 1")
+2026-04-24 14:59:22,478 - __main__ - ERROR - dispatch failed
+Traceback (most recent call last):
+  File "D:\python\craw-platform\platform\main_server.py", line 131, in run_dispatch_loop
+    dispatched = dispatcher.dispatch_once(limit=limit)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\dispatcher\master_dispatcher.py", line 71, in dispatch_once
+    task_id = self.db_store.create_task_record(unit)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\store\db_store.py", line 58, in create_task_record
+    cursor.execute(sql, params)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 153, in execute
+    result = self._query(query)
+             ^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 575, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 826, in _read_query_result
+    result.read()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 1203, in read
+    first_packet = self.connection._read_packet()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 782, in _read_packet
+    packet.raise_for_error()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\err.py", line 150, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.DataError: (1265, "Data truncated for column 'question_id' at row 1")
+2026-04-24 14:59:27,509 - __main__ - ERROR - dispatch failed
+Traceback (most recent call last):
+  File "D:\python\craw-platform\platform\main_server.py", line 131, in run_dispatch_loop
+    dispatched = dispatcher.dispatch_once(limit=limit)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\dispatcher\master_dispatcher.py", line 71, in dispatch_once
+    task_id = self.db_store.create_task_record(unit)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\store\db_store.py", line 58, in create_task_record
+    cursor.execute(sql, params)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 153, in execute
+    result = self._query(query)
+             ^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 575, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 826, in _read_query_result
+    result.read()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 1203, in read
+    first_packet = self.connection._read_packet()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\connections.py", line 782, in _read_packet
+    packet.raise_for_error()
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+  File "D:\python\craw-platform\.venv\Lib\site-packages\pymysql\err.py", line 150, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.DataError: (1265, "Data truncated for column 'question_id' at row 1")
+2026-04-24 15:02:59,438 - __main__ - INFO - starting integrated API and dispatcher service on 127.0.0.1:8000
+2026-04-24 15:02:59,575 - __main__ - ERROR - dispatch failed
+Traceback (most recent call last):
+  File "D:\python\craw-platform\platform\main_server.py", line 131, in run_dispatch_loop
+    dispatched = dispatcher.dispatch_once(limit=limit)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\dispatcher\master_dispatcher.py", line 75, in dispatch_once
+    self.publish_task(task_id, unit)
+  File "D:\python\craw-platform\platform\dispatcher\master_dispatcher.py", line 82, in publish_task
+    message = build_task_message(task_unit, task_id=task_id)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\queue\protocol.py", line 98, in build_task_message
+    "question_id": int(task_unit["question_id"]),
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: invalid literal for int() with base 10: '3f92f9ce-3ebb-11f1-8b90-6018952c5b3e'
+2026-04-24 15:03:04,620 - __main__ - ERROR - dispatch failed
+Traceback (most recent call last):
+  File "D:\python\craw-platform\platform\main_server.py", line 131, in run_dispatch_loop
+    dispatched = dispatcher.dispatch_once(limit=limit)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\dispatcher\master_dispatcher.py", line 75, in dispatch_once
+    self.publish_task(task_id, unit)
+  File "D:\python\craw-platform\platform\dispatcher\master_dispatcher.py", line 82, in publish_task
+    message = build_task_message(task_unit, task_id=task_id)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\queue\protocol.py", line 98, in build_task_message
+    "question_id": int(task_unit["question_id"]),
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: invalid literal for int() with base 10: '3f92f9ce-3ebb-11f1-8b90-6018952c5b3e'
+2026-04-24 15:03:09,659 - __main__ - ERROR - dispatch failed
+Traceback (most recent call last):
+  File "D:\python\craw-platform\platform\main_server.py", line 131, in run_dispatch_loop
+    dispatched = dispatcher.dispatch_once(limit=limit)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\dispatcher\master_dispatcher.py", line 75, in dispatch_once
+    self.publish_task(task_id, unit)
+  File "D:\python\craw-platform\platform\dispatcher\master_dispatcher.py", line 82, in publish_task
+    message = build_task_message(task_unit, task_id=task_id)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\queue\protocol.py", line 98, in build_task_message
+    "question_id": int(task_unit["question_id"]),
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: invalid literal for int() with base 10: '3f92f9ce-3ebb-11f1-8b90-6018952c5b3e'
+2026-04-24 15:03:14,715 - __main__ - ERROR - dispatch failed
+Traceback (most recent call last):
+  File "D:\python\craw-platform\platform\main_server.py", line 131, in run_dispatch_loop
+    dispatched = dispatcher.dispatch_once(limit=limit)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\dispatcher\master_dispatcher.py", line 75, in dispatch_once
+    self.publish_task(task_id, unit)
+  File "D:\python\craw-platform\platform\dispatcher\master_dispatcher.py", line 82, in publish_task
+    message = build_task_message(task_unit, task_id=task_id)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\queue\protocol.py", line 98, in build_task_message
+    "question_id": int(task_unit["question_id"]),
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: invalid literal for int() with base 10: '3f92f9ce-3ebb-11f1-8b90-6018952c5b3e'
+2026-04-24 15:03:19,754 - __main__ - ERROR - dispatch failed
+Traceback (most recent call last):
+  File "D:\python\craw-platform\platform\main_server.py", line 131, in run_dispatch_loop
+    dispatched = dispatcher.dispatch_once(limit=limit)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\dispatcher\master_dispatcher.py", line 75, in dispatch_once
+    self.publish_task(task_id, unit)
+  File "D:\python\craw-platform\platform\dispatcher\master_dispatcher.py", line 82, in publish_task
+    message = build_task_message(task_unit, task_id=task_id)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\python\craw-platform\platform\queue\protocol.py", line 98, in build_task_message
+    "question_id": int(task_unit["question_id"]),
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: invalid literal for int() with base 10: '3f92f9ce-3ebb-11f1-8b90-6018952c5b3e'
+2026-04-24 15:06:04,778 - __main__ - INFO - starting integrated API and dispatcher service on 127.0.0.1:8000
+2026-04-24 15:06:06,464 - __main__ - INFO - dispatch cycle completed: 40 units
+2026-04-24 15:06:13,045 - __main__ - INFO - dispatch cycle completed: 40 units
+2026-04-24 15:06:19,372 - __main__ - INFO - dispatch cycle completed: 40 units
+2026-04-24 15:06:25,589 - __main__ - INFO - dispatch cycle completed: 40 units
+2026-04-24 15:06:32,641 - __main__ - INFO - dispatch cycle completed: 40 units
+2026-04-24 15:06:40,254 - __main__ - INFO - dispatch cycle completed: 40 units
+2026-04-24 15:06:49,621 - __main__ - INFO - dispatch cycle completed: 40 units
+2026-04-24 15:06:55,719 - __main__ - INFO - dispatch cycle completed: 40 units
+2026-04-24 15:07:01,657 - __main__ - INFO - dispatch cycle completed: 40 units
+2026-04-24 15:07:07,795 - __main__ - INFO - dispatch cycle completed: 40 units
+2026-04-24 15:07:14,110 - __main__ - INFO - dispatch cycle completed: 40 units
+2026-04-24 15:07:20,379 - __main__ - INFO - dispatch cycle completed: 40 units
+2026-04-24 15:07:26,561 - __main__ - INFO - dispatch cycle completed: 40 units
+2026-04-24 15:07:32,858 - __main__ - INFO - dispatch cycle completed: 40 units
+2026-04-24 15:07:38,901 - __main__ - INFO - dispatch cycle completed: 40 units
+2026-04-24 15:07:45,126 - __main__ - INFO - dispatch cycle completed: 40 units
+2026-04-24 15:07:51,317 - __main__ - INFO - dispatch cycle completed: 40 units
+2026-04-24 15:11:22,012 - __main__ - INFO - starting integrated API and dispatcher service on 127.0.0.1:8000
+2026-04-24 15:11:23,530 - __main__ - INFO - dispatch cycle completed: 40 units
+2026-04-24 15:11:29,019 - __main__ - INFO - dispatch cycle completed: 0 units
+2026-04-24 15:11:34,596 - __main__ - INFO - dispatch cycle completed: 0 units
+2026-04-24 15:11:40,089 - __main__ - INFO - dispatch cycle completed: 0 units
+2026-04-24 15:11:45,542 - __main__ - INFO - dispatch cycle completed: 0 units
+2026-04-24 15:11:50,988 - __main__ - INFO - dispatch cycle completed: 0 units
+2026-04-24 15:11:56,477 - __main__ - INFO - dispatch cycle completed: 0 units
+2026-04-24 15:12:03,139 - __main__ - INFO - dispatch cycle completed: 0 units
+2026-04-24 15:12:08,961 - __main__ - INFO - dispatch cycle completed: 0 units
+2026-04-24 15:12:14,653 - __main__ - INFO - dispatch cycle completed: 0 units
+2026-04-24 15:12:20,061 - __main__ - INFO - dispatch cycle completed: 0 units
+2026-04-24 15:12:25,513 - __main__ - INFO - dispatch cycle completed: 0 units
+2026-04-24 15:12:31,340 - __main__ - INFO - dispatch cycle completed: 0 units
+2026-04-24 15:12:37,357 - __main__ - INFO - dispatch cycle completed: 0 units
+2026-04-24 15:12:42,834 - __main__ - INFO - dispatch cycle completed: 0 units
+2026-04-24 15:12:48,575 - __main__ - INFO - dispatch cycle completed: 0 units
+2026-04-24 15:12:53,993 - __main__ - INFO - dispatch cycle completed: 0 units
+2026-04-24 15:12:59,823 - __main__ - INFO - dispatch cycle completed: 0 units
+2026-04-24 15:13:05,427 - __main__ - INFO - dispatch cycle completed: 0 units
+2026-04-24 15:13:10,940 - __main__ - INFO - dispatch cycle completed: 0 units
+2026-04-24 15:13:16,331 - __main__ - INFO - dispatch cycle completed: 0 units
+2026-04-24 15:13:21,941 - __main__ - INFO - dispatch cycle completed: 0 units
+2026-04-24 15:13:27,728 - __main__ - INFO - dispatch cycle completed: 0 units
+2026-04-24 15:13:33,396 - __main__ - INFO - dispatch cycle completed: 0 units
+2026-04-24 15:13:39,225 - __main__ - INFO - dispatch cycle completed: 0 units
+2026-04-24 15:13:44,726 - __main__ - INFO - dispatch cycle completed: 0 units
+2026-04-24 15:13:50,447 - __main__ - INFO - dispatch cycle completed: 0 units
+2026-04-24 15:13:56,045 - __main__ - INFO - dispatch cycle completed: 0 units
+2026-04-24 15:14:01,463 - __main__ - INFO - dispatch cycle completed: 0 units
+2026-04-24 15:14:07,003 - __main__ - INFO - dispatch cycle completed: 0 units
+2026-04-24 15:14:12,862 - __main__ - INFO - dispatch cycle completed: 0 units
+2026-04-24 15:14:18,295 - __main__ - INFO - dispatch cycle completed: 0 units
+2026-04-24 15:14:23,880 - __main__ - INFO - dispatch cycle completed: 0 units
+2026-04-24 15:14:29,750 - __main__ - INFO - dispatch cycle completed: 0 units
+2026-04-24 15:14:35,525 - __main__ - INFO - dispatch cycle completed: 0 units
+2026-04-24 15:14:41,094 - __main__ - INFO - dispatch cycle completed: 0 units
+2026-04-24 15:14:46,747 - __main__ - INFO - dispatch cycle completed: 0 units
+2026-04-24 15:14:52,255 - __main__ - INFO - dispatch cycle completed: 0 units
+2026-04-24 15:14:57,863 - __main__ - INFO - dispatch cycle completed: 0 units
+2026-04-24 15:15:03,512 - __main__ - INFO - dispatch cycle completed: 0 units
+2026-04-24 15:22:56,582 - __main__ - INFO - starting integrated API and dispatcher service on 127.0.0.1:8000
+2026-04-24 15:43:12,756 - platform.consumers.base - INFO - consumer started: consumer_id=afu-qycb21124-1777016592628 queue=queue:afu priority_queue=queue:afu:priority once=False
+2026-04-24 15:43:12,756 - platform.consumers.manager - INFO - consumer spawned: model=afu consumer_id=afu-qycb21124-1777016592628 worker_id=afu-2baff153 queue=queue:afu
+2026-04-24 15:43:12,758 - platform.consumers.base - INFO - consumer started: consumer_id=deepseek-qycb21124-1777016592757 queue=queue:deepseek priority_queue=queue:deepseek:priority once=False
+2026-04-24 15:43:12,758 - platform.consumers.manager - INFO - consumer spawned: model=deepseek consumer_id=deepseek-qycb21124-1777016592757 worker_id=deepseek-03ef0aa3 queue=queue:deepseek
+2026-04-24 15:43:12,759 - platform.consumers.base - INFO - consumer started: consumer_id=doubao-qycb21124-1777016592759 queue=queue:doubao priority_queue=queue:doubao:priority once=False
+2026-04-24 15:43:12,759 - platform.consumers.manager - INFO - consumer spawned: model=doubao consumer_id=doubao-qycb21124-1777016592759 worker_id=doubao-ac585d21 queue=queue:doubao
+2026-04-24 15:43:12,761 - platform.consumers.base - INFO - consumer started: consumer_id=yuanbao-qycb21124-1777016592760 queue=queue:yuanbao priority_queue=queue:yuanbao:priority once=False
+2026-04-24 15:43:12,761 - platform.consumers.manager - INFO - consumer spawned: model=yuanbao consumer_id=yuanbao-qycb21124-1777016592760 worker_id=yuanbao-8a91028b queue=queue:yuanbao
+2026-04-24 15:43:12,764 - __main__ - INFO - starting integrated API and dispatcher service on 127.0.0.1:8000
+2026-04-24 15:43:12,785 - platform.consumers.base - INFO - task received: consumer_id=doubao-qycb21124-1777016592759 queue=queue:doubao task_id=690 product_llm_task_id=6e577afd-3ebb-11f1-8b90-6018952c5b3e question_id=3f92f9ce-3ebb-11f1-8b90-6018952c5b3e round_num=5
+2026-04-24 15:43:12,786 - platform.consumers.base - INFO - task received: consumer_id=deepseek-qycb21124-1777016592757 queue=queue:deepseek task_id=708 product_llm_task_id=6f8b8f54-3ebb-11f1-8b90-6018952c5b3e question_id=3f92f9ce-3ebb-11f1-8b90-6018952c5b3e round_num=3
+2026-04-24 15:43:12,793 - platform.consumers.base - INFO - task received: consumer_id=yuanbao-qycb21124-1777016592760 queue=queue:yuanbao task_id=720 product_llm_task_id=70253d93-3ebb-11f1-8b90-6018952c5b3e question_id=3f92f9ce-3ebb-11f1-8b90-6018952c5b3e round_num=5
+2026-04-24 15:43:12,797 - platform.consumers.base - INFO - task received: consumer_id=afu-qycb21124-1777016592628 queue=queue:afu task_id=700 product_llm_task_id=6ef1cf3b-3ebb-11f1-8b90-6018952c5b3e question_id=3f92f9ce-3ebb-11f1-8b90-6018952c5b3e round_num=5
+2026-04-24 15:43:13,571 - database_usage_example - WARNING - ⚠️ get_default_product_llm_task_id() 已废弃，ProductLlmTaskId应由main.py传入
+2026-04-24 15:43:13,575 - deepseek.deepseek - INFO - ✓ 检测到有效的 cookie 文件: cookies4.json
+2026-04-24 15:43:13,576 - deepseek.deepseek - INFO - 使用 Cookie 文件启动浏览器: cookies4.json, 代理: 无
+2026-04-24 15:43:13,576 - database_usage_example - WARNING - ⚠️ get_default_product_llm_task_id() 已废弃，ProductLlmTaskId应由main.py传入
+2026-04-24 15:43:13,576 - database_usage_example - WARNING - ⚠️ get_default_product_llm_task_id() 已废弃，ProductLlmTaskId应由main.py传入
+2026-04-24 15:43:13,577 - database_usage_example - WARNING - ⚠️ get_default_product_llm_task_id() 已废弃，ProductLlmTaskId应由main.py传入
+2026-04-24 15:43:13,578 - afu.afu - INFO - ✓ 已开启代理(带认证): tun-uzqqwl.qg.net:12079
+2026-04-24 15:43:13,584 - doubao.doubao - INFO - ✓ 已开启代理(带认证): tun-uzqqwl.qg.net:12079
+2026-04-24 15:43:13,586 - yuanbao.yuanbao - INFO - ✓ 检测到有效的 cookie 文件: cookies1.json
+2026-04-24 15:43:13,587 - yuanbao.yuanbao - INFO - 使用 Cookie 文件启动浏览器: cookies1.json, 代理: 无
+2026-04-24 16:03:25,512 - __main__ - INFO - starting integrated API and dispatcher service on 127.0.0.1:8000
+2026-04-24 16:11:10,862 - __main__ - INFO - starting integrated API and dispatcher service on 127.0.0.1:8000
+2026-04-24 16:40:39,820 - __main__ - INFO - starting integrated API and dispatcher service on 127.0.0.1:8000
+2026-04-24 17:03:50,811 - __main__ - INFO - starting integrated API and dispatcher service on 127.0.0.1:8000
+2026-04-24 17:07:11,962 - __main__ - INFO - starting integrated API and dispatcher service on 127.0.0.1:8000
+2026-04-24 17:07:14,227 - __main__ - INFO - dispatch cycle completed: 40 units
+2026-04-28 11:18:39,303 - __main__ - INFO - starting integrated API and dispatcher service on 127.0.0.1:8000
+2026-04-28 11:19:01,902 - __main__ - INFO - starting integrated API and dispatcher service on 127.0.0.1:8001
+2026-04-28 11:47:27,147 - __main__ - INFO - starting integrated API and dispatcher service on 127.0.0.1:8001

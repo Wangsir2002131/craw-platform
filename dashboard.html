@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>爬虫平台</title>
+  <style>
+    :root {
+      --bg: #f5f6f8;
+      --surface: #ffffff;
+      --surface-soft: #f2f3f5;
+      --line: #e6e8ec;
+      --text: #121417;
+      --muted: #6b7280;
+      --active: #efefef;
+      --shadow: 0 16px 40px rgba(15, 23, 42, 0.06);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Microsoft YaHei", "PingFang SC", "Segoe UI", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(235, 238, 244, 0.95), transparent 28%),
+        linear-gradient(180deg, #fafafb 0%, #f4f5f7 100%);
+    }
+
+    .app-shell {
+      display: grid;
+      grid-template-columns: 306px 1fr;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      padding: 28px 18px;
+      background: rgba(255, 255, 255, 0.88);
+      border-right: 1px solid var(--line);
+      backdrop-filter: blur(10px);
+    }
+
+    .brand {
+      padding: 6px 10px 24px;
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+
+    .nav {
+      display: grid;
+      gap: 6px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      padding: 14px 16px;
+      border: 0;
+      border-radius: 16px;
+      background: transparent;
+      color: var(--text);
+      text-align: left;
+      font-size: 18px;
+      cursor: pointer;
+      transition: background-color 0.18s ease, transform 0.18s ease;
+    }
+
+    .nav-item:hover {
+      background: #f4f4f5;
+      transform: translateX(2px);
+    }
+
+    .nav-item.active {
+      background: var(--active);
+      box-shadow: inset 0 0 0 1px #ececec;
+    }
+
+    .nav-item svg {
+      width: 22px;
+      height: 22px;
+      flex: 0 0 22px;
+      stroke: currentColor;
+      stroke-width: 2;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .content {
+      padding: 22px;
+    }
+
+    .content-frame {
+      width: 100%;
+      height: calc(100vh - 44px);
+      border: 0;
+      border-radius: 28px;
+      background: var(--surface);
+      box-shadow: var(--shadow);
+    }
+
+    @media (max-width: 980px) {
+      .app-shell {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        padding-bottom: 10px;
+      }
+
+      .nav {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+
+      .nav-item {
+        justify-content: center;
+        font-size: 14px;
+        padding: 12px 10px;
+      }
+
+      .nav-item span {
+        display: none;
+      }
+
+      .content {
+        padding-top: 0;
+      }
+
+      .content-frame {
+        height: calc(100vh - 190px);
+        border-radius: 20px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .nav {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">爬虫平台</div>
+      <nav class="nav" aria-label="主导航">
+        <button class="nav-item" data-page="tasks" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6h11"></path><path d="M9 12h11"></path><path d="M9 18h11"></path><path d="M4 6h.01"></path><path d="M4 12h.01"></path><path d="M4 18h.01"></path></svg>
+          <span>任务</span>
+        </button>
+        <button class="nav-item" data-page="queues" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="5" rx="7" ry="3"></ellipse><path d="M5 5v7c0 1.66 3.13 3 7 3s7-1.34 7-3V5"></path><path d="M5 12v7c0 1.66 3.13 3 7 3s7-1.34 7-3v-7"></path></svg>
+          <span>队列</span>
+        </button>
+        <button class="nav-item" data-page="accounts" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"></path><circle cx="9.5" cy="7" r="4"></circle><path d="M20 8v6"></path><path d="M17 11h6"></path></svg>
+          <span>账号</span>
+        </button>
+        <button class="nav-item" data-page="alerts" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10.27 21h3.46"></path><path d="M18 8a6 6 0 1 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"></path></svg>
+          <span>告警</span>
+        </button>
+        <button class="nav-item" data-page="control" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 21v-7"></path><path d="M4 10V3"></path><path d="M12 21v-9"></path><path d="M12 5V3"></path><path d="M20 21v-4"></path><path d="M20 10V3"></path><path d="M1 10h6"></path><path d="M9 5h6"></path><path d="M17 17h6"></path></svg>
+          <span>控制</span>
+        </button>
+        <button class="nav-item" data-page="health" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-6.5-4.35-9-8.5C.5 8.35 2.42 4 6.75 4c2.15 0 3.48 1.04 4.25 2.13C11.77 5.04 13.1 4 15.25 4 19.58 4 21.5 8.35 21 12.5 18.5 16.65 12 21 12 21z"></path></svg>
+          <span>健康</span>
+        </button>
+        <button class="nav-item" data-page="logs" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><path d="M14 2v6h6"></path><path d="M8 13h8"></path><path d="M8 17h6"></path><path d="M8 9h3"></path></svg>
+          <span>日志</span>
+        </button>
+      </nav>
+    </aside>
+
+    <main class="content">
+      <iframe
+        id="content-frame"
+        class="content-frame"
+        title="内容区"
+        src="pages/tasks.html"
+      ></iframe>
+    </main>
+  </div>
+
+  <script>
+    const pages = {
+      tasks: "pages/tasks.html",
+      queues: "pages/queues.html",
+      accounts: "pages/accounts.html",
+      alerts: "pages/alerts.html",
+      control: "pages/control.html",
+      health: "pages/health.html",
+      logs: "pages/logs.html"
+    };
+
+    const navItems = document.querySelectorAll(".nav-item");
+    const frame = document.getElementById("content-frame");
+
+    function activatePage(pageKey) {
+      const target = pages[pageKey] ? pageKey : "tasks";
+      const activeItem = Array.from(navItems).find((item) => item.dataset.page === target);
+      if (!frame.src.endsWith(pages[target])) {
+        frame.src = pages[target];
+      }
+      navItems.forEach((item) => {
+        item.classList.toggle("active", item.dataset.page === target);
+      });
+      if (window.location.hash !== "#" + target) {
+        window.location.hash = target;
+      }
+      document.title = "爬虫平台 - " + (activeItem ? activeItem.textContent.trim() : "任务");
+    }
+
+    navItems.forEach((item) => {
+      item.addEventListener("click", () => activatePage(item.dataset.page));
+    });
+
+    const defaultPage = (window.location.hash || "#tasks").replace("#", "");
+    activatePage(defaultPage);
+    window.addEventListener("hashchange", () => {
+      const page = (window.location.hash || "#tasks").replace("#", "");
+      activatePage(page);
+    });
+  </script>
+</body>
+</html>

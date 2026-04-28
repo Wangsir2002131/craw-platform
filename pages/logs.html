@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>日志</title>
+  <link rel="stylesheet" href="shared.css" />
+</head>
+<body>
+  <section class="page-head">
+    <h1>日志</h1>
+    <p>查看主服务和消费者最近的执行日志片段。</p>
+  </section>
+
+  <section class="layout-grid dual">
+    <article class="card">
+      <div class="card-title">
+        <h2>主服务日志</h2>
+        <p>分发、告警和回写相关事件。</p>
+      </div>
+      <div class="code-block">[10:24:01] INFO dispatch task=T-001 priority=100 queue=deepseek
+[10:24:02] INFO assigned task=T-001 server=server-b
+[10:24:08] INFO result task=T-003 status=completed
+[10:24:09] WARN queue=deepseek backlog=108
+[10:24:13] WARN consumer=afu@server-a heartbeat_timeout</div>
+    </article>
+
+    <article class="card">
+      <div class="card-title">
+        <h2>消费者日志</h2>
+        <p>任务领取、账号使用和执行异常。</p>
+      </div>
+      <div class="code-block">[10:23:55] INFO worker=deepseek received task=T-001
+[10:24:00] INFO account=deepseek-12 acquired=true
+[10:24:11] INFO execute question=9001
+[10:24:20] ERROR task=T-004 browser_timeout
+[10:24:21] INFO report task=T-004 status=failed</div>
+    </article>
+  </section>
+</body>
+</html>

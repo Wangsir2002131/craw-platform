@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>队列</title>
+  <link rel="stylesheet" href="shared.css" />
+</head>
+<body>
+  <section class="page-head">
+    <h1>队列</h1>
+    <p>查看 Redis 中各爬虫队列的真实堆积、消费者、处理速率、等待时长与异常状态。</p>
+  </section>
+
+  <div id="queue-feedback" class="feedback-modal" hidden></div>
+
+  <section class="layout-grid split">
+    <article class="card">
+      <div class="card-title">
+        <h2>队列状态</h2>
+        <p>数据来源于 Redis 队列长度、消费者心跳和最近 1 分钟处理记录。</p>
+      </div>
+      <div class="toolbar">
+        <div class="field">
+          <label for="state-filter">状态</label>
+          <select id="state-filter">
+            <option value="">全部状态</option>
+          </select>
+        </div>
+      </div>
+      <div class="list" id="queue-list">
+        <div class="table-state">正在加载队列数据...</div>
+      </div>
+      <div class="pagination">
+        <div class="pagination-info" id="pagination-info">-</div>
+        <div class="pagination-actions">
+          <button id="prev-page" type="button">上一页</button>
+          <button id="next-page" type="button" class="dark">下一页</button>
+        </div>
+      </div>
+    </article>
+
+    <article class="card">
+      <div class="card-title">
+        <h2>分配概况</h2>
+        <p>根据实时队列状态自动判定风险等级。</p>
+      </div>
+      <div class="metric-row" id="queue-stats"></div>
+      <div class="table-wrap" style="margin-top: 18px;">
+        <table>
+          <thead>
+            <tr>
+              <th>队列</th>
+              <th>策略</th>
+              <th>风险</th>
+              <th>异常消费者</th>
+            </tr>
+          </thead>
+          <tbody id="queue-risk-body">
+            <tr>
+              <td colspan="4" class="table-state">正在加载队列数据...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </article>
+  </section>
+
+  <script>
+    const state = {
+      page: 1,
+      pageSize: 10,
+      queueState: "",
+      totalPages: 1
+    };
+
+    const stateFilter = document.getElementById("state-filter");
+    const queueList = document.getElementById("queue-list");
+    const queueStats = document.getElementById("queue-stats");
+    const queueRiskBody = document.getElementById("queue-risk-body");
+    const feedbackBanner = document.getElementById("queue-feedback");
+    const paginationInfo = document.getElementById("pagination-info");
+    const prevButton = document.getElementById("prev-page");
+    const nextButton = document.getElementById("next-page");
+    let feedbackTimer = null;
+
+    function getBadgeClass(status) {
+      if (status === "正常" || status === "空闲") return "badge light";
+      if (status === "积压") return "badge warn";
+      if (status === "异常") return "badge danger";
+      return "badge dark";
+    }
+
+    function getRiskBadge(level) {
+      if (level === "high") return "badge danger";
+      if (level === "medium") return "badge warn";
+      return "badge light";
+    }
+
+    function getRiskLabel(level) {
+      if (level === "high") return "高";
+      if (level === "medium") return "中";
+      return "低";
+    }
+
+    function fillSelectOptions(select, options, selectedValue, emptyLabel) {
+      const optionHtml = [`<option value="">${emptyLabel}</option>`]
+        .concat(options.map((item) => {
+          const selected = item === selectedValue ? "selected" : "";
+          return `<option value="${item}" ${selected}>${item}</option>`;
+        }))
+        .join("");
+      select.innerHTML = optionHtml;
+    }
+
+    function showFeedback(message, kind = "info") {
+      feedbackBanner.hidden = false;
+      feedbackBanner.className = `feedback-modal ${kind}`;
+      feedbackBanner.textContent = message;
+      if (feedbackTimer) clearTimeout(feedbackTimer);
+      feedbackTimer = setTimeout(() => {
+        feedbackBanner.hidden = true;
+      }, 2600);
+    }
+
+    function renderQueueList(items) {
+      if (!items.length) {
+        queueList.innerHTML = '<div class="table-state">当前筛选条件下没有数据</div>';
+        return;
+      }
+
+      queueList.innerHTML = items.map((item) => `
+        <div class="list-item">
+          <div class="list-head">
+            <strong>${item.queueName}</strong>
+            <span class="${getBadgeClass(item.state)}">${item.state}</span>
+          </div>
+          <div class="kv-grid">
+            <div class="kv"><span>堆积</span><strong>${item.backlog}</strong></div>
+            <div class="kv"><span>消费者</span><strong>${item.consumers}</strong></div>
+            <div class="kv"><span>目标实例</span><strong>${item.desiredConsumers}</strong></div>
+            <div class="kv"><span>托管实例</span><strong>${item.managedActiveConsumers}</strong></div>
+            <div class="kv"><span>脚本实例</span><strong>${item.externalActiveConsumers}</strong></div>
+            <div class="kv"><span>处理速率</span><strong>${item.throughputPerMinute}/分</strong></div>
+            <div class="kv"><span>等待</span><strong>${item.waitLabel}</strong></div>
+          </div>
+          <div class="toolbar" style="margin-top: 14px;">
+            <button
+              type="button"
+              data-model="${item.model}"
+              data-action="decrement"
+              data-external-running="${item.externalSupervisorRunning}"
+              data-managed-enabled="${item.managedEnabled}"
+              data-desired-consumers="${item.desiredConsumers}"
+            >- 减一个</button>
+            <button
+              type="button"
+              class="dark"
+              data-model="${item.model}"
+              data-action="increment"
+              data-external-running="${item.externalSupervisorRunning}"
+              data-managed-enabled="${item.managedEnabled}"
+              data-desired-consumers="${item.desiredConsumers}"
+            >+ 加一个</button>
+          </div>
+          <p>普通队列 ${item.listLength}，优先队列 ${item.priorityLength}，异常消费者 ${item.staleConsumers}，退场中 ${item.drainingConsumers}，页面缩放 ${item.managedEnabled ? "主服务托管" : (item.externalSupervisorRunning ? "脚本主管进程" : "未启用")}</p>
+        </div>
+      `).join("");
+    }
+
+    function renderStats(stats) {
+      if (!stats.length) {
+        queueStats.innerHTML = '<div class="table-state">暂无统计数据</div>';
+        return;
+      }
+
+      const total = stats.reduce((sum, item) => sum + item.count, 0);
+      queueStats.innerHTML = stats.map((item) => {
+        const percent = total ? Math.round((item.count / total) * 100) : 0;
+        return `
+          <div class="metric-item">
+            <div class="metric-head"><span>${item.label}</span><strong>${item.count}</strong></div>
+            <div class="metric-track"><div class="metric-fill" style="width: ${percent}%;"></div></div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function renderRiskTable(items) {
+      if (!items.length) {
+        queueRiskBody.innerHTML = '<tr><td colspan="4" class="table-state">当前筛选条件下没有数据</td></tr>';
+        return;
+      }
+
+      queueRiskBody.innerHTML = items.map((item) => `
+        <tr>
+          <td>${item.model}</td>
+          <td>${item.strategy}</td>
+          <td><span class="${getRiskBadge(item.riskLevel)}">${getRiskLabel(item.riskLevel)}</span></td>
+          <td>${item.staleConsumers}</td>
+        </tr>
+      `).join("");
+    }
+
+    function renderPagination(pagination) {
+      state.totalPages = pagination.totalPages;
+      paginationInfo.textContent = `第 ${pagination.page} / ${pagination.totalPages} 页，共 ${pagination.total} 条`;
+      prevButton.disabled = !pagination.hasPrev;
+      nextButton.disabled = !pagination.hasNext;
+    }
+
+    async function loadQueues() {
+      queueList.innerHTML = '<div class="table-state">正在加载队列数据...</div>';
+      queueRiskBody.innerHTML = '<tr><td colspan="4" class="table-state">正在加载队列数据...</td></tr>';
+
+      const params = new URLSearchParams({
+        page: String(state.page),
+        page_size: String(state.pageSize)
+      });
+      if (state.queueState) params.set("state", state.queueState);
+
+      try {
+        const response = await fetch(`/api/queues?${params.toString()}`);
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+
+        const data = await response.json();
+        fillSelectOptions(stateFilter, data.filters.stateOptions, data.filters.selected.state, "全部状态");
+        renderQueueList(data.items);
+        renderStats(data.stats);
+        renderRiskTable(data.items);
+        renderPagination(data.pagination);
+      } catch (error) {
+        queueList.innerHTML = `<div class="table-state">加载失败：${error.message}</div>`;
+        queueStats.innerHTML = "";
+        queueRiskBody.innerHTML = `<tr><td colspan="4" class="table-state">加载失败：${error.message}</td></tr>`;
+        paginationInfo.textContent = "接口未连接";
+        prevButton.disabled = true;
+        nextButton.disabled = true;
+      }
+    }
+
+    async function changeConsumers(model, action) {
+      try {
+        const response = await fetch(`/queues/consumers/${model}/${action}`, {
+          method: "POST"
+        });
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+        showFeedback(action === "increment" ? `${model} 已提交加一个消费者` : `${model} 已提交减少一个消费者`, "success");
+        await loadQueues();
+      } catch (error) {
+        showFeedback(`调整消费者失败：${error.message}`, "error");
+      }
+    }
+
+    stateFilter.addEventListener("change", () => {
+      state.queueState = stateFilter.value;
+      state.page = 1;
+      loadQueues();
+    });
+
+    prevButton.addEventListener("click", () => {
+      if (state.page > 1) {
+        state.page -= 1;
+        loadQueues();
+      }
+    });
+
+    nextButton.addEventListener("click", () => {
+      if (state.page < state.totalPages) {
+        state.page += 1;
+        loadQueues();
+      }
+    });
+
+    queueList.addEventListener("click", (event) => {
+      const button = event.target.closest("button[data-model][data-action]");
+      if (!button) return;
+      const model = button.dataset.model;
+      const action = button.dataset.action;
+      const externalRunning = button.dataset.externalRunning === "true";
+      const managedEnabled = button.dataset.managedEnabled === "true";
+      const desiredConsumers = Number(button.dataset.desiredConsumers || 0);
+
+      if (!managedEnabled && !externalRunning) {
+        showFeedback(`请先启动 ${model} 消费者脚本，再进行加减`, "warn");
+        return;
+      }
+
+      if (action === "decrement" && desiredConsumers <= 1) {
+        showFeedback(`${model} 只剩最后一个消费者，不能再减了`, "warn");
+        return;
+      }
+      changeConsumers(model, action);
+    });
+
+    loadQueues();
+  </script>
+</body>
+</html>

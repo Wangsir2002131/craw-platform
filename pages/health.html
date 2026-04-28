@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>健康</title>
+  <link rel="stylesheet" href="shared.css" />
+</head>
+<body>
+  <section class="page-head">
+    <h1>健康</h1>
+    <p>查看调度服务、中间件和执行节点的整体可用性。</p>
+  </section>
+
+  <section class="layout-grid dual">
+    <article class="card">
+      <div class="card-title">
+        <h2>服务状态</h2>
+        <p>核心模块健康信息。</p>
+      </div>
+      <div class="list">
+        <div class="list-item">
+          <div class="list-head"><strong>主服务</strong><span class="badge light">在线</span></div>
+          <p>心跳正常，调度循环和结果监听运行中。</p>
+        </div>
+        <div class="list-item">
+          <div class="list-head"><strong>Redis</strong><span class="badge light">已连接</span></div>
+          <p>队列读写正常，平均延迟 4ms。</p>
+        </div>
+        <div class="list-item">
+          <div class="list-head"><strong>数据库</strong><span class="badge light">已连接</span></div>
+          <p>连接池正常，查询延迟 21ms。</p>
+        </div>
+      </div>
+    </article>
+
+    <article class="card">
+      <div class="card-title">
+        <h2>执行节点</h2>
+        <p>节点在线情况和消费能力。</p>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>节点</th>
+            <th>状态</th>
+            <th>任务数</th>
+            <th>备注</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>afu@server-a</td>
+            <td><span class="badge danger">离线</span></td>
+            <td>0</td>
+            <td>心跳超时 47 秒</td>
+          </tr>
+          <tr>
+            <td>deepseek@server-b</td>
+            <td><span class="badge light">在线</span></td>
+            <td>12</td>
+            <td>消费正常</td>
+          </tr>
+          <tr>
+            <td>doubao@server-c</td>
+            <td><span class="badge light">在线</span></td>
+            <td>8</td>
+            <td>处理延迟稳定</td>
+          </tr>
+          <tr>
+            <td>yuanbao@server-d</td>
+            <td><span class="badge warn">降级</span></td>
+            <td>5</td>
+            <td>仅使用备用账号</td>
+          </tr>
+        </tbody>
+      </table>
+    </article>
+  </section>
+</body>
+</html>

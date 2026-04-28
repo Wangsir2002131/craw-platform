@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>控制</title>
+  <link rel="stylesheet" href="shared.css" />
+</head>
+<body>
+  <section class="page-head">
+    <h1>控制</h1>
+    <p>执行暂停分发、调整策略和账号干预等后台操作。</p>
+  </section>
+
+  <section class="card">
+    <div class="card-title">
+      <h2>控制中心</h2>
+      <p>当前页面保留后台控制台的面板式布局。</p>
+    </div>
+    <div class="panel-grid">
+      <div class="action-box">
+        <h3>分发控制</h3>
+        <p>暂停或恢复新任务分发，不影响运行中任务。</p>
+        <div class="actions">
+          <button class="warn" type="button">暂停分发</button>
+          <button class="dark" type="button">恢复分发</button>
+        </div>
+      </div>
+      <div class="action-box">
+        <h3>调度策略</h3>
+        <p>切换 FIFO、LIFO 和优先级队列策略。</p>
+        <div class="actions">
+          <select>
+            <option>priority_fifo</option>
+            <option>fifo</option>
+            <option>lifo</option>
+            <option>priority_lifo</option>
+          </select>
+          <button class="dark" type="button">应用</button>
+        </div>
+      </div>
+      <div class="action-box">
+        <h3>账号干预</h3>
+        <p>手动停用异常账号并移出当前可分配池。</p>
+        <div class="actions">
+          <select>
+            <option>deepseek-12</option>
+            <option>yuanbao-17</option>
+            <option>doubao-03</option>
+          </select>
+          <button class="danger" type="button">停用账号</button>
+        </div>
+      </div>
+      <div class="action-box">
+        <h3>快捷入口</h3>
+        <p>快速跳转高频处理项。</p>
+        <div class="actions">
+          <button type="button">失败任务</button>
+          <button type="button">队列积压</button>
+          <button type="button">备用账号</button>
+        </div>
+      </div>
+    </div>
+  </section>
+</body>
+</html>

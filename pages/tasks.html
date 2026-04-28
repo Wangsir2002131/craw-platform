@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>任务</title>
+  <link rel="stylesheet" href="shared.css" />
+</head>
+<body>
+  <section class="page-head">
+    <h1>任务</h1>
+    <p>查看真实任务数据，并按状态、模型、服务器进行筛选。</p>
+  </section>
+
+  <section class="layout-grid split">
+    <article class="card">
+      <div class="card-title">
+        <h2>任务列表</h2>
+        <p>每页展示 5 条数据，任务服务器按模型固定映射。</p>
+      </div>
+      <div class="toolbar">
+        <div class="field">
+          <label for="status-filter">状态</label>
+          <select id="status-filter">
+            <option value="">全部状态</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="model-filter">模型</label>
+          <select id="model-filter">
+            <option value="">全部模型</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="server-filter">服务器</label>
+          <select id="server-filter">
+            <option value="">全部服务器</option>
+          </select>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>模型ID</th>
+              <th>模型</th>
+              <th>状态</th>
+              <th>服务器</th>
+            </tr>
+          </thead>
+          <tbody id="task-table-body">
+            <tr>
+              <td colspan="4" class="table-state">正在加载任务数据...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="pagination">
+        <div class="pagination-info" id="pagination-info">-</div>
+        <div class="pagination-actions">
+          <button id="prev-page" type="button">上一页</button>
+          <button id="next-page" type="button" class="dark">下一页</button>
+        </div>
+      </div>
+    </article>
+
+    <aside class="card">
+      <div class="card-title">
+        <h2>任务统计</h2>
+        <p>统计当前任务表中的真实状态分布。</p>
+      </div>
+      <div class="metric-row" id="task-stats"></div>
+    </aside>
+  </section>
+
+  <script>
+    const state = {
+      page: 1,
+      pageSize: 5,
+      status: "",
+      model: "",
+      server: "",
+      totalPages: 1
+    };
+
+    const statusFilter = document.getElementById("status-filter");
+    const modelFilter = document.getElementById("model-filter");
+    const serverFilter = document.getElementById("server-filter");
+    const tableBody = document.getElementById("task-table-body");
+    const statsContainer = document.getElementById("task-stats");
+    const paginationInfo = document.getElementById("pagination-info");
+    const prevButton = document.getElementById("prev-page");
+    const nextButton = document.getElementById("next-page");
+
+    function getBadgeClass(status) {
+      if (status === "进行中") return "badge dark";
+      if (status === "已失败") return "badge danger";
+      if (status === "爬网完成" || status === "已完成") return "badge light";
+      return "badge warn";
+    }
+
+    function fillSelectOptions(select, options, selectedValue, emptyLabel) {
+      const optionHtml = [`<option value="">${emptyLabel}</option>`]
+        .concat(options.map((item) => {
+          const selected = item === selectedValue ? "selected" : "";
+          return `<option value="${item}" ${selected}>${item}</option>`;
+        }))
+        .join("");
+      select.innerHTML = optionHtml;
+    }
+
+    function renderRows(items) {
+      if (!items.length) {
+        tableBody.innerHTML = '<tr><td colspan="4" class="table-state">当前筛选条件下没有数据</td></tr>';
+        return;
+      }
+
+      tableBody.innerHTML = items.map((item) => `
+        <tr>
+          <td>${item.id}<span class="subtle">任务id：${item.productTaskId || "-"}<br>产品id：${item.productId || "-"}</span></td>
+          <td>${item.model}</td>
+          <td><span class="${getBadgeClass(item.status)}">${item.status}</span></td>
+          <td class="nowrap">${item.server}</td>
+        </tr>
+      `).join("");
+    }
+
+    function renderStats(stats) {
+      const total = stats.reduce((sum, item) => sum + item.count, 0);
+      statsContainer.innerHTML = stats.map((item) => {
+        const percent = total ? Math.round((item.count / total) * 100) : 0;
+        return `
+          <div class="metric-item">
+            <div class="metric-head"><span>${item.label}</span><strong>${item.count}</strong></div>
+            <div class="metric-track"><div class="metric-fill" style="width: ${percent}%;"></div></div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function renderPagination(pagination) {
+      state.totalPages = pagination.totalPages;
+      paginationInfo.textContent = `第 ${pagination.page} / ${pagination.totalPages} 页，共 ${pagination.total} 条`;
+      prevButton.disabled = !pagination.hasPrev;
+      nextButton.disabled = !pagination.hasNext;
+    }
+
+    async function loadTasks() {
+      tableBody.innerHTML = '<tr><td colspan="4" class="table-state">正在加载任务数据...</td></tr>';
+
+      const params = new URLSearchParams({
+        page: String(state.page),
+        page_size: String(state.pageSize)
+      });
+      if (state.status) params.set("status", state.status);
+      if (state.model) params.set("model", state.model);
+      if (state.server) params.set("server", state.server);
+
+      try {
+        const response = await fetch(`/api/tasks?${params.toString()}`);
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+
+        const data = await response.json();
+        fillSelectOptions(statusFilter, data.filters.statusOptions, data.filters.selected.status, "全部状态");
+        fillSelectOptions(modelFilter, data.filters.modelOptions, data.filters.selected.model, "全部模型");
+        fillSelectOptions(serverFilter, data.filters.serverOptions, data.filters.selected.server, "全部服务器");
+
+        renderRows(data.items);
+        renderStats(data.stats);
+        renderPagination(data.pagination);
+      } catch (error) {
+        tableBody.innerHTML = `<tr><td colspan="4" class="table-state">加载失败：${error.message}</td></tr>`;
+        statsContainer.innerHTML = "";
+        paginationInfo.textContent = "接口未连接";
+        prevButton.disabled = true;
+        nextButton.disabled = true;
+      }
+    }
+
+    statusFilter.addEventListener("change", () => {
+      state.status = statusFilter.value;
+      state.page = 1;
+      loadTasks();
+    });
+
+    modelFilter.addEventListener("change", () => {
+      state.model = modelFilter.value;
+      state.page = 1;
+      loadTasks();
+    });
+
+    serverFilter.addEventListener("change", () => {
+      state.server = serverFilter.value;
+      state.page = 1;
+      loadTasks();
+    });
+
+    prevButton.addEventListener("click", () => {
+      if (state.page > 1) {
+        state.page -= 1;
+        loadTasks();
+      }
+    });
+
+    nextButton.addEventListener("click", () => {
+      if (state.page < state.totalPages) {
+        state.page += 1;
+        loadTasks();
+      }
+    });
+
+    loadTasks();
+  </script>
+</body>
+</html>

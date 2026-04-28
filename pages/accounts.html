@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>账号</title>
+  <link rel="stylesheet" href="shared.css" />
+</head>
+<body>
+  <section class="page-head">
+    <h1>账号</h1>
+    <p>查看真实账号池数据，并按爬虫、状态、账号类型进行筛选。</p>
+  </section>
+
+  <section class="layout-grid split">
+    <article class="card">
+      <div class="card-title">
+        <h2>账号列表</h2>
+        <p>每页展示 5 条真实账号数据。</p>
+      </div>
+      <div class="toolbar">
+        <div class="field">
+          <label for="crawler-filter">爬虫</label>
+          <select id="crawler-filter">
+            <option value="">全部爬虫</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="status-filter">状态</label>
+          <select id="status-filter">
+            <option value="">全部状态</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="type-filter">账号类型</label>
+          <select id="type-filter">
+            <option value="">全部类型</option>
+          </select>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>账号</th>
+              <th>爬虫</th>
+              <th>状态</th>
+              <th>类型</th>
+              <th>失败次数</th>
+            </tr>
+          </thead>
+          <tbody id="account-table-body">
+            <tr>
+              <td colspan="5" class="table-state">正在加载账号数据...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="pagination">
+        <div class="pagination-info" id="pagination-info">-</div>
+        <div class="pagination-actions">
+          <button id="prev-page" type="button">上一页</button>
+          <button id="next-page" type="button" class="dark">下一页</button>
+        </div>
+      </div>
+    </article>
+
+    <aside class="card">
+      <div class="card-title">
+        <h2>账号统计</h2>
+        <p>统计当前筛选条件下的真实账号状态分布。</p>
+      </div>
+      <div class="metric-row" id="account-stats"></div>
+    </aside>
+  </section>
+
+  <script>
+    const state = {
+      page: 1,
+      pageSize: 5,
+      crawler: "",
+      status: "",
+      accountType: "",
+      totalPages: 1
+    };
+
+    const crawlerFilter = document.getElementById("crawler-filter");
+    const statusFilter = document.getElementById("status-filter");
+    const typeFilter = document.getElementById("type-filter");
+    const tableBody = document.getElementById("account-table-body");
+    const statsContainer = document.getElementById("account-stats");
+    const paginationInfo = document.getElementById("pagination-info");
+    const prevButton = document.getElementById("prev-page");
+    const nextButton = document.getElementById("next-page");
+
+    function getBadgeClass(status) {
+      if (status === "正常" || status === "备用") return "badge light";
+      if (status === "已停用") return "badge danger";
+      if (status === "可疑" || status === "异常") return "badge warn";
+      return "badge dark";
+    }
+
+    function fillSelectOptions(select, options, selectedValue, emptyLabel) {
+      const optionHtml = [`<option value="">${emptyLabel}</option>`]
+        .concat(options.map((item) => {
+          const selected = item === selectedValue ? "selected" : "";
+          return `<option value="${item}" ${selected}>${item}</option>`;
+        }))
+        .join("");
+      select.innerHTML = optionHtml;
+    }
+
+    function renderRows(items) {
+      if (!items.length) {
+        tableBody.innerHTML = '<tr><td colspan="5" class="table-state">当前筛选条件下没有数据</td></tr>';
+        return;
+      }
+
+      tableBody.innerHTML = items.map((item) => `
+        <tr>
+          <td>${item.account}<span class="subtle">ID：${item.id}<br>创建时间：${item.createdAt || "-"}</span></td>
+          <td>${item.crawler}</td>
+          <td><span class="${getBadgeClass(item.status)}">${item.status}</span></td>
+          <td>${item.accountType}</td>
+          <td>${item.failCount}</td>
+        </tr>
+      `).join("");
+    }
+
+    function renderStats(stats) {
+      if (!stats.length) {
+        statsContainer.innerHTML = '<div class="table-state">暂无统计数据</div>';
+        return;
+      }
+
+      const total = stats.reduce((sum, item) => sum + item.count, 0);
+      statsContainer.innerHTML = stats.map((item) => {
+        const percent = total ? Math.round((item.count / total) * 100) : 0;
+        return `
+          <div class="metric-item">
+            <div class="metric-head"><span>${item.label}</span><strong>${item.count}</strong></div>
+            <div class="metric-track"><div class="metric-fill" style="width: ${percent}%;"></div></div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function renderPagination(pagination) {
+      state.totalPages = pagination.totalPages;
+      paginationInfo.textContent = `第 ${pagination.page} / ${pagination.totalPages} 页，共 ${pagination.total} 条`;
+      prevButton.disabled = !pagination.hasPrev;
+      nextButton.disabled = !pagination.hasNext;
+    }
+
+    async function loadAccounts() {
+      tableBody.innerHTML = '<tr><td colspan="5" class="table-state">正在加载账号数据...</td></tr>';
+
+      const params = new URLSearchParams({
+        page: String(state.page),
+        page_size: String(state.pageSize)
+      });
+      if (state.crawler) params.set("crawler", state.crawler);
+      if (state.status) params.set("status", state.status);
+      if (state.accountType) params.set("account_type", state.accountType);
+
+      try {
+        const response = await fetch(`/api/accounts?${params.toString()}`);
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+
+        const data = await response.json();
+        fillSelectOptions(crawlerFilter, data.filters.crawlerOptions, data.filters.selected.crawler, "全部爬虫");
+        fillSelectOptions(statusFilter, data.filters.statusOptions, data.filters.selected.status, "全部状态");
+        fillSelectOptions(typeFilter, data.filters.accountTypeOptions, data.filters.selected.accountType, "全部类型");
+
+        renderRows(data.items);
+        renderStats(data.stats);
+        renderPagination(data.pagination);
+      } catch (error) {
+        tableBody.innerHTML = `<tr><td colspan="5" class="table-state">加载失败：${error.message}</td></tr>`;
+        statsContainer.innerHTML = "";
+        paginationInfo.textContent = "接口未连接";
+        prevButton.disabled = true;
+        nextButton.disabled = true;
+      }
+    }
+
+    crawlerFilter.addEventListener("change", () => {
+      state.crawler = crawlerFilter.value;
+      state.page = 1;
+      loadAccounts();
+    });
+
+    statusFilter.addEventListener("change", () => {
+      state.status = statusFilter.value;
+      state.page = 1;
+      loadAccounts();
+    });
+
+    typeFilter.addEventListener("change", () => {
+      state.accountType = typeFilter.value;
+      state.page = 1;
+      loadAccounts();
+    });
+
+    prevButton.addEventListener("click", () => {
+      if (state.page > 1) {
+        state.page -= 1;
+        loadAccounts();
+      }
+    });
+
+    nextButton.addEventListener("click", () => {
+      if (state.page < state.totalPages) {
+        state.page += 1;
+        loadAccounts();
+      }
+    });
+
+    loadAccounts();
+  </script>
+</body>
+</html>

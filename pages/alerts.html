@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>告警</title>
+  <link rel="stylesheet" href="shared.css" />
+</head>
+<body>
+  <section class="page-head">
+    <h1>告警</h1>
+    <p>集中查看积压、离线和账号异常等告警事件。</p>
+  </section>
+
+  <section class="layout-grid dual">
+    <article class="card">
+      <div class="card-title">
+        <h2>实时告警</h2>
+        <p>优先处理影响分发和执行成功率的问题。</p>
+      </div>
+      <div class="list">
+        <div class="list-item">
+          <div class="list-head"><strong>队列积压</strong><span class="badge danger">严重</span></div>
+          <p>deepseek 队列长度 108，超过阈值 100，建议临时扩容消费者。</p>
+        </div>
+        <div class="list-item">
+          <div class="list-head"><strong>备用账号接管</strong><span class="badge warn">警告</span></div>
+          <p>yuanbao 主账号池耗尽，当前已切到备用账号组。</p>
+        </div>
+        <div class="list-item">
+          <div class="list-head"><strong>消费者离线</strong><span class="badge danger">严重</span></div>
+          <p>afu@server-a 心跳超时 47 秒，任务回收尚未完成。</p>
+        </div>
+      </div>
+    </article>
+
+    <article class="card">
+      <div class="card-title">
+        <h2>告警汇总</h2>
+        <p>按处理状态区分待办工作。</p>
+      </div>
+      <div class="kv-grid">
+        <div class="kv"><span>未处理</span><strong>6</strong></div>
+        <div class="kv"><span>处理中</span><strong>2</strong></div>
+        <div class="kv"><span>已抑制</span><strong>3</strong></div>
+        <div class="kv"><span>今日恢复</span><strong>12</strong></div>
+      </div>
+      <div class="code-block">[10:24:09] WARN queue=deepseek backlog=108 threshold=100
+[10:24:13] ERROR consumer=afu@server-a heartbeat_timeout=47s
+[10:24:16] WARN account_pool=yuanbao primary_exhausted=true
+[10:24:20] ERROR task=T-004 browser_timeout=true</div>
+    </article>
+  </section>
+</body>
+</html>
