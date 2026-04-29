@@ -166,6 +166,91 @@ class TaskMasterStatusStore:
             rows = cursor.fetchall()
             return list(rows or [])
 
+    def fetch_products_for_llm_task_ids(self, product_llm_task_ids: list[str]) -> list[dict[str, Any]]:
+        """Resolve queued ProductLlmTaskId values to ProductId and ProductName."""
+        normalized_ids = [str(item).strip() for item in product_llm_task_ids if str(item).strip()]
+        if not normalized_ids:
+            return []
+
+        placeholders = ", ".join(["%s"] * len(normalized_ids))
+        sql = f"""
+        SELECT
+            llm_task.ProductLlmTaskId,
+            llm_task.ProductId,
+            product.ProductName
+        FROM ent_data_product_llm_task AS llm_task
+        LEFT JOIN ent_data_product AS product
+            ON llm_task.ProductId = product.ProductId
+            AND product.Deleted = b'0'
+            AND product.Disabled = b'0'
+        WHERE llm_task.Deleted = b'0'
+          AND llm_task.Disabled = b'0'
+          AND llm_task.ProductLlmTaskId IN ({placeholders})
+        """
+        with self.cursor() as cursor:
+            cursor.execute(sql, tuple(normalized_ids))
+            rows = list(cursor.fetchall() or [])
+
+        grouped: dict[str, dict[str, Any]] = {}
+        for row in rows:
+            product_id = str(row.get("ProductId") or "").strip()
+            if not product_id:
+                continue
+            entry = grouped.setdefault(
+                product_id,
+                {
+                    "product_id": row.get("ProductId"),
+                    "product_name": row.get("ProductName") or f"Product {product_id}",
+                    "product_llm_task_ids": [],
+                },
+            )
+            task_id = str(row.get("ProductLlmTaskId") or "").strip()
+            if task_id and task_id not in entry["product_llm_task_ids"]:
+                entry["product_llm_task_ids"].append(task_id)
+
+        items = list(grouped.values())
+        items.sort(key=lambda item: (str(item["product_name"]), str(item["product_id"])))
+        return items
+
+    def adjust_task_priorities(self, product_llm_task_ids: list[str], delta: int) -> int:
+        """Adjust unfinished task_master_status priorities in bulk."""
+        normalized_ids = [str(item).strip() for item in product_llm_task_ids if str(item).strip()]
+        if not normalized_ids:
+            return 0
+
+        placeholders = ", ".join(["%s"] * len(normalized_ids))
+        sql = f"""
+        UPDATE task_master_status
+        SET priority = LEAST(100, GREATEST(0, COALESCE(priority, 50) + %s)),
+            updated_at = CURRENT_TIMESTAMP
+        WHERE product_llm_task_id IN ({placeholders})
+          AND execute_status NOT IN ('completed', 'failed', 'cancelled')
+        """
+        params = (int(delta), *normalized_ids)
+        with self.cursor() as cursor:
+            cursor.execute(sql, params)
+            return int(getattr(cursor, "rowcount", 0) or 0)
+
+    def set_task_priorities(self, product_llm_task_ids: list[str], priority: int) -> int:
+        """Set unfinished task_master_status priorities in bulk."""
+        normalized_ids = [str(item).strip() for item in product_llm_task_ids if str(item).strip()]
+        if not normalized_ids:
+            return 0
+
+        safe_priority = max(0, min(100, int(priority)))
+        placeholders = ", ".join(["%s"] * len(normalized_ids))
+        sql = f"""
+        UPDATE task_master_status
+        SET priority = %s,
+            updated_at = CURRENT_TIMESTAMP
+        WHERE product_llm_task_id IN ({placeholders})
+          AND execute_status NOT IN ('completed', 'failed', 'cancelled')
+        """
+        params = (safe_priority, *normalized_ids)
+        with self.cursor() as cursor:
+            cursor.execute(sql, params)
+            return int(getattr(cursor, "rowcount", 0) or 0)
+
     @contextmanager
     def cursor(self) -> Iterator[Any]:
         """Yield a DictCursor and commit or rollback around the operation."""

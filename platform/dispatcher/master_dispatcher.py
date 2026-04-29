@@ -8,11 +8,13 @@ import importlib
 from datetime import datetime
 from typing import Any
 
+from platform.config import PRIORITY_QUEUE_MIN
 from platform.dispatcher.result_collector import ResultCollector
 from platform.dispatcher.schedule_strategy import ScheduleStrategy
 from platform.dispatcher.task_expander import TaskExpander
 from platform.queue.protocol import build_task_message
 from platform.queue.redis_store import RedisQueueStore
+from platform.queue.strategy_store import QueueStrategyStore
 from platform.store.db_store import TaskMasterStatusStore
 
 logger = logging.getLogger(__name__)
@@ -44,6 +46,7 @@ class MasterDispatcher:
         self.crawler_modules = crawler_modules or {}
         self.execute_crawlers = execute_crawlers
         self.result_collector = result_collector or ResultCollector(self.db_store)
+        self.priority_queue_min = PRIORITY_QUEUE_MIN
 
     def fetch_pending_tasks(self, limit: int = 100) -> list[dict[str, Any]]:
         """Fetch Status='未开始' tasks from ent_data_product_llm_task."""
@@ -94,8 +97,7 @@ class MasterDispatcher:
         """Push one expanded task unit into its target model queue."""
         message = build_task_message(task_unit, task_id=task_id)
         if self.publish_to_queue:
-            if not self._push_priority_task(message["queue_name"], message):
-                self.queue_store.push(message["queue_name"], message)
+            self.queue_store.push(message["queue_name"], message)
         self.db_store.update_status(task_id, "queued", dispatched_at=datetime.now())
         if hasattr(self.db_store, "update_business_task_status"):
             self.db_store.update_business_task_status(
@@ -118,33 +120,24 @@ class MasterDispatcher:
         return result
 
     def pop_priority_task(self, queue_name: str) -> dict[str, Any] | None:
-        """Pop the highest-priority task from a Redis SortedSet queue."""
-        client = self.queue_store._get_client()
-        if not hasattr(client, "zpopmax"):
-            return self.queue_store.pop(queue_name)
-
-        result = client.zpopmax(self.priority_queue_name(queue_name), count=1)
-        if not result:
-            return None
-        payload, _ = result[0]
-        return self.queue_store._deserialize(payload)
+        """Pop the highest-priority task from one model queue."""
+        return self.queue_store.pop_highest_priority(
+            queue_name,
+            min_priority_queue_score=self.priority_queue_min,
+        )
 
     def priority_queue_name(self, queue_name: str) -> str:
         """Return the SortedSet queue name for a model queue."""
-        return f"{queue_name}:priority"
+        return QueueStrategyStore.priority_queue_name(queue_name)
 
     def _push_priority_task(self, queue_name: str, message: dict[str, Any]) -> bool:
-        if not self.use_priority_queue:
-            return False
+        return self.use_priority_queue and self._is_priority_message(message)
 
-        client = self.queue_store._get_client()
-        if not hasattr(client, "zadd"):
+    def _is_priority_message(self, message: dict[str, Any]) -> bool:
+        try:
+            return int(message.get("priority", 50)) >= self.priority_queue_min
+        except (TypeError, ValueError):
             return False
-
-        payload = self.queue_store._serialize(message)
-        score = int(message.get("priority", 50))
-        client.zadd(self.priority_queue_name(queue_name), {payload: score})
-        return True
 
     @staticmethod
     def _model_key_from_queue(queue_name: str) -> str:

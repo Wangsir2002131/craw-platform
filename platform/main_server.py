@@ -42,6 +42,7 @@ from platform.consumers.manager import get_consumer_manager  # noqa: E402
 from platform.dispatcher.master_dispatcher import MasterDispatcher  # noqa: E402
 from platform.heartbeat.health_checker import HealthChecker  # noqa: E402
 from platform.heartbeat.master_heartbeat import MasterHeartbeat  # noqa: E402
+from platform.tasks.result_listener import ResultListener  # noqa: E402
 
 
 logger = logging.getLogger(__name__)
@@ -135,10 +136,14 @@ def run_dispatch_loop(
     stop_event: threading.Event,
 ) -> None:
     control_state = get_control_state()
+    pause_logged = False
     while not stop_event.is_set():
         if control_state.paused:
-            logger.info("dispatcher paused by control API")
+            if not pause_logged:
+                logger.info("dispatcher paused by control API")
+                pause_logged = True
         else:
+            pause_logged = False
             try:
                 dispatched = dispatcher.dispatch_once(limit=limit)
                 if dispatched > 0:
@@ -181,6 +186,23 @@ def run_health_checker(
         stop_event.wait(interval)
 
 
+def run_result_listener(
+    listener: ResultListener,
+    *,
+    timeout: int,
+    idle_sleep: float,
+    stop_event: threading.Event,
+) -> None:
+    try:
+        listener.run(
+            timeout=timeout,
+            idle_sleep=idle_sleep,
+            stop_event=stop_event,
+        )
+    except Exception:
+        logger.exception("result listener failed")
+
+
 def run_api_server(host: str, port: int) -> None:
     uvicorn.run(app, host=host, port=port, log_level="info")
 
@@ -198,6 +220,7 @@ def _start_background_threads(args: argparse.Namespace) -> tuple[threading.Event
     heartbeat = MasterHeartbeat(redis_url=REDIS_URL)
     checker = HealthChecker(redis_url=REDIS_URL)
     dispatcher = _build_dispatcher()
+    result_listener = ResultListener(DB_CONFIG)
     consumer_manager = get_consumer_manager()
     consumer_manager.configure(
         enabled=args.managed_consumers,
@@ -222,6 +245,17 @@ def _start_background_threads(args: argparse.Namespace) -> tuple[threading.Event
             },
             daemon=True,
             name="health-checker",
+        ),
+        threading.Thread(
+            target=run_result_listener,
+            kwargs={
+                "listener": result_listener,
+                "timeout": 5,
+                "idle_sleep": 1.0,
+                "stop_event": stop_event,
+            },
+            daemon=True,
+            name="result-listener",
         ),
     ]
 

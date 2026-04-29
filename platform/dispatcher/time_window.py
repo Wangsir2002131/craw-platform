@@ -43,6 +43,22 @@ class TimeWindowController:
         next_start = self.next_open_time(current)
         return max(0, int((next_start - current).total_seconds()))
 
+    def seconds_until_close(self, current_time: datetime | None = None) -> int:
+        """Return the number of seconds until the current open window closes."""
+        current = current_time or datetime.now()
+        if not self.is_open(current):
+            return 0
+
+        close_at = current.replace(
+            hour=0 if self.end_hour == 24 else self.end_hour,
+            minute=0,
+            second=0,
+            microsecond=0,
+        )
+        if self.end_hour == 24:
+            close_at += timedelta(days=1)
+        return max(0, int((close_at - current).total_seconds()))
+
     def next_open_time(self, current_time: datetime | None = None) -> datetime:
         """Return the next datetime when dispatch becomes allowed."""
         current = current_time or datetime.now()

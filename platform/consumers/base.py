@@ -7,13 +7,16 @@ import socket
 import threading
 import time
 import traceback
+from datetime import datetime
 from typing import Any
 
-from platform.config import CONSUMER_MAX_RETRIES, REDIS_URL
+from platform.config import CONSUMER_END_HOUR, CONSUMER_MAX_RETRIES, CONSUMER_START_HOUR, PRIORITY_QUEUE_MIN, REDIS_URL
+from platform.dispatcher.time_window import TimeWindowController
 from platform.heartbeat.consumer_heartbeat import ConsumerHeartbeat
 from platform.queue.metrics import QueueMetricsStore
 from platform.queue.protocol import DEAD_LETTER_QUEUE_NAME, MESSAGE_TYPE_RESULT, RESULT_QUEUE_NAME
 from platform.queue.redis_store import RedisQueueStore
+from platform.queue.strategy_store import QueueStrategyStore
 from platform.store.db_store import TaskMasterStatusStore
 
 
@@ -34,6 +37,8 @@ class BaseQueueConsumer:
         consumer_id: str | None = None,
         redis_url: str | None = None,
         max_retries: int | None = None,
+        time_window: TimeWindowController | None = None,
+        strategy_store: QueueStrategyStore | None = None,
     ) -> None:
         self.db_store = db_store or TaskMasterStatusStore(db_config or {})
         self.queue_store = queue_store or RedisQueueStore(redis_url=redis_url or REDIS_URL)
@@ -42,6 +47,11 @@ class BaseQueueConsumer:
         self.consumer_id = consumer_id or self._build_consumer_id()
         self.redis_url = redis_url or REDIS_URL
         self.max_retries = CONSUMER_MAX_RETRIES if max_retries is None else max(0, int(max_retries))
+        self.time_window = time_window or TimeWindowController(
+            start_hour=CONSUMER_START_HOUR,
+            end_hour=CONSUMER_END_HOUR,
+        )
+        self.strategy_store = strategy_store or QueueStrategyStore(queue_store=self.queue_store)
         self.metrics_store = QueueMetricsStore(
             redis_url=self.redis_url,
             client=self.queue_store._get_client(),
@@ -53,6 +63,7 @@ class BaseQueueConsumer:
             client=self.queue_store._get_client(),
         )
         self._waiting_logged = False
+        self._window_closed_logged = False
 
     def run(
         self,
@@ -64,10 +75,9 @@ class BaseQueueConsumer:
     ) -> int:
         processed = 0
         logger.info(
-            "consumer started: consumer_id=%s queue=%s priority_queue=%s once=%s",
+            "consumer started: consumer_id=%s queue=%s once=%s",
             self.consumer_id,
             self.queue_name,
-            f"{self.queue_name}:priority",
             once,
         )
         heartbeat_stop_event = threading.Event()
@@ -104,14 +114,36 @@ class BaseQueueConsumer:
             self.heartbeat.clear()
 
     def consume_once(self, timeout: int = 5) -> bool:
+        current_time = self._current_time()
+        if not self.time_window.is_open(current_time):
+            if not self._window_closed_logged:
+                logger.info(
+                    "consumer intake paused by time window: consumer_id=%s queue=%s current_time=%s window=%s-%s",
+                    self.consumer_id,
+                    self.queue_name,
+                    current_time.isoformat(timespec="seconds"),
+                    f"{self.time_window.start_hour:02d}:00",
+                    f"{self.time_window.end_hour:02d}:00",
+                )
+                self._window_closed_logged = True
+            self.heartbeat.beat(
+                status="idle",
+                extra={
+                    "processed_last_minute": self.metrics_store.processed_last_minute(self.queue_name),
+                    "window_open": False,
+                    "next_open_seconds": self.time_window.seconds_until_open(current_time),
+                },
+            )
+            return False
+
+        self._window_closed_logged = False
         message = self._pop_message(timeout=timeout)
         if not message:
             if not self._waiting_logged:
                 logger.info(
-                    "waiting for task: consumer_id=%s queue=%s priority_queue=%s",
+                    "waiting for task: consumer_id=%s queue=%s",
                     self.consumer_id,
                     self.queue_name,
-                    f"{self.queue_name}:priority",
                 )
                 self._waiting_logged = True
             self.heartbeat.beat(status="idle", extra={"processed_last_minute": self.metrics_store.processed_last_minute(self.queue_name)})
@@ -178,14 +210,40 @@ class BaseQueueConsumer:
         return True
 
     def _pop_message(self, timeout: int = 5) -> dict[str, Any] | None:
-        client = self.queue_store._get_client()
-        if hasattr(client, "zpopmax"):
-            result = client.zpopmax(f"{self.queue_name}:priority", count=1)
-            if result:
-                payload, _ = result[0]
-                return self.queue_store._deserialize(payload)
+        strategy = self.strategy_store.get_strategy()
+        if self.strategy_store.is_priority_strategy(strategy):
+            queue_priority_state = self.queue_store.queue_priority_state(self.queue_name, default_priority=50)
+            if queue_priority_state.get("has_elevated_priority") and not queue_priority_state.get("all_same"):
+                priority_message = self._pop_priority_message()
+                if priority_message:
+                    return priority_message
+        effective_timeout = self._effective_pop_timeout(timeout)
+        if self.strategy_store.uses_lifo(strategy):
+            normal_message = self._pop_normal_lifo(effective_timeout)
+        else:
+            normal_message = self._pop_normal_fifo(effective_timeout)
 
+        return normal_message
+
+    def _effective_pop_timeout(self, timeout: int) -> int:
+        remaining_open = self.time_window.seconds_until_close(self._current_time())
+        if remaining_open <= 0:
+            return 1
+        if timeout <= 0:
+            return max(1, remaining_open)
+        return max(1, min(timeout, remaining_open))
+
+    def _pop_priority_message(self) -> dict[str, Any] | None:
+        return self.queue_store.pop_highest_priority(
+            self.queue_name,
+            min_priority_queue_score=PRIORITY_QUEUE_MIN,
+        )
+
+    def _pop_normal_fifo(self, timeout: int) -> dict[str, Any] | None:
         return self.queue_store.blocking_pop(self.queue_name, timeout=timeout)
+
+    def _pop_normal_lifo(self, timeout: int) -> dict[str, Any] | None:
+        return self.queue_store.blocking_pop_latest(self.queue_name, timeout=timeout)
 
     def _heartbeat_loop(self, *, stop_event: threading.Event) -> None:
         while not stop_event.is_set():
@@ -248,13 +306,14 @@ class BaseQueueConsumer:
             )
 
     def _push_task_message(self, message: dict[str, Any]) -> None:
-        client = self.queue_store._get_client()
-        if hasattr(client, "zadd"):
-            payload = self.queue_store._serialize(message)
-            score = int(message.get("priority", 50))
-            client.zadd(f"{self.queue_name}:priority", {payload: score})
-            return
         self.queue_store.push(self.queue_name, message)
+
+    @staticmethod
+    def _is_priority_message(message: dict[str, Any]) -> bool:
+        try:
+            return int(message.get("priority", 50)) >= PRIORITY_QUEUE_MIN
+        except (TypeError, ValueError):
+            return False
 
     def _push_dead_letter(self, message: dict[str, Any], result: dict[str, Any]) -> None:
         dead_letter_message = {
@@ -278,9 +337,11 @@ class BaseQueueConsumer:
         return f"{queue_key}-{host}-{int(time.time() * 1000)}"
 
     @staticmethod
-    def _now():
-        from datetime import datetime
+    def _current_time() -> datetime:
+        return datetime.now()
 
+    @staticmethod
+    def _now():
         return datetime.now()
 
     @staticmethod
