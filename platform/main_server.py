@@ -12,8 +12,8 @@ from pathlib import Path
 from typing import Any
 
 import uvicorn
-from fastapi import FastAPI
-from fastapi.responses import FileResponse
+from fastapi import FastAPI, Request
+from fastapi.responses import FileResponse, Response
 from fastapi.staticfiles import StaticFiles
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
@@ -42,6 +42,16 @@ from platform.consumers.manager import get_consumer_manager  # noqa: E402
 from platform.dispatcher.master_dispatcher import MasterDispatcher  # noqa: E402
 from platform.heartbeat.health_checker import HealthChecker  # noqa: E402
 from platform.heartbeat.master_heartbeat import MasterHeartbeat  # noqa: E402
+from platform.alerts import (  # noqa: E402
+    AccountMonitor,
+    ConsoleNotifier,
+    LogNotifier,
+    QueueMonitor,
+    SystemMonitor,
+    TaskMonitor,
+    get_alert_manager,
+)
+from platform.alerts.alert_manager import register_monitor  # noqa: E402
 
 
 logger = logging.getLogger(__name__)
@@ -76,6 +86,16 @@ def build_api_app() -> FastAPI:
     app.include_router(dashboard_queue_router)
     app.include_router(dashboard_task_router)
     app.mount("/pages", StaticFiles(directory=str(Path(__file__).resolve().parent.parent / "pages")), name="pages")
+
+    @app.middleware("http")
+    async def no_cache_html(request: Request, call_next) -> Response:
+        response = await call_next(request)
+        path = request.url.path
+        if path.endswith(".html") or path in ("/", "/dashboard.html"):
+            response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+            response.headers["Pragma"] = "no-cache"
+            response.headers["Expires"] = "0"
+        return response
 
     @app.get("/")
     async def root() -> FileResponse:
@@ -193,7 +213,34 @@ def _build_dispatcher() -> MasterDispatcher:
     )
 
 
-def _start_background_threads(args: argparse.Namespace) -> tuple[threading.Event, list[threading.Thread]]:
+def _start_alert_monitors() -> list[object]:
+    """Initialise and start all alert monitors with default notifiers."""
+    alert_manager = get_alert_manager()
+
+    # Register default notifiers
+    alert_manager.register_notifier(LogNotifier())
+    alert_manager.register_notifier(ConsoleNotifier())
+
+    # Create monitors with sensible intervals (seconds)
+    monitors = [
+        TaskMonitor(interval=30),
+        QueueMonitor(interval=15),
+        AccountMonitor(interval=60),
+        SystemMonitor(interval=30),
+    ]
+
+    for monitor in monitors:
+        monitor.start()
+        register_monitor(monitor)
+
+    logger.info(
+        "alert monitors started: %s",
+        [m.monitor_name for m in monitors],
+    )
+    return monitors
+
+
+def _start_background_threads(args: argparse.Namespace) -> tuple[threading.Event, list[threading.Thread], list[object]]:
     stop_event = threading.Event()
     heartbeat = MasterHeartbeat(redis_url=REDIS_URL)
     checker = HealthChecker(redis_url=REDIS_URL)
@@ -243,7 +290,9 @@ def _start_background_threads(args: argparse.Namespace) -> tuple[threading.Event
     for thread in threads:
         thread.start()
 
-    return stop_event, threads
+    monitors = _start_alert_monitors()
+
+    return stop_event, threads, monitors
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -275,7 +324,7 @@ def main(argv: list[str] | None = None) -> int:
     if args.dispatcher_only and not args.forever:
         args.forever = True
 
-    stop_event, threads = _start_background_threads(args)
+    stop_event, threads, monitors = _start_background_threads(args)
     try:
         if args.dispatcher_only:
             logger.info("starting dispatcher service only")
@@ -290,6 +339,8 @@ def main(argv: list[str] | None = None) -> int:
         stop_event.set()
         for thread in threads:
             thread.join(timeout=2)
+        for monitor in monitors:
+            monitor.stop(timeout=5)
         get_consumer_manager().shutdown()
 
     return 0
