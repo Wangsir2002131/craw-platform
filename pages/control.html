@@ -3,64 +3,710 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>控制</title>
+  <title>任务调度</title>
   <link rel="stylesheet" href="shared.css" />
+  <style>
+    .scheduler-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.45fr) minmax(320px, 0.85fr);
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .stack {
+      display: grid;
+      gap: 18px;
+      align-content: stretch;
+      height: 100%;
+    }
+
+    .scheduler-grid > .card {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .scheduler-grid > .stack > .card:first-child {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    .panel-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .scheduler-panel {
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.96) 0%, rgba(248, 249, 251, 0.98) 100%);
+    }
+
+    .scheduler-panel h3 {
+      font-size: 18px;
+    }
+
+    .scheduler-panel p {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .field-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .field-grid.single {
+      grid-template-columns: 1fr;
+    }
+
+    .field-grid .field {
+      min-width: 0;
+    }
+
+    .action-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .status-note {
+      color: #5f6b7a;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .status-note strong {
+      color: #111827;
+    }
+
+    .summary-grid {
+      display: grid;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .status-card-body {
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+    }
+
+    .summary-item {
+      padding: 7px 16px;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.88);
+    }
+
+    .summary-item span {
+      display: block;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .summary-item strong {
+      display: block;
+      margin-top: 8px;
+      font-size: 18px;
+      line-height: 1.4;
+      word-break: break-word;
+    }
+
+    .rule-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .rule-list.compact {
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .rule-list.fill {
+      margin-top: auto;
+      padding-top: 14px;
+    }
+
+    .rule-item {
+      padding: 14px 16px;
+      border-radius: 16px;
+      background: var(--surface-soft);
+      border: 1px solid var(--line);
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--text);
+    }
+
+    .rule-item strong {
+      color: var(--strong);
+    }
+
+    .compact-actions {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .compact-actions button,
+    .action-row button {
+      min-width: 120px;
+    }
+
+    .placeholder-box {
+      margin-top: 16px;
+      padding: 14px 16px;
+      border: 1px dashed #d4d7dd;
+      border-radius: 16px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.7;
+      background: rgba(255, 255, 255, 0.72);
+    }
+
+    @media (max-width: 1100px) {
+      .scheduler-grid {
+        grid-template-columns: 1fr;
+        align-items: start;
+      }
+
+      .stack {
+        height: auto;
+        align-content: start;
+      }
+
+      .scheduler-grid > .stack > .card:first-child {
+        height: auto;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .field-grid,
+      .compact-actions {
+        grid-template-columns: 1fr;
+      }
+
+      .action-row {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .action-row button {
+        width: 100%;
+      }
+    }
+  </style>
 </head>
 <body>
   <section class="page-head">
-    <h1>控制</h1>
-    <p>执行暂停分发、调整策略和账号干预等后台操作。</p>
+    <h1>任务调度</h1>
+    <p>拆开管理产品优先级、调度策略和分发开关，避免一次操作同时改动多项设置。</p>
   </section>
 
-  <section class="card">
-    <div class="card-title">
-      <h2>控制中心</h2>
-      <p>当前页面保留后台控制台的面板式布局。</p>
-    </div>
-    <div class="panel-grid">
-      <div class="action-box">
-        <h3>分发控制</h3>
-        <p>暂停或恢复新任务分发，不影响运行中任务。</p>
-        <div class="actions">
-          <button class="warn" type="button">暂停分发</button>
-          <button class="dark" type="button">恢复分发</button>
-        </div>
+  <div id="control-feedback" class="feedback-modal" hidden></div>
+
+  <section class="scheduler-grid">
+    <article class="card">
+      <div class="card-title">
+        <h2>调度操作台</h2>
+        <p>优先级调整只改产品任务，策略切换只改取任务方式，二者现在分开提交。</p>
       </div>
-      <div class="action-box">
-        <h3>调度策略</h3>
-        <p>切换 FIFO、LIFO 和优先级队列策略。</p>
-        <div class="actions">
-          <select>
-            <option>priority_fifo</option>
-            <option>fifo</option>
-            <option>lifo</option>
-            <option>priority_lifo</option>
-          </select>
-          <button class="dark" type="button">应用</button>
-        </div>
+
+      <div class="panel-stack">
+        <section class="scheduler-panel">
+          <h3>产品优先级调整</h3>
+          <p>按产品批量修改 Redis 队列中对应任务的 <code>priority</code>。当前运行中的任务不会被中断，改动只影响后续取任务。</p>
+
+          <div class="field-grid single">
+            <div class="field">
+              <label for="product-select">产品</label>
+              <select id="product-select">
+                <option value="">正在加载产品...</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="field-grid">
+            <div class="field">
+              <label for="priority-action">优先级动作</label>
+              <select id="priority-action">
+                <option value="raise">提升优先级</option>
+                <option value="lower">降低优先级</option>
+                <option value="reset">恢复默认优先级</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="priority-step">优先级步长</label>
+              <select id="priority-step">
+                <option value="10">10</option>
+                <option value="20">20</option>
+                <option value="5">5</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="action-row">
+            <div class="status-note" id="priority-status">当前优先级数据读取中...</div>
+            <button class="dark" id="apply-priority" type="button">应用优先级</button>
+          </div>
+        </section>
+
+        <section class="scheduler-panel">
+          <h3>调度策略</h3>
+          <p>只改变消费者后续取任务策略。当前队列中若全部是同一优先级则按 FIFO；存在高于默认值且不一致时才按优先级取。</p>
+
+          <div class="field-grid">
+            <div class="field">
+              <label for="strategy-select">当前可选策略</label>
+              <select id="strategy-select">
+                <option value="fifo">fifo</option>
+                <option value="priority">priority</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="strategy-preview">生效状态</label>
+              <select id="strategy-preview" disabled>
+                <option>读取中...</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="action-row">
+            <div class="status-note" id="strategy-status">当前策略读取中...</div>
+            <button class="dark" id="apply-strategy" type="button">应用策略</button>
+          </div>
+        </section>
+
+        <section class="scheduler-panel">
+          <h3>分发开关</h3>
+          <p>控制数据库里“未开始”的任务是否继续写入 Redis，不影响当前已经在跑的任务，也不影响已入队任务。</p>
+          <div class="actions">
+            <button class="warn" id="pause-dispatch" type="button">暂停分发</button>
+            <button class="dark" id="resume-dispatch" type="button">恢复分发</button>
+          </div>
+          <p class="status-note" id="dispatch-status">当前状态读取中...</p>
+        </section>
       </div>
-      <div class="action-box">
-        <h3>账号干预</h3>
-        <p>手动停用异常账号并移出当前可分配池。</p>
-        <div class="actions">
-          <select>
-            <option>deepseek-12</option>
-            <option>yuanbao-17</option>
-            <option>doubao-03</option>
-          </select>
-          <button class="danger" type="button">停用账号</button>
+    </article>
+
+    <aside class="stack">
+      <article class="card">
+        <div class="card-title">
+          <h2>当前状态</h2>
+          <p>这里显示实时生效的调度状态、产品摘要和当前分发状态。</p>
         </div>
-      </div>
-      <div class="action-box">
-        <h3>快捷入口</h3>
-        <p>快速跳转高频处理项。</p>
-        <div class="actions">
-          <button type="button">失败任务</button>
-          <button type="button">队列积压</button>
-          <button type="button">备用账号</button>
+
+        <div class="status-card-body">
+          <div class="summary-grid">
+            <div class="summary-item">
+              <span>当前分发状态</span>
+              <strong id="dispatch-summary-label">读取中...</strong>
+            </div>
+            <div class="summary-item">
+              <span>生效调度策略</span>
+              <strong id="active-strategy-label">读取中...</strong>
+            </div>
+            <div class="summary-item">
+              <span>当前选中产品</span>
+              <strong id="selected-product-label">未选择</strong>
+            </div>
+            <div class="summary-item">
+              <span>该产品关联排队任务</span>
+              <strong id="selected-product-count">0</strong>
+            </div>
+            <div class="summary-item">
+              <span>当前队列产品总数</span>
+              <strong id="product-total-count">0</strong>
+            </div>
+          </div>
+
+          <div class="rule-list compact">
+            <div class="rule-item"><strong>当前优先级动作：</strong><span id="priority-action-summary">提升优先级</span></div>
+            <div class="rule-item"><strong>当前优先级步长：</strong><span id="priority-step-summary">10</span></div>
+          </div>
+
+          <div class="rule-list fill">
+            <div class="rule-item"><strong>FIFO：</strong>当前队列任务优先级都一致时，按入队顺序取任务。</div>
+            <div class="rule-item"><strong>Priority：</strong>当前队列存在高于默认值 50 的不同优先级任务时，优先取更高 priority。</div>
+            <div class="rule-item"><strong>隔离：</strong>四个模型队列互不影响，不会因为别的队列有高优先级而改变当前队列行为。</div>
+          </div>
         </div>
-      </div>
-    </div>
+      </article>
+    </aside>
   </section>
+
+  <section class="layout-grid dual" style="margin-top: 18px;">
+    <article class="card">
+      <div class="card-title">
+        <h2>账号干预</h2>
+        <p>先选择模型，再选择该模型下的账号进行启用或停用。</p>
+      </div>
+      <div class="field-grid">
+        <div class="field">
+          <label for="intervention-model-select">模型</label>
+          <select id="intervention-model-select">
+            <option value="">正在加载模型...</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="intervention-account-select">账号</label>
+          <select id="intervention-account-select" disabled>
+            <option value="">请先选择模型</option>
+          </select>
+        </div>
+      </div>
+      <div class="action-row">
+        <div class="status-note" id="intervention-status">账号数据读取中...</div>
+        <div class="actions" style="margin-top: 0;">
+          <button class="dark" id="enable-account" type="button">启用账号</button>
+          <button class="danger" id="disable-account" type="button">停用账号</button>
+        </div>
+      </div>
+    </article>
+
+    <article class="card">
+      <div class="card-title">
+        <h2>快捷入口</h2>
+        <p>给高频处理项留出固定位置，避免右侧出现空白。</p>
+      </div>
+      <div class="compact-actions">
+        <button type="button">失败任务</button>
+        <button type="button">队列积压</button>
+        <button type="button">备用账号</button>
+      </div>
+      <div class="placeholder-box">如果你后面想要，我可以继续把这三个按钮接到对应页面或带筛选条件的跳转。</div>
+    </article>
+  </section>
+
+  <script>
+    const dispatchStatus = document.getElementById("dispatch-status");
+    const priorityStatus = document.getElementById("priority-status");
+    const strategyStatus = document.getElementById("strategy-status");
+    const feedbackBanner = document.getElementById("control-feedback");
+    const strategySelect = document.getElementById("strategy-select");
+    const strategyPreview = document.getElementById("strategy-preview");
+    const productSelect = document.getElementById("product-select");
+    const priorityAction = document.getElementById("priority-action");
+    const priorityStep = document.getElementById("priority-step");
+    const activeStrategyLabel = document.getElementById("active-strategy-label");
+    const dispatchSummaryLabel = document.getElementById("dispatch-summary-label");
+    const selectedProductLabel = document.getElementById("selected-product-label");
+    const selectedProductCount = document.getElementById("selected-product-count");
+    const productTotalCount = document.getElementById("product-total-count");
+    const priorityActionSummary = document.getElementById("priority-action-summary");
+    const priorityStepSummary = document.getElementById("priority-step-summary");
+    const interventionModelSelect = document.getElementById("intervention-model-select");
+    const interventionAccountSelect = document.getElementById("intervention-account-select");
+    const interventionStatus = document.getElementById("intervention-status");
+    const enableAccountButton = document.getElementById("enable-account");
+    const disableAccountButton = document.getElementById("disable-account");
+
+    let feedbackTimer = null;
+    let productMap = new Map();
+    let appliedStrategy = "fifo";
+    let interventionAccounts = [];
+
+    async function requestJson(url, options) {
+      const response = await fetch(url, options);
+      if (!response.ok) {
+        const text = await response.text();
+        throw new Error(text || "request failed");
+      }
+      return response.json();
+    }
+
+    function showFeedback(message, kind = "success") {
+      feedbackBanner.hidden = false;
+      feedbackBanner.className = `feedback-modal ${kind}`;
+      feedbackBanner.textContent = message;
+      if (feedbackTimer) clearTimeout(feedbackTimer);
+      feedbackTimer = setTimeout(() => {
+        feedbackBanner.hidden = true;
+      }, 2600);
+    }
+
+    function updateStrategyDisplay() {
+      const strategyChanged = strategySelect.value !== appliedStrategy;
+      activeStrategyLabel.textContent = appliedStrategy;
+      strategyPreview.innerHTML = `<option>${strategyChanged ? "有未应用修改" : "已与当前生效策略一致"}</option>`;
+      strategyStatus.innerHTML =
+        "当前生效：<strong>" + appliedStrategy + "</strong>" +
+        (strategyChanged ? "，待应用：<strong>" + strategySelect.value + "</strong>" : "");
+    }
+
+    function updateSelectedProductSummary() {
+      const selected = productMap.get(productSelect.value);
+      if (!selected) {
+        selectedProductLabel.textContent = "未选择";
+        selectedProductCount.textContent = "0";
+        return;
+      }
+      selectedProductLabel.textContent = selected.product_name;
+      selectedProductCount.textContent = String(selected.queued_task_count || 0);
+    }
+
+    function updatePrioritySummary() {
+      const actionLabels = {
+        raise: "提升优先级",
+        lower: "降低优先级",
+        reset: "恢复默认优先级",
+      };
+      priorityActionSummary.textContent = actionLabels[priorityAction.value] || priorityAction.value;
+      priorityStepSummary.textContent = priorityStep.value;
+    }
+
+    function setInterventionActionsDisabled(disabled) {
+      interventionAccountSelect.disabled = disabled || !interventionModelSelect.value;
+      enableAccountButton.disabled = disabled || !interventionAccountSelect.value;
+      disableAccountButton.disabled = disabled || !interventionAccountSelect.value;
+    }
+
+    function renderInterventionModels(models) {
+      interventionModelSelect.innerHTML = "";
+      interventionModelSelect.append(new Option("请选择模型", ""));
+      models.forEach((model) => {
+        interventionModelSelect.append(new Option(model, model));
+      });
+    }
+
+    function renderInterventionAccounts(accounts) {
+      interventionAccountSelect.innerHTML = "";
+      if (!accounts.length) {
+        interventionAccountSelect.append(new Option("该模型暂无账号", ""));
+        interventionStatus.textContent = "该模型暂无账号数据";
+        setInterventionActionsDisabled(true);
+        return;
+      }
+
+      interventionAccountSelect.append(new Option("请选择账号", ""));
+      accounts.forEach((account) => {
+        const label = `${account.account}（${account.status}，${account.accountType}，ID:${account.id}）`;
+        interventionAccountSelect.append(new Option(label, String(account.id)));
+      });
+      interventionStatus.textContent = `已加载 ${accounts.length} 个账号，请选择要干预的账号`;
+      setInterventionActionsDisabled(false);
+    }
+
+    function selectedInterventionAccount() {
+      return interventionAccounts.find((item) => String(item.id) === interventionAccountSelect.value);
+    }
+
+    async function fetchDashboardAccounts(crawler) {
+      const firstPage = await requestJson(
+        `/api/accounts?page=1&page_size=100${crawler ? `&crawler=${encodeURIComponent(crawler)}` : ""}`
+      );
+      const items = [...firstPage.items];
+      const totalPages = Number(firstPage.pagination.totalPages || 1);
+      for (let page = 2; page <= totalPages; page += 1) {
+        const data = await requestJson(
+          `/api/accounts?page=${page}&page_size=100${crawler ? `&crawler=${encodeURIComponent(crawler)}` : ""}`
+        );
+        items.push(...data.items);
+      }
+      return { ...firstPage, items };
+    }
+
+    async function loadInterventionModels() {
+      const data = await fetchDashboardAccounts("");
+      renderInterventionModels(data.filters.crawlerOptions);
+      interventionStatus.textContent = "请选择模型后加载账号";
+      setInterventionActionsDisabled(true);
+    }
+
+    async function loadInterventionAccounts() {
+      const model = interventionModelSelect.value;
+      interventionAccounts = [];
+      interventionAccountSelect.innerHTML = '<option value="">正在加载账号...</option>';
+      interventionStatus.textContent = model ? `正在加载 ${model} 账号...` : "请选择模型后加载账号";
+      setInterventionActionsDisabled(true);
+      if (!model) {
+        interventionAccountSelect.innerHTML = '<option value="">请先选择模型</option>';
+        return;
+      }
+
+      const data = await fetchDashboardAccounts(model);
+      interventionAccounts = data.items;
+      renderInterventionAccounts(interventionAccounts);
+    }
+
+    function updateInterventionStatusText() {
+      const account = selectedInterventionAccount();
+      if (!account) {
+        interventionStatus.textContent = interventionModelSelect.value ? "请选择要干预的账号" : "请选择模型后加载账号";
+        setInterventionActionsDisabled(false);
+        return;
+      }
+      interventionStatus.textContent = `当前账号：${account.account}，状态：${account.status}`;
+      setInterventionActionsDisabled(false);
+    }
+
+    async function applyAccountStatus(statusLabel) {
+      const account = selectedInterventionAccount();
+      if (!account) {
+        showFeedback("请先选择账号", "warn");
+        return;
+      }
+
+      setInterventionActionsDisabled(true);
+      const result = await requestJson(`/api/accounts/${account.id}/status`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          status: statusLabel,
+          reason: statusLabel === "已停用" ? "控制台手动停用" : "控制台手动启用",
+        }),
+      });
+
+      const updatedAccount = result.account;
+      interventionAccounts = interventionAccounts.map((item) => (
+        String(item.id) === String(updatedAccount.id) ? updatedAccount : item
+      ));
+      const selectedValue = interventionAccountSelect.value;
+      renderInterventionAccounts(interventionAccounts);
+      interventionAccountSelect.value = selectedValue;
+      updateInterventionStatusText();
+      showFeedback(`${updatedAccount.account} 已${statusLabel === "已停用" ? "停用" : "启用"}`, "success");
+    }
+
+    async function loadControlStatus() {
+      const state = await requestJson("/control/status");
+      const dispatchLabel = state.paused ? "暂停分发" : "正常分发";
+      dispatchStatus.innerHTML = "当前状态：<strong>" + dispatchLabel + "</strong>";
+      dispatchSummaryLabel.textContent = dispatchLabel;
+    }
+
+    async function loadPriorityControl() {
+      const state = await requestJson("/control/priority/products");
+      appliedStrategy = state.current_strategy;
+      strategySelect.value = state.current_strategy;
+      productMap = new Map();
+
+      const previousValue = productSelect.value;
+      const options = ['<option value="">请选择产品</option>'];
+      state.products.forEach((item) => {
+        productMap.set(String(item.product_id), item);
+        options.push(`<option value="${item.product_id}">${item.product_name}</option>`);
+      });
+
+      productSelect.innerHTML = options.join("");
+      if (previousValue && productMap.has(previousValue)) {
+        productSelect.value = previousValue;
+      }
+
+      productTotalCount.textContent = String(state.products.length);
+      priorityStatus.innerHTML =
+        "默认 priority：<strong>" + state.default_priority + "</strong>" +
+        "，优先阈值：<strong>" + state.priority_threshold + "</strong>" +
+        "，排队任务数：<strong>" + state.queued_task_count + "</strong>";
+
+      updateStrategyDisplay();
+      updateSelectedProductSummary();
+      updatePrioritySummary();
+    }
+
+    document.getElementById("pause-dispatch").addEventListener("click", async () => {
+      await requestJson("/control/pause", { method: "POST" });
+      await loadControlStatus();
+      showFeedback("分发已暂停", "warn");
+    });
+
+    document.getElementById("resume-dispatch").addEventListener("click", async () => {
+      await requestJson("/control/resume", { method: "POST" });
+      await loadControlStatus();
+      showFeedback("分发已恢复", "success");
+    });
+
+    document.getElementById("apply-priority").addEventListener("click", async () => {
+      if (!productSelect.value) {
+        showFeedback("请先选择产品", "warn");
+        return;
+      }
+
+      const state = await requestJson("/control/priority/apply", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          strategy: appliedStrategy,
+          product_id: productSelect.value,
+          action: priorityAction.value,
+          amount: Number(priorityStep.value),
+        }),
+      });
+
+      await loadPriorityControl();
+      if (state.updated && state.updated.updated_messages > 0) {
+        showFeedback(
+          `${state.updated.product_name} 已更新 ${state.updated.updated_messages} 条队列任务`,
+          "success"
+        );
+      } else {
+        showFeedback("没有可更新的排队任务", "warn");
+      }
+    });
+
+    document.getElementById("apply-strategy").addEventListener("click", async () => {
+      const state = await requestJson("/control/strategy", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ strategy: strategySelect.value }),
+      });
+      appliedStrategy = state.current_strategy;
+      updateStrategyDisplay();
+      showFeedback(`调度策略已切换为 ${appliedStrategy}`, "success");
+    });
+
+    productSelect.addEventListener("change", updateSelectedProductSummary);
+    strategySelect.addEventListener("change", updateStrategyDisplay);
+    priorityAction.addEventListener("change", updatePrioritySummary);
+    priorityStep.addEventListener("change", updatePrioritySummary);
+    interventionModelSelect.addEventListener("change", () => {
+      loadInterventionAccounts().catch((error) => {
+        interventionStatus.textContent = "账号数据读取失败：" + error.message;
+        setInterventionActionsDisabled(true);
+      });
+    });
+    interventionAccountSelect.addEventListener("change", updateInterventionStatusText);
+    enableAccountButton.addEventListener("click", () => {
+      applyAccountStatus("正常").catch((error) => {
+        interventionStatus.textContent = "启用失败：" + error.message;
+        showFeedback("启用失败：" + error.message, "error");
+        setInterventionActionsDisabled(false);
+      });
+    });
+    disableAccountButton.addEventListener("click", () => {
+      applyAccountStatus("已停用").catch((error) => {
+        interventionStatus.textContent = "停用失败：" + error.message;
+        showFeedback("停用失败：" + error.message, "error");
+        setInterventionActionsDisabled(false);
+      });
+    });
+
+    loadControlStatus().catch((error) => {
+      dispatchStatus.textContent = "当前状态读取失败：" + error.message;
+      dispatchSummaryLabel.textContent = "读取失败";
+    });
+    loadPriorityControl().catch((error) => {
+      priorityStatus.textContent = "当前优先级数据读取失败：" + error.message;
+      strategyStatus.textContent = "当前策略读取失败：" + error.message;
+      activeStrategyLabel.textContent = "读取失败";
+    });
+    loadInterventionModels().catch((error) => {
+      interventionModelSelect.innerHTML = '<option value="">模型读取失败</option>';
+      interventionAccountSelect.innerHTML = '<option value="">账号读取失败</option>';
+      interventionStatus.textContent = "账号数据读取失败：" + error.message;
+      setInterventionActionsDisabled(true);
+    });
+  </script>
 </body>
 </html>

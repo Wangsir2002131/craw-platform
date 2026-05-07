@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+import threading
 import time
 from typing import Any
 
@@ -31,10 +32,19 @@ class ResultListener:
         self.result_collector = result_collector or ResultCollector(self.db_store)
         self.result_queue_name = result_queue_name
 
-    def run(self, *, once: bool = False, timeout: int = 5, idle_sleep: float = 1.0) -> int:
+    def run(
+        self,
+        *,
+        once: bool = False,
+        timeout: int = 5,
+        idle_sleep: float = 1.0,
+        stop_event: threading.Event | None = None,
+    ) -> int:
         """Listen for results continuously or run a single iteration when once=True."""
         processed = 0
         while True:
+            if stop_event is not None and stop_event.is_set():
+                return processed
             handled = self.consume_once(timeout=timeout)
             if handled:
                 processed += 1

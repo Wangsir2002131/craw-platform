@@ -5,7 +5,9 @@ from __future__ import annotations
 from typing import Any
 
 from platform.consumers.base import BaseQueueConsumer
+from platform.dispatcher.time_window import TimeWindowController
 from platform.queue.protocol import get_queue_name
+from platform.queue.strategy_store import QueueStrategyStore
 
 
 class DoubaoConsumer(BaseQueueConsumer):
@@ -19,6 +21,8 @@ class DoubaoConsumer(BaseQueueConsumer):
         db_store: TaskMasterStatusStore | None = None,
         crawler_module: str = "doubao.doubao",
         redis_url: str | None = None,
+        time_window: TimeWindowController | None = None,
+        strategy_store: QueueStrategyStore | None = None,
     ) -> None:
         super().__init__(
             db_config,
@@ -27,4 +31,6 @@ class DoubaoConsumer(BaseQueueConsumer):
             crawler_module=crawler_module,
             queue_name=get_queue_name("doubao"),
             redis_url=redis_url,
+            time_window=time_window,
+            strategy_store=strategy_store,
         )

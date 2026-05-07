@@ -4,10 +4,30 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="018a1d23-1773-4349-a228-de372b06355c" name="更改" comment="更新">
+    <list default="true" id="018a1d23-1773-4349-a228-de372b06355c" name="更改" comment="日志模块更新">
+      <change afterPath="$PROJECT_DIR$/platform/queue/strategy_store.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/test_main_server.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/logs/master_server.log" beforeDir="false" afterPath="$PROJECT_DIR$/logs/master_server.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pages/logs.html" beforeDir="false" afterPath="$PROJECT_DIR$/pages/logs.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pages/control.html" beforeDir="false" afterPath="$PROJECT_DIR$/pages/control.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pages/health.html" beforeDir="false" afterPath="$PROJECT_DIR$/pages/health.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pages/queues.html" beforeDir="false" afterPath="$PROJECT_DIR$/pages/queues.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pages/shared.css" beforeDir="false" afterPath="$PROJECT_DIR$/pages/shared.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/platform/api/routes/account.py" beforeDir="false" afterPath="$PROJECT_DIR$/platform/api/routes/account.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/platform/api/routes/control.py" beforeDir="false" afterPath="$PROJECT_DIR$/platform/api/routes/control.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/platform/api/routes/queue.py" beforeDir="false" afterPath="$PROJECT_DIR$/platform/api/routes/queue.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/platform/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/platform/config.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/platform/consumers/deepseek_consumer.py" beforeDir="false" afterPath="$PROJECT_DIR$/platform/consumers/deepseek_consumer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/platform/consumers/doubao_consumer.py" beforeDir="false" afterPath="$PROJECT_DIR$/platform/consumers/doubao_consumer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/platform/consumers/yuanbao_consumer.py" beforeDir="false" afterPath="$PROJECT_DIR$/platform/consumers/yuanbao_consumer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/platform/dispatcher/master_dispatcher.py" beforeDir="false" afterPath="$PROJECT_DIR$/platform/dispatcher/master_dispatcher.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/platform/dispatcher/time_window.py" beforeDir="false" afterPath="$PROJECT_DIR$/platform/dispatcher/time_window.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/platform/main_server.py" beforeDir="false" afterPath="$PROJECT_DIR$/platform/main_server.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/platform/queue/redis_store.py" beforeDir="false" afterPath="$PROJECT_DIR$/platform/queue/redis_store.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/platform/store/db_store.py" beforeDir="false" afterPath="$PROJECT_DIR$/platform/store/db_store.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/platform/tasks/result_listener.py" beforeDir="false" afterPath="$PROJECT_DIR$/platform/tasks/result_listener.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/test_phase_b.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_phase_b.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/test_phase_d.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_phase_d.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -15,7 +35,7 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="EmbeddingIndexingInfo">
-    <option name="cachedIndexableFilesCount" value="182" />
+    <option name="cachedIndexableFilesCount" value="185" />
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -54,12 +74,12 @@
     &quot;second&quot;: &quot;0ade4f97-7070-458e-ae70-cdcd044496ab&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings">{
-  &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;git@github.com:Wangsir2002131/craw-platform.git&quot;,
-    &quot;accountId&quot;: &quot;4fc815a2-e8bd-4420-8f6c-4bfb7e279a07&quot;
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "git@github.com:/Wangsir2002131/craw-platform.git",
+    "accountId": "4fc815a2-e8bd-4420-8f6c-4bfb7e279a07"
   }
-}</component>
+}]]></component>
   <component name="McpProjectServerCommands">
     <commands />
     <urls />
@@ -95,7 +115,7 @@
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;ml.llm.LLMConfigurable&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;ml.llm.AcpAgentsConfigurable&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
@@ -324,30 +344,70 @@
       <option name="project" value="LOCAL" />
       <updated>1778133437583</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="日志模块更新">
+      <option name="closed" value="true" />
+      <created>1778142731063</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1778142731063</updated>
+    </task>
+    <task id="LOCAL-00012" summary="日志模块更新">
+      <option name="closed" value="true" />
+      <created>1778149654162</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1778149654162</updated>
+    </task>
+    <task id="LOCAL-00013" summary="日志模块更新">
+      <option name="closed" value="true" />
+      <created>1778149966395</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1778149966395</updated>
+    </task>
+    <task id="LOCAL-00014" summary="日志模块更新">
+      <option name="closed" value="true" />
+      <created>1778150223353</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1778150223353</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
+    <option name="RECENT_FILTERS">
+      <map>
+        <entry key="Branch">
+          <value>
+            <list>
+              <RecentGroup>
+                <option name="FILTER_VALUES">
+                  <option value="origin/main" />
+                </option>
+              </RecentGroup>
+              <RecentGroup>
+                <option name="FILTER_VALUES">
+                  <option value="main" />
+                </option>
+              </RecentGroup>
+            </list>
+          </value>
+        </entry>
+      </map>
+    </option>
     <option name="TAB_STATES">
       <map>
         <entry key="MAIN">
           <value>
-            <State>
-              <option name="FILTERS">
-                <map>
-                  <entry key="branch">
-                    <value>
-                      <list>
-                        <option value="origin/main" />
-                      </list>
-                    </value>
-                  </entry>
-                </map>
-              </option>
-            </State>
+            <State />
           </value>
         </entry>
       </map>
@@ -362,6 +422,8 @@
     <MESSAGE value="告警模块页面2.0" />
     <MESSAGE value="日志更新" />
     <MESSAGE value="更新" />
-    <option name="LAST_COMMIT_MESSAGE" value="更新" />
+    <MESSAGE value="日志模块跟新" />
+    <MESSAGE value="日志模块更新" />
+    <option name="LAST_COMMIT_MESSAGE" value="日志模块更新" />
   </component>
 </project>

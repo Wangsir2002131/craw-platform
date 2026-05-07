@@ -5,6 +5,97 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>健康</title>
   <link rel="stylesheet" href="shared.css" />
+  <style>
+    .refresh-bar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      padding: 10px 16px;
+      background: #f8f8f8;
+      border: 1px solid #ebebeb;
+      border-radius: 8px;
+      margin-bottom: 18px;
+    }
+    .refresh-bar label { font-size: 13px; color: #555; }
+    .refresh-bar select {
+      padding: 4px 8px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 13px;
+      background: #fff;
+      cursor: pointer;
+    }
+    .refresh-bar button {
+      padding: 5px 14px;
+      border-radius: 6px;
+      border: none;
+      background: #333;
+      color: #fff;
+      font-size: 13px;
+      cursor: pointer;
+    }
+    .refresh-bar button:hover { background: #555; }
+    .auto-label {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 13px;
+      color: #555;
+      cursor: pointer;
+      user-select: none;
+    }
+    .refresh-indicator {
+      margin-left: auto;
+      font-size: 12px;
+      color: #aaa;
+    }
+    .refresh-indicator.active { color: #22a06b; font-weight: 600; }
+
+    /* 服务状态列表 */
+    .svc-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding: 14px 16px;
+      border: 1px solid #eee;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      background: #fafafa;
+      transition: border-color .2s;
+    }
+    .svc-item:last-child { margin-bottom: 0; }
+    .svc-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .svc-head strong { font-size: 15px; color: #222; }
+    .svc-detail { font-size: 13px; color: #777; }
+    .svc-item.status-error  { border-color: #fca5a5; background: #fff5f5; }
+    .svc-item.status-warn   { border-color: #fcd34d; background: #fffbeb; }
+
+    /* 消费者节点表格 */
+    .node-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .node-table th {
+      text-align: left;
+      padding: 8px 10px;
+      color: #888;
+      font-weight: 500;
+      border-bottom: 1px solid #e5e5e5;
+    }
+    .node-table td {
+      padding: 9px 10px;
+      border-bottom: 1px solid #f0f0f0;
+      color: #333;
+    }
+    .node-table tr:last-child td { border-bottom: none; }
+    .node-table .node-id { font-family: monospace; font-size: 12px; color: #555; }
+    .empty-row td { text-align: center; color: #aaa; padding: 20px 0; }
+
+    /* 上次检测时间 */
+    .checked-at { font-size: 12px; color: #aaa; text-align: right; margin-top: 4px; }
+  </style>
 </head>
 <body>
   <section class="page-head">
@@ -12,70 +103,197 @@
     <p>查看调度服务、中间件和执行节点的整体可用性。</p>
   </section>
 
+  <!-- 工具栏 -->
+  <div class="refresh-bar">
+    <label class="auto-label">
+      <input type="checkbox" id="auto-toggle" />
+      自动刷新
+    </label>
+    <select id="interval-select" disabled>
+      <option value="5">每 5 秒</option>
+      <option value="10" selected>每 10 秒</option>
+      <option value="30">每 30 秒</option>
+    </select>
+    <button id="refresh-btn" type="button">立即刷新</button>
+    <span class="refresh-indicator" id="indicator">未开启自动刷新</span>
+  </div>
+
   <section class="layout-grid dual">
+
+    <!-- 左：服务状态 -->
     <article class="card">
       <div class="card-title">
         <h2>服务状态</h2>
         <p>核心模块健康信息。</p>
       </div>
-      <div class="list">
-        <div class="list-item">
-          <div class="list-head"><strong>主服务</strong><span class="badge light">在线</span></div>
-          <p>心跳正常，调度循环和结果监听运行中。</p>
-        </div>
-        <div class="list-item">
-          <div class="list-head"><strong>Redis</strong><span class="badge light">已连接</span></div>
-          <p>队列读写正常，平均延迟 4ms。</p>
-        </div>
-        <div class="list-item">
-          <div class="list-head"><strong>数据库</strong><span class="badge light">已连接</span></div>
-          <p>连接池正常，查询延迟 21ms。</p>
-        </div>
+      <div id="svc-list">
+        <div class="svc-item"><div class="svc-head"><strong>加载中…</strong></div></div>
       </div>
+      <p class="checked-at" id="checked-at"></p>
     </article>
 
+    <!-- 右：消费者节点 -->
     <article class="card">
       <div class="card-title">
         <h2>执行节点</h2>
         <p>节点在线情况和消费能力。</p>
       </div>
-      <table>
+      <table class="node-table">
         <thead>
           <tr>
             <th>节点</th>
+            <th>队列</th>
             <th>状态</th>
-            <th>任务数</th>
-            <th>备注</th>
+            <th>最后心跳</th>
           </tr>
         </thead>
-        <tbody>
-          <tr>
-            <td>afu@server-a</td>
-            <td><span class="badge danger">离线</span></td>
-            <td>0</td>
-            <td>心跳超时 47 秒</td>
-          </tr>
-          <tr>
-            <td>deepseek@server-b</td>
-            <td><span class="badge light">在线</span></td>
-            <td>12</td>
-            <td>消费正常</td>
-          </tr>
-          <tr>
-            <td>doubao@server-c</td>
-            <td><span class="badge light">在线</span></td>
-            <td>8</td>
-            <td>处理延迟稳定</td>
-          </tr>
-          <tr>
-            <td>yuanbao@server-d</td>
-            <td><span class="badge warn">降级</span></td>
-            <td>5</td>
-            <td>仅使用备用账号</td>
-          </tr>
+        <tbody id="node-tbody">
+          <tr class="empty-row"><td colspan="4">正在加载…</td></tr>
         </tbody>
       </table>
     </article>
+
   </section>
+
+  <script>
+    /* ── DOM ── */
+    const autoToggle   = document.getElementById("auto-toggle");
+    const intervalSel  = document.getElementById("interval-select");
+    const refreshBtn   = document.getElementById("refresh-btn");
+    const indicator    = document.getElementById("indicator");
+    const svcList      = document.getElementById("svc-list");
+    const nodeTbody    = document.getElementById("node-tbody");
+    const checkedAt    = document.getElementById("checked-at");
+
+    let autoTimer = null;
+
+    /* ── 工具 ── */
+    function escHtml(s) {
+      return String(s ?? "")
+        .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+    }
+
+    function badgeFor(status, isStale) {
+      if (isStale || status === "error" || status === "offline") {
+        return `<span class="badge danger">${status === "error" ? "错误" : "离线"}</span>`;
+      }
+      if (status === "online" || status === "connected" || status === "running") {
+        return `<span class="badge light">${status === "connected" ? "已连接" : "在线"}</span>`;
+      }
+      return `<span class="badge warn">${escHtml(status)}</span>`;
+    }
+
+    function svcStatusClass(status) {
+      if (status === "error") return "status-error";
+      return "";
+    }
+
+    /* ── 渲染服务状态 ── */
+    function renderServices(data) {
+      const items = [
+        {
+          name:   "主服务",
+          status: data.master.status,
+          detail: data.master.details
+                  + (data.master.dispatcher_paused ? "（调度器已暂停）" : ""),
+        },
+        {
+          name:   "Redis",
+          status: data.redis.status,
+          detail: data.redis.details,
+        },
+        {
+          name:   "数据库",
+          status: data.database.status,
+          detail: data.database.details,
+        },
+      ];
+
+      svcList.innerHTML = items.map(item => `
+        <div class="svc-item ${svcStatusClass(item.status)}">
+          <div class="svc-head">
+            <strong>${escHtml(item.name)}</strong>
+            ${badgeFor(item.status, false)}
+          </div>
+          <p class="svc-detail">${escHtml(item.detail)}</p>
+        </div>
+      `).join("");
+    }
+
+    /* ── 渲染消费者节点 ── */
+    function renderNodes(consumers) {
+      if (!consumers.length) {
+        nodeTbody.innerHTML = '<tr class="empty-row"><td colspan="4">暂无在线节点</td></tr>';
+        return;
+      }
+
+      nodeTbody.innerHTML = consumers.map(c => {
+        const isStale = c.is_stale;
+        const lastSeen = c.last_seen_seconds !== null && c.last_seen_seconds !== undefined
+          ? `${c.last_seen_seconds} 秒前`
+          : "-";
+        const statusBadge = isStale
+          ? '<span class="badge danger">超时</span>'
+          : badgeFor(c.status, false);
+
+        return `
+          <tr>
+            <td class="node-id">${escHtml(c.consumer_id)}</td>
+            <td>${escHtml(c.queue_name)}</td>
+            <td>${statusBadge}</td>
+            <td>${lastSeen}</td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    /* ── 加载数据 ── */
+    async function load() {
+      try {
+        const resp = await fetch("/api/health-status");
+        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+        const data = await resp.json();
+
+        renderServices(data);
+        renderNodes(data.consumers || []);
+        checkedAt.textContent = `检测时间: ${new Date(data.checked_at).toLocaleString()}`;
+      } catch (err) {
+        svcList.innerHTML = `
+          <div class="svc-item status-error">
+            <div class="svc-head"><strong>加载失败</strong><span class="badge danger">错误</span></div>
+            <p class="svc-detail">${escHtml(err.message)}</p>
+          </div>
+        `;
+        nodeTbody.innerHTML = '<tr class="empty-row"><td colspan="4">接口未连接</td></tr>';
+        checkedAt.textContent = "";
+      }
+    }
+
+    /* ── 自动刷新 ── */
+    function startAR() {
+      clearInterval(autoTimer);
+      const sec = parseInt(intervalSel.value, 10) || 10;
+      autoTimer = setInterval(load, sec * 1000);
+      indicator.textContent = `自动刷新中（每 ${sec} 秒）`;
+      indicator.className   = "refresh-indicator active";
+    }
+    function stopAR() {
+      clearInterval(autoTimer);
+      autoTimer = null;
+      indicator.textContent = "未开启自动刷新";
+      indicator.className   = "refresh-indicator";
+    }
+
+    /* ── 事件 ── */
+    refreshBtn.addEventListener("click", load);
+    autoToggle.addEventListener("change", () => {
+      intervalSel.disabled = !autoToggle.checked;
+      autoToggle.checked ? startAR() : stopAR();
+    });
+    intervalSel.addEventListener("change", () => { if (autoToggle.checked) startAR(); });
+
+    /* ── 初始加载 ── */
+    load();
+  </script>
 </body>
 </html>

@@ -13,6 +13,7 @@ from platform.heartbeat.health_checker import HealthChecker
 from platform.queue.metrics import QueueMetricsStore
 from platform.queue.protocol import QUEUE_NAMES
 from platform.queue.redis_store import RedisQueueStore
+from platform.queue.strategy_store import QueueStrategyStore
 
 
 router = APIRouter(prefix="/queues", tags=["queues"])
@@ -39,6 +40,10 @@ def get_external_supervisor_registry() -> ExternalSupervisorRegistry:
     return ExternalSupervisorRegistry()
 
 
+def get_strategy_store(store: RedisQueueStore = Depends(get_queue_store)) -> QueueStrategyStore:
+    return QueueStrategyStore(queue_store=store)
+
+
 def _priority_queue_name(queue_name: str) -> str:
     return f"{queue_name}:priority"
 
@@ -53,10 +58,9 @@ def _validate_queue_name(queue_name: str) -> str:
 @router.get("/status")
 def get_queue_status(store: RedisQueueStore = Depends(get_queue_store)) -> dict[str, Any]:
     queue_store = store
-    client = queue_store._get_client()
     queues = []
     for queue_name in QUEUE_NAMES.values():
-        priority_size = int(client.zcard(_priority_queue_name(queue_name))) if hasattr(client, "zcard") else 0
+        priority_size = queue_store.count_priority_messages(queue_name)
         queues.append(
             {
                 "queue_name": queue_name,
@@ -88,14 +92,13 @@ def clear_queue(queue_name: str, store: RedisQueueStore = Depends(get_queue_stor
 @router.get("/stats")
 def get_queue_stats(store: RedisQueueStore = Depends(get_queue_store)) -> dict[str, Any]:
     queue_store = store
-    client = queue_store._get_client()
     total_messages = 0
     priority_messages = 0
     stats: dict[str, Any] = {"redis_ping": queue_store.ping(), "queues": {}}
 
     for queue_name in QUEUE_NAMES.values():
         queue_length = queue_store.length(queue_name)
-        priority_length = int(client.zcard(_priority_queue_name(queue_name))) if hasattr(client, "zcard") else 0
+        priority_length = queue_store.count_priority_messages(queue_name)
         total_messages += queue_length
         priority_messages += priority_length
         stats["queues"][queue_name] = {
@@ -179,8 +182,9 @@ def list_dashboard_queues(
     health_checker: HealthChecker = Depends(get_health_checker),
     consumer_manager: ConsumerManager = Depends(get_runtime_consumer_manager),
     external_supervisors: ExternalSupervisorRegistry = Depends(get_external_supervisor_registry),
+    strategy_store: QueueStrategyStore = Depends(get_strategy_store),
 ) -> dict[str, Any]:
-    client = queue_store._get_client()
+    current_strategy = strategy_store.get_strategy()
     manager_status = consumer_manager.status().get("models", {})
     external_status = external_supervisors.list_supervisors()
     stale_lookup = {
@@ -198,8 +202,9 @@ def list_dashboard_queues(
     for queue_name in model_queues:
         model_key = queue_name.rsplit(":", 1)[-1]
         queue_length = queue_store.length(queue_name)
-        priority_length = int(client.zcard(_priority_queue_name(queue_name))) if hasattr(client, "zcard") else 0
-        backlog = queue_length + priority_length
+        priority_length = queue_store.count_priority_messages(queue_name)
+        normal_length = max(0, queue_length - priority_length)
+        backlog = queue_length
         healthy_consumers, stale_consumers = metrics_store.queue_consumers(queue_name, stale_after_seconds=60)
         wait_seconds = metrics_store.oldest_wait_seconds(queue_name)
         throughput_per_min = metrics_store.processed_last_minute(queue_name)
@@ -222,6 +227,7 @@ def list_dashboard_queues(
                 "model": model_key,
                 "backlog": backlog,
                 "listLength": queue_length,
+                "normalLength": normal_length,
                 "priorityLength": priority_length,
                 "consumers": display_consumers,
                 "staleConsumers": len(stale_consumers),
@@ -236,7 +242,7 @@ def list_dashboard_queues(
                 "state": state_label,
                 "riskLevel": risk_level,
                 "managedEnabled": managed.get("managedEnabled", False),
-                "strategy": "priority_fifo" if priority_length > 0 else "fifo",
+                "strategy": current_strategy,
                 "consumerIds": [item.get("consumer_id") for item in healthy_consumers],
                 "staleConsumerIds": [item.get("consumer_id") for item in stale_consumers],
                 "staleHeartbeatKeys": [item.get("heartbeat_key") for item in stale_consumers if item.get("heartbeat_key") in stale_lookup],

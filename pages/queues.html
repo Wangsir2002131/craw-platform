@@ -163,7 +163,7 @@
               data-desired-consumers="${item.desiredConsumers}"
             >+ 加一个</button>
           </div>
-          <p>普通队列 ${item.listLength}，优先队列 ${item.priorityLength}，异常消费者 ${item.staleConsumers}，退场中 ${item.drainingConsumers}，页面缩放 ${item.managedEnabled ? "主服务托管" : (item.externalSupervisorRunning ? "脚本主管进程" : "未启用")}</p>
+          <p>普通队列 ${item.normalLength ?? Math.max(0, item.listLength - item.priorityLength)}，优先队列 ${item.priorityLength}，总队列 ${item.listLength}，异常消费者 ${item.staleConsumers}，退场中 ${item.drainingConsumers}，页面缩放 ${item.managedEnabled ? "主服务托管" : (item.externalSupervisorRunning ? "脚本主管进程" : "未启用")}</p>
         </div>
       `).join("");
     }
@@ -283,15 +283,8 @@
       const action = button.dataset.action;
       const externalRunning = button.dataset.externalRunning === "true";
       const managedEnabled = button.dataset.managedEnabled === "true";
-      const desiredConsumers = Number(button.dataset.desiredConsumers || 0);
-
       if (!managedEnabled && !externalRunning) {
         showFeedback(`请先启动 ${model} 消费者脚本，再进行加减`, "warn");
-        return;
-      }
-
-      if (action === "decrement" && desiredConsumers <= 1) {
-        showFeedback(`${model} 只剩最后一个消费者，不能再减了`, "warn");
         return;
       }
       changeConsumers(model, action);
