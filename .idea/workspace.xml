@@ -4,14 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="018a1d23-1773-4349-a228-de372b06355c" name="更改" comment="新增告警模块">
-      <change beforePath="$PROJECT_DIR$/logs/master_server.log" beforeDir="false" afterPath="$PROJECT_DIR$/logs/master_server.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pages/alerts.html" beforeDir="false" afterPath="$PROJECT_DIR$/pages/alerts.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platform/main_server.py" beforeDir="false" afterPath="$PROJECT_DIR$/platform/main_server.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platform/queue/metrics.py" beforeDir="false" afterPath="$PROJECT_DIR$/platform/queue/metrics.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shared-methods/shared_methods.py" beforeDir="false" afterPath="$PROJECT_DIR$/shared-methods/shared_methods.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/test_consumer_manager.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_consumer_manager.py" afterDir="false" />
-    </list>
+    <list default="true" id="018a1d23-1773-4349-a228-de372b06355c" name="更改" comment="更新" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -274,7 +267,55 @@
       <option name="project" value="LOCAL" />
       <updated>1778133092764</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="告警模块页面2.0">
+      <option name="closed" value="true" />
+      <created>1778133146684</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1778133146684</updated>
+    </task>
+    <task id="LOCAL-00006" summary="日志更新">
+      <option name="closed" value="true" />
+      <created>1778133184202</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1778133184202</updated>
+    </task>
+    <task id="LOCAL-00007" summary="更新">
+      <option name="closed" value="true" />
+      <created>1778133229967</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1778133229967</updated>
+    </task>
+    <task id="LOCAL-00008" summary="更新">
+      <option name="closed" value="true" />
+      <created>1778133246309</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1778133246309</updated>
+    </task>
+    <task id="LOCAL-00009" summary="更新">
+      <option name="closed" value="true" />
+      <created>1778133287083</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1778133287083</updated>
+    </task>
+    <task id="LOCAL-00010" summary="更新">
+      <option name="closed" value="true" />
+      <created>1778133437583</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1778133437583</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -309,6 +350,9 @@
     <MESSAGE value=" 数据库连接配置 密码、数据库名称有变动" />
     <MESSAGE value="修正相应的页面代码" />
     <MESSAGE value="新增告警模块" />
-    <option name="LAST_COMMIT_MESSAGE" value="新增告警模块" />
+    <MESSAGE value="告警模块页面2.0" />
+    <MESSAGE value="日志更新" />
+    <MESSAGE value="更新" />
+    <option name="LAST_COMMIT_MESSAGE" value="更新" />
   </component>
 </project>
