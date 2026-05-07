@@ -350,17 +350,29 @@
     <article class="card">
       <div class="card-title">
         <h2>账号干预</h2>
-        <p>手动停用异常账号并移出当前可分配池。</p>
+        <p>先选择模型，再选择该模型下的账号进行启用或停用。</p>
       </div>
-      <div class="actions">
-        <select>
-          <option>deepseek-12</option>
-          <option>yuanbao-17</option>
-          <option>doubao-03</option>
-        </select>
-        <button class="danger" type="button">停用账号</button>
+      <div class="field-grid">
+        <div class="field">
+          <label for="intervention-model-select">模型</label>
+          <select id="intervention-model-select">
+            <option value="">正在加载模型...</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="intervention-account-select">账号</label>
+          <select id="intervention-account-select" disabled>
+            <option value="">请先选择模型</option>
+          </select>
+        </div>
       </div>
-      <div class="placeholder-box">当前页面保留账号干预入口，后续如果你要，我可以把它也接成真实数据和接口。</div>
+      <div class="action-row">
+        <div class="status-note" id="intervention-status">账号数据读取中...</div>
+        <div class="actions" style="margin-top: 0;">
+          <button class="dark" id="enable-account" type="button">启用账号</button>
+          <button class="danger" id="disable-account" type="button">停用账号</button>
+        </div>
+      </div>
     </article>
 
     <article class="card">
@@ -394,10 +406,16 @@
     const productTotalCount = document.getElementById("product-total-count");
     const priorityActionSummary = document.getElementById("priority-action-summary");
     const priorityStepSummary = document.getElementById("priority-step-summary");
+    const interventionModelSelect = document.getElementById("intervention-model-select");
+    const interventionAccountSelect = document.getElementById("intervention-account-select");
+    const interventionStatus = document.getElementById("intervention-status");
+    const enableAccountButton = document.getElementById("enable-account");
+    const disableAccountButton = document.getElementById("disable-account");
 
     let feedbackTimer = null;
     let productMap = new Map();
     let appliedStrategy = "fifo";
+    let interventionAccounts = [];
 
     async function requestJson(url, options) {
       const response = await fetch(url, options);
@@ -446,6 +464,119 @@
       };
       priorityActionSummary.textContent = actionLabels[priorityAction.value] || priorityAction.value;
       priorityStepSummary.textContent = priorityStep.value;
+    }
+
+    function setInterventionActionsDisabled(disabled) {
+      interventionAccountSelect.disabled = disabled || !interventionModelSelect.value;
+      enableAccountButton.disabled = disabled || !interventionAccountSelect.value;
+      disableAccountButton.disabled = disabled || !interventionAccountSelect.value;
+    }
+
+    function renderInterventionModels(models) {
+      interventionModelSelect.innerHTML = "";
+      interventionModelSelect.append(new Option("请选择模型", ""));
+      models.forEach((model) => {
+        interventionModelSelect.append(new Option(model, model));
+      });
+    }
+
+    function renderInterventionAccounts(accounts) {
+      interventionAccountSelect.innerHTML = "";
+      if (!accounts.length) {
+        interventionAccountSelect.append(new Option("该模型暂无账号", ""));
+        interventionStatus.textContent = "该模型暂无账号数据";
+        setInterventionActionsDisabled(true);
+        return;
+      }
+
+      interventionAccountSelect.append(new Option("请选择账号", ""));
+      accounts.forEach((account) => {
+        const label = `${account.account}（${account.status}，${account.accountType}，ID:${account.id}）`;
+        interventionAccountSelect.append(new Option(label, String(account.id)));
+      });
+      interventionStatus.textContent = `已加载 ${accounts.length} 个账号，请选择要干预的账号`;
+      setInterventionActionsDisabled(false);
+    }
+
+    function selectedInterventionAccount() {
+      return interventionAccounts.find((item) => String(item.id) === interventionAccountSelect.value);
+    }
+
+    async function fetchDashboardAccounts(crawler) {
+      const firstPage = await requestJson(
+        `/api/accounts?page=1&page_size=100${crawler ? `&crawler=${encodeURIComponent(crawler)}` : ""}`
+      );
+      const items = [...firstPage.items];
+      const totalPages = Number(firstPage.pagination.totalPages || 1);
+      for (let page = 2; page <= totalPages; page += 1) {
+        const data = await requestJson(
+          `/api/accounts?page=${page}&page_size=100${crawler ? `&crawler=${encodeURIComponent(crawler)}` : ""}`
+        );
+        items.push(...data.items);
+      }
+      return { ...firstPage, items };
+    }
+
+    async function loadInterventionModels() {
+      const data = await fetchDashboardAccounts("");
+      renderInterventionModels(data.filters.crawlerOptions);
+      interventionStatus.textContent = "请选择模型后加载账号";
+      setInterventionActionsDisabled(true);
+    }
+
+    async function loadInterventionAccounts() {
+      const model = interventionModelSelect.value;
+      interventionAccounts = [];
+      interventionAccountSelect.innerHTML = '<option value="">正在加载账号...</option>';
+      interventionStatus.textContent = model ? `正在加载 ${model} 账号...` : "请选择模型后加载账号";
+      setInterventionActionsDisabled(true);
+      if (!model) {
+        interventionAccountSelect.innerHTML = '<option value="">请先选择模型</option>';
+        return;
+      }
+
+      const data = await fetchDashboardAccounts(model);
+      interventionAccounts = data.items;
+      renderInterventionAccounts(interventionAccounts);
+    }
+
+    function updateInterventionStatusText() {
+      const account = selectedInterventionAccount();
+      if (!account) {
+        interventionStatus.textContent = interventionModelSelect.value ? "请选择要干预的账号" : "请选择模型后加载账号";
+        setInterventionActionsDisabled(false);
+        return;
+      }
+      interventionStatus.textContent = `当前账号：${account.account}，状态：${account.status}`;
+      setInterventionActionsDisabled(false);
+    }
+
+    async function applyAccountStatus(statusLabel) {
+      const account = selectedInterventionAccount();
+      if (!account) {
+        showFeedback("请先选择账号", "warn");
+        return;
+      }
+
+      setInterventionActionsDisabled(true);
+      const result = await requestJson(`/api/accounts/${account.id}/status`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          status: statusLabel,
+          reason: statusLabel === "已停用" ? "控制台手动停用" : "控制台手动启用",
+        }),
+      });
+
+      const updatedAccount = result.account;
+      interventionAccounts = interventionAccounts.map((item) => (
+        String(item.id) === String(updatedAccount.id) ? updatedAccount : item
+      ));
+      const selectedValue = interventionAccountSelect.value;
+      renderInterventionAccounts(interventionAccounts);
+      interventionAccountSelect.value = selectedValue;
+      updateInterventionStatusText();
+      showFeedback(`${updatedAccount.account} 已${statusLabel === "已停用" ? "停用" : "启用"}`, "success");
     }
 
     async function loadControlStatus() {
@@ -539,6 +670,27 @@
     strategySelect.addEventListener("change", updateStrategyDisplay);
     priorityAction.addEventListener("change", updatePrioritySummary);
     priorityStep.addEventListener("change", updatePrioritySummary);
+    interventionModelSelect.addEventListener("change", () => {
+      loadInterventionAccounts().catch((error) => {
+        interventionStatus.textContent = "账号数据读取失败：" + error.message;
+        setInterventionActionsDisabled(true);
+      });
+    });
+    interventionAccountSelect.addEventListener("change", updateInterventionStatusText);
+    enableAccountButton.addEventListener("click", () => {
+      applyAccountStatus("正常").catch((error) => {
+        interventionStatus.textContent = "启用失败：" + error.message;
+        showFeedback("启用失败：" + error.message, "error");
+        setInterventionActionsDisabled(false);
+      });
+    });
+    disableAccountButton.addEventListener("click", () => {
+      applyAccountStatus("已停用").catch((error) => {
+        interventionStatus.textContent = "停用失败：" + error.message;
+        showFeedback("停用失败：" + error.message, "error");
+        setInterventionActionsDisabled(false);
+      });
+    });
 
     loadControlStatus().catch((error) => {
       dispatchStatus.textContent = "当前状态读取失败：" + error.message;
@@ -548,6 +700,12 @@
       priorityStatus.textContent = "当前优先级数据读取失败：" + error.message;
       strategyStatus.textContent = "当前策略读取失败：" + error.message;
       activeStrategyLabel.textContent = "读取失败";
+    });
+    loadInterventionModels().catch((error) => {
+      interventionModelSelect.innerHTML = '<option value="">模型读取失败</option>';
+      interventionAccountSelect.innerHTML = '<option value="">账号读取失败</option>';
+      interventionStatus.textContent = "账号数据读取失败：" + error.message;
+      setInterventionActionsDisabled(true);
     });
   </script>
 </body>

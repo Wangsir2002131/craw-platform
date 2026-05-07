@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from contextlib import contextmanager
 from math import ceil
+import re
 from typing import Any, Iterator
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
@@ -75,20 +76,110 @@ class AccountQueryService:
 
         items: list[dict[str, Any]] = []
         for row in rows:
-            items.append(
-                {
-                    "id": row.get("id"),
-                    "account": row.get("account") or "-",
-                    "crawler": row.get("crawler") or "-",
-                    "accountType": row.get("account_type") or "-",
-                    "status": row.get("status") or "-",
-                    "failCount": int(row.get("fail_count") or 0),
-                    "createdAt": row.get("created_at").isoformat() if row.get("created_at") else None,
-                    "dataMode": "tep_data_accounts",
-                    "statusSource": "tep_data_accounts.status",
-                }
-            )
+            items.append(self._format_dashboard_account(row))
         return items
+
+    def update_dashboard_account_status(
+        self,
+        account_id: int,
+        new_status: str,
+        *,
+        reason: str | None = None,
+    ) -> dict[str, Any]:
+        if new_status not in {"正常", "已停用"}:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="dashboard account status must be 正常 or 已停用",
+            )
+
+        with self.cursor() as cursor:
+            cursor.execute("SELECT * FROM tep_data_accounts WHERE id = %s FOR UPDATE", (account_id,))
+            account = cursor.fetchone()
+            if not account:
+                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="dashboard account not found")
+
+            cursor.execute(
+                """
+                UPDATE tep_data_accounts
+                SET status = %s
+                WHERE id = %s
+                """,
+                (new_status, account_id),
+            )
+
+            master_status = "disabled" if new_status == "已停用" else "available"
+            master_rows_updated = self._sync_account_master_status(
+                cursor,
+                account,
+                master_status=master_status,
+                reason=reason or f"dashboard:{new_status}",
+            )
+
+            updated = dict(account)
+            updated["status"] = new_status
+            item = self._format_dashboard_account(updated)
+            item["masterRowsUpdated"] = master_rows_updated
+            return item
+
+    def _format_dashboard_account(self, row: dict[str, Any]) -> dict[str, Any]:
+        return {
+            "id": row.get("id"),
+            "account": row.get("account") or "-",
+            "crawler": row.get("crawler") or "-",
+            "accountType": row.get("account_type") or "-",
+            "status": row.get("status") or "-",
+            "failCount": int(row.get("fail_count") or 0),
+            "createdAt": row.get("created_at").isoformat() if row.get("created_at") else None,
+            "dataMode": "tep_data_accounts",
+            "statusSource": "tep_data_accounts.status",
+        }
+
+    def _sync_account_master_status(
+        self,
+        cursor: Any,
+        account: dict[str, Any],
+        *,
+        master_status: str,
+        reason: str,
+    ) -> int:
+        crawler = str(account.get("crawler") or "").strip().lower()
+        if not crawler:
+            return 0
+
+        account_keys = self._candidate_account_keys(account)
+        if not account_keys:
+            return 0
+
+        placeholders = ", ".join(["%s"] * len(account_keys))
+        cursor.execute(
+            f"""
+            UPDATE account_master
+            SET account_status = %s,
+                disabled_reason = %s,
+                updated_at = CURRENT_TIMESTAMP
+            WHERE platform_name = %s
+              AND account_key IN ({placeholders})
+            """,
+            (
+                master_status,
+                reason if master_status == "disabled" else None,
+                crawler,
+                *account_keys,
+            ),
+        )
+        return int(getattr(cursor, "rowcount", 0) or 0)
+
+    def _candidate_account_keys(self, account: dict[str, Any]) -> list[str]:
+        keys: list[str] = []
+        account_name = str(account.get("account") or "").strip()
+        match = re.search(r"(\d+)$", account_name)
+        if match:
+            keys.append(match.group(1))
+
+        source_id = str(account.get("id") or "").strip()
+        if source_id and source_id not in keys:
+            keys.append(source_id)
+        return keys
 
     def update_account_status(
         self,
@@ -225,6 +316,21 @@ def list_dashboard_accounts(
             "statusSource": "tep_data_accounts.status",
         },
     }
+
+
+@dashboard_router.patch("/{account_id}/status")
+def update_dashboard_account_status(
+    account_id: int,
+    payload: AccountStatusUpdateRequest,
+    service: AccountQueryService = Depends(get_account_service),
+) -> dict[str, Any]:
+    account_service = service
+    account = account_service.update_dashboard_account_status(
+        account_id,
+        payload.status,
+        reason=payload.reason,
+    )
+    return {"account": account}
 
 
 @router.patch("/{account_id}/status")

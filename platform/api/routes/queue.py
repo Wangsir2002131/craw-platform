@@ -203,7 +203,8 @@ def list_dashboard_queues(
         model_key = queue_name.rsplit(":", 1)[-1]
         queue_length = queue_store.length(queue_name)
         priority_length = queue_store.count_priority_messages(queue_name)
-        backlog = queue_length + priority_length
+        normal_length = max(0, queue_length - priority_length)
+        backlog = queue_length
         healthy_consumers, stale_consumers = metrics_store.queue_consumers(queue_name, stale_after_seconds=60)
         wait_seconds = metrics_store.oldest_wait_seconds(queue_name)
         throughput_per_min = metrics_store.processed_last_minute(queue_name)
@@ -226,6 +227,7 @@ def list_dashboard_queues(
                 "model": model_key,
                 "backlog": backlog,
                 "listLength": queue_length,
+                "normalLength": normal_length,
                 "priorityLength": priority_length,
                 "consumers": display_consumers,
                 "staleConsumers": len(stale_consumers),
