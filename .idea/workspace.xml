@@ -5,29 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="018a1d23-1773-4349-a228-de372b06355c" name="更改" comment="日志模块更新">
-      <change afterPath="$PROJECT_DIR$/platform/queue/strategy_store.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/test_main_server.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/logs/master_server.log" beforeDir="false" afterPath="$PROJECT_DIR$/logs/master_server.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pages/control.html" beforeDir="false" afterPath="$PROJECT_DIR$/pages/control.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pages/health.html" beforeDir="false" afterPath="$PROJECT_DIR$/pages/health.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pages/queues.html" beforeDir="false" afterPath="$PROJECT_DIR$/pages/queues.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pages/shared.css" beforeDir="false" afterPath="$PROJECT_DIR$/pages/shared.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platform/api/routes/account.py" beforeDir="false" afterPath="$PROJECT_DIR$/platform/api/routes/account.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platform/api/routes/control.py" beforeDir="false" afterPath="$PROJECT_DIR$/platform/api/routes/control.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platform/api/routes/queue.py" beforeDir="false" afterPath="$PROJECT_DIR$/platform/api/routes/queue.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platform/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/platform/config.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platform/consumers/deepseek_consumer.py" beforeDir="false" afterPath="$PROJECT_DIR$/platform/consumers/deepseek_consumer.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platform/consumers/doubao_consumer.py" beforeDir="false" afterPath="$PROJECT_DIR$/platform/consumers/doubao_consumer.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platform/consumers/yuanbao_consumer.py" beforeDir="false" afterPath="$PROJECT_DIR$/platform/consumers/yuanbao_consumer.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platform/dispatcher/master_dispatcher.py" beforeDir="false" afterPath="$PROJECT_DIR$/platform/dispatcher/master_dispatcher.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platform/dispatcher/time_window.py" beforeDir="false" afterPath="$PROJECT_DIR$/platform/dispatcher/time_window.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platform/main_server.py" beforeDir="false" afterPath="$PROJECT_DIR$/platform/main_server.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platform/queue/redis_store.py" beforeDir="false" afterPath="$PROJECT_DIR$/platform/queue/redis_store.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platform/store/db_store.py" beforeDir="false" afterPath="$PROJECT_DIR$/platform/store/db_store.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platform/tasks/result_listener.py" beforeDir="false" afterPath="$PROJECT_DIR$/platform/tasks/result_listener.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/test_phase_b.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_phase_b.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/test_phase_d.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_phase_d.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -93,32 +72,32 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;JavaScript 调试.logs.html.executor&quot;: &quot;Run&quot;,
-    &quot;Python 测试.Python 测试 (test_redis_connection_rule.py 内).executor&quot;: &quot;Run&quot;,
-    &quot;Python 测试.platform.alerts.test_redis_connection_rule.TestRedisConnectionErrorRule 的 Python 测试.executor&quot;: &quot;Debug&quot;,
-    &quot;Python.main_server.executor&quot;: &quot;Run&quot;,
-    &quot;Python.test_alerts_manual.executor&quot;: &quot;Run&quot;,
-    &quot;Python.verify_redis_alert.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
-    &quot;SHELLCHECK.PATH&quot;: &quot;C:\\Users\\SocialMED\\AppData\\Roaming\\JetBrains\\PyCharm2026.1\\plugins\\Shell Script\\shellcheck.exe&quot;,
-    &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;ml.llm.AcpAgentsConfigurable&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "JavaScript 调试.logs.html.executor": "Run",
+    "Python 测试.Python 测试 (test_redis_connection_rule.py 内).executor": "Run",
+    "Python 测试.platform.alerts.test_redis_connection_rule.TestRedisConnectionErrorRule 的 Python 测试.executor": "Debug",
+    "Python.main_server.executor": "Run",
+    "Python.test_alerts_manual.executor": "Run",
+    "Python.verify_redis_alert.executor": "Run",
+    "RunOnceActivity.MCP Project settings loaded": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "SHELLCHECK.PATH": "C:\\Users\\SocialMED\\AppData\\Roaming\\JetBrains\\PyCharm2026.1\\plugins\\Shell Script\\shellcheck.exe",
+    "codeWithMe.voiceChat.enabledByDefault": "false",
+    "git-widget-placeholder": "wangyilei",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "ml.llm.AcpAgentsConfigurable",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\SocialMED\Desktop\craw-platform\tests\alerts" />
