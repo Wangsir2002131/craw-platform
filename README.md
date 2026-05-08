@@ -126,7 +126,7 @@ python -m platform.main_server --forever --host 127.0.0.1 --port 8000
 ### 只启动 API
 
 ```powershell
-python platform/main_server.py --api-only --host 127.0.0.1 --port 8000
+python platform.main_server.py --api-only --host 127.0.0.1 --port 8000
 ```
 
 ### 只运行一轮调度
