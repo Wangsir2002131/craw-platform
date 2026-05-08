@@ -114,7 +114,7 @@ $env:REDIS_URL="redis://127.0.0.1:6379/0"
 集成服务会同时启动 API、调度循环、心跳、健康检查和结果监听。
 
 ```powershell
-python platform/main_server.py --forever --host 127.0.0.1 --port 8000
+python -m platform.main_server --forever --host 127.0.0.1 --port 8000
 ```
 
 访问地址：
