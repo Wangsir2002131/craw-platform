@@ -65,12 +65,11 @@ DB_CONFIG = {
     'host': '127.0.0.1',
     'port': 3306,
     'user': 'root',
-    'password': '123456',
-    'db': 'test',
+    'password': 'root',
+    'db': 'geo',
     'charset': 'utf8mb4',
     'cursorclass': pymysql.cursors.DictCursor
 }
-
 class DatabaseManager:
     """数据库连接管理类（单例模式，线程安全）"""
     _instance = None
