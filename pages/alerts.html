@@ -5,51 +5,562 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>告警</title>
   <link rel="stylesheet" href="shared.css" />
+  <style>
+    .card-header-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .card-header-row .card-title { flex: 1; }
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+      padding-top: 4px;
+    }
+    .refresh-meta {
+      font-size: 12px;
+      color: #888;
+      white-space: nowrap;
+    }
+    .toolbar-settings {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 14px;
+    }
+    .combined-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      gap: 8px;
+      margin-top: 14px;
+      width: 100%;
+    }
+    .combined-bar-sep {
+      width: 1px;
+      height: 36px;
+      background: #dde0e5;
+      align-self: center;
+      flex-shrink: 0;
+    }
+    .combined-bar .settings-group {
+      flex: 1;
+      min-width: 0;
+    }
+    .settings-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      background: #f8f9fa;
+      border: 1px solid #e8eaed;
+      border-radius: 10px;
+      flex-shrink: 0;
+    }
+    .settings-group-title {
+      font-size: 11px;
+      font-weight: 700;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      padding-right: 6px;
+      border-right: 1px solid #ddd;
+      margin-right: 2px;
+      white-space: nowrap;
+      align-self: center;
+    }
+    .settings-field {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .settings-field label {
+      font-size: 11px;
+      color: #999;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+    .settings-field input[type="number"] {
+      width: 72px;
+      padding: 5px 8px;
+      border: 1px solid #d0d0d0;
+      border-radius: 6px;
+      font-size: 13px;
+      background: #fff;
+      color: #333;
+      transition: border-color .15s;
+    }
+    .settings-field input[type="number"]:focus {
+      outline: none;
+      border-color: #4a90e2;
+    }
+    .settings-field select {
+      padding: 5px 28px 5px 8px;
+      border: 1px solid #d0d0d0;
+      border-radius: 6px;
+      font-size: 13px;
+      background: #fff;
+      color: #333;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23999'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 8px center;
+      cursor: pointer;
+      transition: border-color .15s;
+    }
+    .settings-field select:focus {
+      outline: none;
+      border-color: #4a90e2;
+    }
+    .settings-apply-btn {
+      padding: 6px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #fff;
+      background: #4a90e2;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      white-space: nowrap;
+      align-self: flex-end;
+      transition: background .15s;
+    }
+    .settings-apply-btn:hover { background: #357abd; }
+    .settings-apply-btn:disabled { background: #a0b8d8; cursor: not-allowed; }
+    .auto-refresh-status {
+      font-size: 12px;
+      color: #888;
+      margin-top: 8px;
+      text-align: right;
+    }
+    .countdown-active { color: #2e7d32; font-weight: 500; }
+    .countdown-off { color: #999; }
+    .event-count-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      margin-left: 6px;
+      padding-left: 12px;
+      border-left: 1px solid #e0e3e8;
+    }
+    .event-count-label {
+      font-size: 11px;
+      color: #999;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+    .event-count-badge {
+      font-size: 22px;
+      font-weight: 700;
+      color: #333;
+      line-height: 1;
+    }
+    .event-count-badge.has-alerts { color: #e53935; }
+    .event-count-badge.no-alerts  { color: #2e7d32; }
+    .detail-toggle {
+      font-size: 12px;
+      color: #4a90e2;
+      cursor: pointer;
+      border: none;
+      background: none;
+      padding: 4px 0 0;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .detail-toggle:hover { color: #357abd; }
+    .detail-panel {
+      display: none;
+      margin-top: 8px;
+      padding: 10px 12px;
+      background: #f5f7fa;
+      border-radius: 6px;
+      border: 1px solid #e4e8ef;
+      font-size: 12px;
+      line-height: 1.8;
+    }
+    .detail-panel.open { display: block; }
+    .detail-kv {
+      display: flex;
+      gap: 8px;
+      align-items: baseline;
+    }
+    .detail-kv .dk {
+      color: #999;
+      min-width: 72px;
+      flex-shrink: 0;
+      font-size: 11px;
+    }
+    .detail-kv .dv {
+      color: #222;
+      font-weight: 600;
+      word-break: break-all;
+      font-family: Consolas, monospace;
+    }
+  </style>
 </head>
 <body>
   <section class="page-head">
     <h1>告警</h1>
-    <p>集中查看积压、离线和账号异常等告警事件。</p>
+    <p>集中查看任务、队列、账号和系统告警事件，实时反映当前系统状态。</p>
   </section>
 
-  <section class="layout-grid dual">
+  <div id="alert-feedback" class="feedback-modal" hidden></div>
+
+  <section class="layout-grid split">
     <article class="card">
-      <div class="card-title">
-        <h2>实时告警</h2>
-        <p>优先处理影响分发和执行成功率的问题。</p>
+      <div class="card-header-row">
+        <div class="card-title">
+          <h2>告警事件</h2>
+          <p>点击刷新查看当前系统真实状态，问题解决后告警自动消失。</p>
+        </div>
+        <div class="header-actions">
+          <span class="refresh-meta" id="last-refresh-label">-</span>
+          <button id="refresh-btn" class="dark">🔄 刷新</button>
+        </div>
       </div>
-      <div class="list">
-        <div class="list-item">
-          <div class="list-head"><strong>队列积压</strong><span class="badge danger">严重</span></div>
-          <p>deepseek 队列长度 108，超过阈值 100，建议临时扩容消费者。</p>
+
+      <!-- 筛选 + 设置合并行 -->
+      <div class="combined-bar">
+        <!-- 筛选组 -->
+        <div class="settings-group">
+          <div class="settings-field">
+            <label for="category-filter">分类</label>
+            <select id="category-filter">
+              <option value="">全部分类</option>
+              <option value="task">任务告警</option>
+              <option value="queue">队列告警</option>
+              <option value="account">账号告警</option>
+              <option value="system">系统告警</option>
+            </select>
+          </div>
+          <div class="settings-field">
+            <label for="level-filter">级别</label>
+            <select id="level-filter">
+              <option value="">全部级别</option>
+              <option value="yellow">🟡 黄色</option>
+              <option value="red">🔴 红色</option>
+              <option value="error">❌ 错误</option>
+            </select>
+          </div>
+          <div class="event-count-wrap">
+            <span class="event-count-label">当前告警</span>
+            <span id="event-count-badge" class="event-count-badge">-</span>
+          </div>
         </div>
-        <div class="list-item">
-          <div class="list-head"><strong>备用账号接管</strong><span class="badge warn">警告</span></div>
-          <p>yuanbao 主账号池耗尽，当前已切到备用账号组。</p>
+
+        <div class="combined-bar-sep"></div>
+
+        <!-- 队列阈值组 -->
+        <div class="settings-group">
+          <span class="settings-group-title">🚦 队列阈值</span>
+          <div class="settings-field">
+            <label for="warn-threshold">警告（黄色）</label>
+            <input type="number" id="warn-threshold" value="100" min="1" max="9999" />
+          </div>
+          <div class="settings-field">
+            <label for="crit-threshold">危险（红色）</label>
+            <input type="number" id="crit-threshold" value="500" min="2" max="99999" />
+          </div>
+          <button id="apply-threshold-btn" class="settings-apply-btn">应用</button>
         </div>
-        <div class="list-item">
-          <div class="list-head"><strong>消费者离线</strong><span class="badge danger">严重</span></div>
-          <p>afu@server-a 心跳超时 47 秒，任务回收尚未完成。</p>
+
+        <!-- 自动刷新组 -->
+        <div class="settings-group">
+          <span class="settings-group-title">⏱ 自动刷新</span>
+          <div class="settings-field">
+            <label for="auto-refresh-select">刷新间隔</label>
+            <select id="auto-refresh-select">
+              <option value="0">关闭</option>
+              <option value="5">5 分钟</option>
+              <option value="10">10 分钟</option>
+              <option value="30" selected>30 分钟</option>
+              <option value="60">60 分钟</option>
+            </select>
+          </div>
         </div>
+      </div>
+
+      <div class="auto-refresh-status" id="auto-refresh-status"></div>
+
+      <div class="list" id="alert-event-list" style="margin-top:14px;">
+        <div class="table-state">点击刷新加载当前告警...</div>
       </div>
     </article>
 
     <article class="card">
       <div class="card-title">
         <h2>告警汇总</h2>
-        <p>按处理状态区分待办工作。</p>
+        <p>实时告警统计与历史摘要。</p>
       </div>
-      <div class="kv-grid">
-        <div class="kv"><span>未处理</span><strong>6</strong></div>
-        <div class="kv"><span>处理中</span><strong>2</strong></div>
-        <div class="kv"><span>已抑制</span><strong>3</strong></div>
-        <div class="kv"><span>今日恢复</span><strong>12</strong></div>
+
+      <div class="kv-grid" id="alert-stats">
+        <div class="kv"><span>总告警</span><strong id="stat-total">-</strong></div>
+        <div class="kv"><span>未处理</span><strong id="stat-unacked">-</strong></div>
       </div>
-      <div class="code-block">[10:24:09] WARN queue=deepseek backlog=108 threshold=100
-[10:24:13] ERROR consumer=afu@server-a heartbeat_timeout=47s
-[10:24:16] WARN account_pool=yuanbao primary_exhausted=true
-[10:24:20] ERROR task=T-004 browser_timeout=true</div>
+
+      <div class="metric-row" style="margin-top: 18px;" id="category-metrics"></div>
+      <div class="metric-row" style="margin-top: 18px;" id="level-metrics"></div>
+
+      <div class="code-block" id="alert-timeline" style="margin-top: 18px;">等待数据加载...</div>
     </article>
   </section>
+
+  <script>
+    const state = { category: "", level: "" };
+
+    // ── DOM refs ──────────────────────────────────────────────────────────
+    const categoryFilter    = document.getElementById("category-filter");
+    const levelFilter       = document.getElementById("level-filter");
+    const eventList         = document.getElementById("alert-event-list");
+    const eventCountBadge   = document.getElementById("event-count-badge");
+    const refreshBtn        = document.getElementById("refresh-btn");
+    const feedbackBanner    = document.getElementById("alert-feedback");
+    const alertTimeline     = document.getElementById("alert-timeline");
+    const statTotal         = document.getElementById("stat-total");
+    const statUnacked       = document.getElementById("stat-unacked");
+    const categoryMetrics   = document.getElementById("category-metrics");
+    const levelMetrics      = document.getElementById("level-metrics");
+    const lastRefreshLabel  = document.getElementById("last-refresh-label");
+    const warnThresholdInput = document.getElementById("warn-threshold");
+    const critThresholdInput = document.getElementById("crit-threshold");
+    const applyThresholdBtn = document.getElementById("apply-threshold-btn");
+    const autoRefreshSelect = document.getElementById("auto-refresh-select");
+    const autoRefreshStatus = document.getElementById("auto-refresh-status");
+
+    let feedbackTimer = null;
+    let autoRefreshTimer = null;
+    let countdownTimer = null;
+    let nextRefreshAt = null;
+
+    // ── Helpers ───────────────────────────────────────────────────────────
+    function getCategoryDisplay(cat) {
+      return { task: "任务告警", queue: "队列告警", account: "账号告警", system: "系统告警" }[cat] || cat;
+    }
+    function getLevelBadge(level) {
+      if (level === "yellow") return "badge warn";
+      if (level === "red")    return "badge danger";
+      if (level === "error")  return "badge dark";
+      return "badge";
+    }
+    function getLevelLabel(level) {
+      if (level === "yellow") return "🟡 黄色";
+      if (level === "red")    return "🔴 红色";
+      if (level === "error")  return "❌ 错误";
+      return level;
+    }
+    function formatMeta(meta) {
+      if (!meta || !Object.keys(meta).length) return "";
+      try { return JSON.stringify(meta, null, 1); } catch (e) { return String(meta); }
+    }
+    function formatTime(isoStr) {
+      if (!isoStr) return "-";
+      try { return new Date(isoStr).toLocaleString("zh-CN", { hour12: false }); } catch (e) { return isoStr; }
+    }
+    function showFeedback(message, kind = "info") {
+      feedbackBanner.hidden = false;
+      feedbackBanner.className = `feedback-modal ${kind}`;
+      feedbackBanner.textContent = message;
+      if (feedbackTimer) clearTimeout(feedbackTimer);
+      feedbackTimer = setTimeout(() => { feedbackBanner.hidden = true; }, 2600);
+    }
+    function updateLastRefreshLabel() {
+      lastRefreshLabel.textContent = "上次刷新: " + new Date().toLocaleTimeString("zh-CN", { hour12: false });
+    }
+
+    // ── Render ────────────────────────────────────────────────────────────
+    function filterEvents(events) {
+      return events.filter(e => {
+        if (state.category && e.category !== state.category) return false;
+        if (state.level    && e.level    !== state.level)    return false;
+        return true;
+      });
+    }
+
+    function renderEvents(events) {
+      const filtered = filterEvents(events);
+      // 更新告警事件计数强调显示
+      eventCountBadge.textContent = filtered.length;
+      eventCountBadge.className = "event-count-badge " + (filtered.length > 0 ? "has-alerts" : "no-alerts");
+      if (!filtered.length) {
+        eventList.innerHTML = '<div class="table-state">当前没有告警事件 ✅</div>';
+        return;
+      }
+      eventList.innerHTML = filtered.map((e) => {
+        const meta = e.metadata || {};
+        const detailId = `detail-${(e.id || Math.random().toString(36).slice(2)).replace(/[^a-z0-9]/gi, "-")}`;
+        const detailRows = [
+          meta.task_id        ? `<div class="detail-kv"><span class="dk">任务 ID</span><span class="dv">${meta.task_id}</span></div>` : "",
+          meta.question_id    ? `<div class="detail-kv"><span class="dk">问题 ID</span><span class="dv">${meta.question_id}</span></div>` : "",
+          meta.question_name  ? `<div class="detail-kv"><span class="dk">问题内容</span><span class="dv">${meta.question_name}</span></div>` : "",
+          meta.round_num != null ? `<div class="detail-kv"><span class="dk">执行轮次</span><span class="dv">第 ${meta.round_num} 轮</span></div>` : "",
+          meta.queue_name     ? `<div class="detail-kv"><span class="dk">队列</span><span class="dv">${meta.queue_name}</span></div>` : "",
+          meta.elapsed_seconds != null ? `<div class="detail-kv"><span class="dk">已运行</span><span class="dv">${meta.elapsed_seconds} 秒</span></div>` : "",
+        ].filter(Boolean).join("");
+        const hasDetail = detailRows.length > 0;
+        return `
+          <div class="list-item">
+            <div class="list-head">
+              <strong>${getCategoryDisplay(e.category)} · ${e.name}</strong>
+              <span class="${getLevelBadge(e.level)}">${getLevelLabel(e.level)}</span>
+            </div>
+            <div class="kv-grid">
+              <div class="kv"><span>时间</span><strong style="font-size:13px;">${formatTime(e.triggered_at)}</strong></div>
+            </div>
+            <p>${e.message}</p>
+            ${hasDetail ? `
+              <button class="detail-toggle" onclick="var p=document.getElementById('${detailId}');p.classList.toggle('open');this.textContent=p.classList.contains('open')?'▲ 收起详情':'▼ 查看详情'">▼ 查看详情</button>
+              <div class="detail-panel" id="${detailId}">${detailRows}</div>
+            ` : ""}
+          </div>`;
+      }).join("");
+    }
+
+    function renderTimeline(events) {
+      const lines = events.slice(0, 10).map((e) => {
+        return `${formatTime(e.triggered_at)} [${e.level.toUpperCase()}] category=${e.category} name=${e.name}\n  ${e.message}`;
+      });
+      alertTimeline.textContent = lines.length ? lines.join("\n\n") : "暂无告警事件";
+    }
+
+    function renderStats(summary) {
+      statTotal.textContent  = summary.total_events  ?? 0;
+      statUnacked.textContent = summary.unacknowledged ?? 0;
+
+      const catMap = summary.by_category || {};
+      const catDisplay = { task: "任务", queue: "队列", account: "账号", system: "系统" };
+      let catMax = Math.max(1, ...Object.values(catMap));
+      categoryMetrics.innerHTML = ["task", "queue", "account", "system"].map((cat) => {
+        const count = catMap[cat] || 0;
+        const pct = Math.round((count / catMax) * 100);
+        return `<div class="metric-item">
+          <div class="metric-head"><span>${catDisplay[cat] || cat}</span><strong>${count}</strong></div>
+          <div class="metric-track"><div class="metric-fill" style="width:${pct}%;"></div></div>
+        </div>`;
+      }).join("");
+
+      const lvlMap = summary.by_level || {};
+      const lvlDisplay = { yellow: "🟡 黄色", red: "🔴 红色", error: "❌ 错误" };
+      let lvlMax = Math.max(1, ...Object.values(lvlMap));
+      levelMetrics.innerHTML = ["yellow", "red", "error"].map((lvl) => {
+        const count = lvlMap[lvl] || 0;
+        const pct = Math.round((count / lvlMax) * 100);
+        return `<div class="metric-item">
+          <div class="metric-head"><span>${lvlDisplay[lvl] || lvl}</span><strong>${count}</strong></div>
+          <div class="metric-track"><div class="metric-fill" style="width:${pct}%;"></div></div>
+        </div>`;
+      }).join("");
+    }
+
+    // ── Auto-refresh countdown ────────────────────────────────────────────
+    function clearCountdown() {
+      if (countdownTimer) { clearInterval(countdownTimer); countdownTimer = null; }
+      autoRefreshStatus.textContent = "";
+      autoRefreshStatus.className = "auto-refresh-status countdown-off";
+    }
+    function startCountdown(minutes) {
+      clearCountdown();
+      if (!minutes) { autoRefreshStatus.textContent = "自动刷新已关闭"; return; }
+      nextRefreshAt = Date.now() + minutes * 60 * 1000;
+      function tick() {
+        const remaining = Math.max(0, Math.ceil((nextRefreshAt - Date.now()) / 1000));
+        const m = Math.floor(remaining / 60), s = remaining % 60;
+        autoRefreshStatus.textContent = `下次自动刷新: ${m}分${String(s).padStart(2,"0")}秒后`;
+        autoRefreshStatus.className = "auto-refresh-status countdown-active";
+      }
+      tick();
+      countdownTimer = setInterval(tick, 1000);
+    }
+    function scheduleAutoRefresh() {
+      if (autoRefreshTimer) { clearTimeout(autoRefreshTimer); autoRefreshTimer = null; }
+      const minutes = parseInt(autoRefreshSelect.value, 10);
+      if (!minutes) { clearCountdown(); return; }
+      startCountdown(minutes);
+      autoRefreshTimer = setTimeout(() => {
+        doForceCheck();
+        scheduleAutoRefresh();
+      }, minutes * 60 * 1000);
+    }
+
+    // ── Core actions ──────────────────────────────────────────────────────
+    async function doForceCheck() {
+      refreshBtn.disabled = true;
+      refreshBtn.textContent = "检测中...";
+      eventList.innerHTML = '<div class="table-state">正在重新检测系统状态...</div>';
+      try {
+        const res = await fetch("/alerts/force-check", { method: "POST" });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        renderEvents(data.events);
+        renderTimeline(data.events);
+        renderStats(data.summary);
+        updateLastRefreshLabel();
+        showFeedback(`检测完成，发现 ${data.events.length} 条告警`, data.events.length ? "warn" : "success");
+      } catch (err) {
+        eventList.innerHTML = `<div class="table-state">刷新失败：${err.message}</div>`;
+        showFeedback(`刷新失败：${err.message}`, "error");
+      } finally {
+        refreshBtn.disabled = false;
+        refreshBtn.textContent = "🔄 刷新";
+      }
+    }
+
+    async function applyThresholds() {
+      const warning  = parseInt(warnThresholdInput.value, 10);
+      const critical = parseInt(critThresholdInput.value, 10);
+      if (isNaN(warning) || isNaN(critical) || critical <= warning) {
+        showFeedback("阈值无效：危险值必须大于警告值", "error");
+        return;
+      }
+      applyThresholdBtn.disabled = true;
+      applyThresholdBtn.textContent = "应用中...";
+      try {
+        const res = await fetch(`/alerts/config/queue-thresholds?warning=${warning}&critical=${critical}`, { method: "PATCH" });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        // 阈值更新成功后立即重新检测，使告警级别按新阈值刷新
+        await doForceCheck();
+        showFeedback(`阈值已更新（警告>${data.warning_threshold} / 危险>${data.critical_threshold}），告警已按新阈值重新评估`, "success");
+      } catch (err) {
+        showFeedback(`阈值更新失败：${err.message}`, "error");
+      } finally {
+        applyThresholdBtn.disabled = false;
+        applyThresholdBtn.textContent = "应用";
+      }
+    }
+
+    // ── Event listeners ───────────────────────────────────────────────────
+    categoryFilter.addEventListener("change", () => {
+      state.category = categoryFilter.value;
+      // Re-render from last data if available
+      if (window._lastEvents) renderEvents(window._lastEvents);
+    });
+    levelFilter.addEventListener("change", () => {
+      state.level = levelFilter.value;
+      if (window._lastEvents) renderEvents(window._lastEvents);
+    });
+    refreshBtn.addEventListener("click", () => {
+      doForceCheck();
+      scheduleAutoRefresh();
+    });
+    applyThresholdBtn.addEventListener("click", applyThresholds);
+    autoRefreshSelect.addEventListener("change", scheduleAutoRefresh);
+
+    // Wrap renderEvents to cache last events for filter re-renders
+    const _origRenderEvents = renderEvents;
+    window.renderEvents = function(events) {
+      window._lastEvents = events;
+      _origRenderEvents(events);
+    };
+
+    // ── Init ──────────────────────────────────────────────────────────────
+    scheduleAutoRefresh();
+    doForceCheck();
+  </script>
 </body>
 </html>

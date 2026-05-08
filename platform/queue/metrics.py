@@ -109,7 +109,10 @@ class QueueMetricsStore:
         payload = client.lindex(queue_name, -1)
         if payload is None:
             return None
-        message = self._deserialize(payload)
+        try:
+            message = self._deserialize(payload)
+        except (ValueError, Exception):
+            return None
         return self.normalize_timestamp(message.get("enqueued_at"))
 
     def _oldest_priority_enqueued_timestamp(self, queue_name: str) -> int | None:

@@ -192,14 +192,15 @@
   </div>
 
   <script>
+    const _v = Date.now();
     const pages = {
-      tasks: "pages/tasks.html",
-      queues: "pages/queues.html",
-      accounts: "pages/accounts.html",
-      alerts: "pages/alerts.html",
-      control: "pages/control.html",
-      health: "pages/health.html",
-      logs: "pages/logs.html"
+      tasks: `pages/tasks.html?v=${_v}`,
+      queues: `pages/queues.html?v=${_v}`,
+      accounts: `pages/accounts.html?v=${_v}`,
+      alerts: `pages/alerts.html?v=${_v}`,
+      control: `pages/control.html?v=${_v}`,
+      health: `pages/health.html?v=${_v}`,
+      logs: `pages/logs.html?v=${_v}`
     };
 
     const navItems = document.querySelectorAll(".nav-item");
@@ -208,8 +209,11 @@
     function activatePage(pageKey) {
       const target = pages[pageKey] ? pageKey : "tasks";
       const activeItem = Array.from(navItems).find((item) => item.dataset.page === target);
-      if (!frame.src.endsWith(pages[target])) {
-        frame.src = pages[target];
+      const targetUrl = pages[target];
+      const currentBase = frame.src.split('?')[0];
+      const targetBase = location.origin + '/' + targetUrl.split('?')[0];
+      if (currentBase !== targetBase) {
+        frame.src = targetUrl;
       }
       navItems.forEach((item) => {
         item.classList.toggle("active", item.dataset.page === target);

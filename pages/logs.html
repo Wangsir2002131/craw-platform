@@ -5,37 +5,354 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>日志</title>
   <link rel="stylesheet" href="shared.css" />
+  <style>
+    .global-toolbar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      padding: 10px 16px;
+      background: #f8f8f8;
+      border: 1px solid #ebebeb;
+      border-radius: 8px;
+      margin-bottom: 18px;
+    }
+    .global-toolbar label { font-size: 13px; color: #555; }
+    .global-toolbar select {
+      padding: 4px 8px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 13px;
+      background: #fff;
+      cursor: pointer;
+    }
+    .global-toolbar button {
+      padding: 5px 14px;
+      border-radius: 6px;
+      border: none;
+      background: #333;
+      color: #fff;
+      font-size: 13px;
+      cursor: pointer;
+    }
+    .global-toolbar button:hover { background: #555; }
+    .auto-refresh-label {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 13px;
+      color: #555;
+      cursor: pointer;
+      user-select: none;
+    }
+    .refresh-indicator {
+      margin-left: auto;
+      font-size: 12px;
+      color: #aaa;
+    }
+    .refresh-indicator.active { color: #22a06b; font-weight: 600; }
+
+    .log-toolbar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+    }
+    .log-toolbar input[type="text"] {
+      flex: 1;
+      min-width: 100px;
+      padding: 5px 10px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 13px;
+      background: #f9f9f9;
+      outline: none;
+    }
+    .log-toolbar input[type="text"]:focus { border-color: #999; background: #fff; }
+    .log-toolbar select {
+      padding: 5px 8px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 13px;
+      background: #f9f9f9;
+      cursor: pointer;
+    }
+    .log-count { font-size: 12px; color: #888; white-space: nowrap; }
+    .log-count strong { color: #333; }
+
+    .code-block {
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 12px;
+      background: #1a1a1a;
+      color: #d4d4d4;
+      border-radius: 8px;
+      padding: 12px 14px;
+      overflow-y: auto;
+      max-height: 460px;
+      line-height: 1.7;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+    .code-block .ln-error { color: #f47067; }
+    .code-block .ln-warn  { color: #e5c07b; }
+    .code-block .ln-info  { color: #d4d4d4; }
+    .code-block .ln-debug { color: #666; }
+    .code-block .ln-empty { color: #444; font-style: italic; text-align: center; padding: 20px 0; display: block; }
+    mark { background: #ffe066; color: #222; border-radius: 2px; }
+
+    .log-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 6px;
+      font-size: 12px;
+      color: #aaa;
+    }
+    .scroll-btn {
+      font-size: 12px;
+      padding: 3px 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      background: #f5f5f5;
+      cursor: pointer;
+      color: #555;
+    }
+    .scroll-btn:hover { background: #e8e8e8; }
+  </style>
 </head>
 <body>
   <section class="page-head">
     <h1>日志</h1>
-    <p>查看主服务和消费者最近的执行日志片段。</p>
+    <p>查看主服务和消费者最近的执行日志片段，支持关键词过滤与自动刷新。</p>
   </section>
 
+  <!-- 全局工具栏 -->
+  <div class="global-toolbar">
+    <label for="lines-select">显示行数</label>
+    <select id="lines-select">
+      <option value="100">最近 100 行</option>
+      <option value="200" selected>最近 200 行</option>
+      <option value="500">最近 500 行</option>
+      <option value="1000">最近 1000 行</option>
+    </select>
+
+    <label class="auto-refresh-label">
+      <input type="checkbox" id="auto-refresh-toggle" />
+      自动刷新
+    </label>
+    <select id="refresh-interval-select" disabled>
+      <option value="5">每 5 秒</option>
+      <option value="10" selected>每 10 秒</option>
+      <option value="30">每 30 秒</option>
+    </select>
+
+    <button id="refresh-btn" type="button">立即刷新</button>
+    <span class="refresh-indicator" id="refresh-indicator">未开启自动刷新</span>
+  </div>
+
+  <!-- 双面板 -->
   <section class="layout-grid dual">
+
+    <!-- 主服务日志 -->
     <article class="card">
       <div class="card-title">
         <h2>主服务日志</h2>
-        <p>分发、告警和回写相关事件。</p>
+        <p>分发、告警、回写、调度相关事件。</p>
       </div>
-      <div class="code-block">[10:24:01] INFO dispatch task=T-001 priority=100 queue=deepseek
-[10:24:02] INFO assigned task=T-001 server=server-b
-[10:24:08] INFO result task=T-003 status=completed
-[10:24:09] WARN queue=deepseek backlog=108
-[10:24:13] WARN consumer=afu@server-a heartbeat_timeout</div>
+      <div class="log-toolbar">
+        <input type="text" id="master-kw" placeholder="关键词过滤（多词空格分隔）" />
+        <select id="master-lv">
+          <option value="">全部级别</option>
+          <option value="ERROR">ERROR</option>
+          <option value="WARN">WARN</option>
+          <option value="INFO">INFO</option>
+          <option value="DEBUG">DEBUG</option>
+        </select>
+        <span class="log-count">共 <strong id="master-count">0</strong> 行</span>
+      </div>
+      <div class="code-block" id="master-block"><span class="ln-empty">正在加载…</span></div>
+      <div class="log-footer">
+        <span id="master-ts"></span>
+        <button class="scroll-btn" onclick="scrollBottom('master-block')">↓ 滚到底部</button>
+      </div>
     </article>
 
+    <!-- 消费者日志 -->
     <article class="card">
       <div class="card-title">
         <h2>消费者日志</h2>
         <p>任务领取、账号使用和执行异常。</p>
       </div>
-      <div class="code-block">[10:23:55] INFO worker=deepseek received task=T-001
-[10:24:00] INFO account=deepseek-12 acquired=true
-[10:24:11] INFO execute question=9001
-[10:24:20] ERROR task=T-004 browser_timeout
-[10:24:21] INFO report task=T-004 status=failed</div>
+      <div class="log-toolbar">
+        <input type="text" id="consumer-kw" placeholder="关键词过滤（多词空格分隔）" />
+        <select id="consumer-lv">
+          <option value="">全部级别</option>
+          <option value="ERROR">ERROR</option>
+          <option value="WARN">WARN</option>
+          <option value="INFO">INFO</option>
+          <option value="DEBUG">DEBUG</option>
+        </select>
+        <span class="log-count">共 <strong id="consumer-count">0</strong> 行</span>
+      </div>
+      <div class="code-block" id="consumer-block"><span class="ln-empty">正在加载…</span></div>
+      <div class="log-footer">
+        <span id="consumer-ts"></span>
+        <button class="scroll-btn" onclick="scrollBottom('consumer-block')">↓ 滚到底部</button>
+      </div>
     </article>
+
   </section>
+
+  <script>
+    /* ── 数据状态 ── */
+    const DATA = { master: [], consumer: [] };
+    let autoTimer = null;
+
+    /* ── DOM ── */
+    const linesSelect    = document.getElementById("lines-select");
+    const arToggle       = document.getElementById("auto-refresh-toggle");
+    const arInterval     = document.getElementById("refresh-interval-select");
+    const refreshBtn     = document.getElementById("refresh-btn");
+    const indicator      = document.getElementById("refresh-indicator");
+
+    const masterKw       = document.getElementById("master-kw");
+    const masterLv       = document.getElementById("master-lv");
+    const masterBlock    = document.getElementById("master-block");
+    const masterCount    = document.getElementById("master-count");
+    const masterTs       = document.getElementById("master-ts");
+
+    const consumerKw     = document.getElementById("consumer-kw");
+    const consumerLv     = document.getElementById("consumer-lv");
+    const consumerBlock  = document.getElementById("consumer-block");
+    const consumerCount  = document.getElementById("consumer-count");
+    const consumerTs     = document.getElementById("consumer-ts");
+
+    /* ── 工具函数 ── */
+    function escHtml(s) {
+      return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+    }
+    function escRe(s) {
+      return s.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");
+    }
+
+    // 判断是否为消费者日志行（按 logger 模块名）
+    function isConsumer(line) {
+      return /\s-\s(platform\.consumers|afu_consumer|doubao_consumer|deepseek_consumer|yuanbao_consumer)\b/.test(line);
+    }
+
+    // 提取日志级别
+    function level(line) {
+      const m = line.match(/\s-\s(ERROR|WARNING|WARN|INFO|DEBUG)\s-\s/);
+      if (!m) return "";
+      return m[1] === "WARNING" ? "WARN" : m[1];
+    }
+
+    // CSS 类
+    function lvClass(line) {
+      const lv = level(line);
+      if (lv === "ERROR") return "ln-error";
+      if (lv === "WARN")  return "ln-warn";
+      if (lv === "DEBUG") return "ln-debug";
+      return "ln-info";
+    }
+
+    // 高亮关键词
+    function highlight(text, keywords) {
+      let s = escHtml(text);
+      keywords.forEach(kw => {
+        if (!kw) return;
+        s = s.replace(new RegExp(escRe(kw), "gi"), m => `<mark>${m}</mark>`);
+      });
+      return s;
+    }
+
+    /* ── 渲染单个面板 ── */
+    function renderPanel(lines, block, countEl, kwInput, lvSelect) {
+      const kws    = kwInput.value.trim().split(/\s+/).filter(Boolean);
+      const lvFilt = lvSelect.value;
+
+      let rows = lines;
+      if (lvFilt) rows = rows.filter(l => level(l) === lvFilt);
+      if (kws.length) rows = rows.filter(l => kws.every(k => l.toLowerCase().includes(k.toLowerCase())));
+
+      countEl.textContent = rows.length;
+
+      if (!rows.length) {
+        block.innerHTML = `<span class="ln-empty">${lines.length ? "无匹配日志" : "暂无数据"}</span>`;
+        return;
+      }
+      block.innerHTML = rows.map(l =>
+        `<div class="${lvClass(l)}">${highlight(l, kws)}</div>`
+      ).join("");
+    }
+
+    function renderAll() {
+      renderPanel(DATA.master,   masterBlock,   masterCount,   masterKw,   masterLv);
+      renderPanel(DATA.consumer, consumerBlock, consumerCount, consumerKw, consumerLv);
+    }
+
+    /* ── 加载日志 ── */
+    async function load() {
+      const n = parseInt(linesSelect.value, 10) || 200;
+      try {
+        const resp = await fetch(`/logs/master_server.log?lines=${n}`);
+        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+        const data = await resp.json();
+        const all  = (data.lines || []).filter(l => l.trim());
+
+        DATA.master   = all.filter(l => !isConsumer(l));
+        DATA.consumer = all.filter(l =>  isConsumer(l));
+
+        const ts = new Date().toLocaleTimeString();
+        masterTs.textContent   = `更新: ${ts}`;
+        consumerTs.textContent = `更新: ${ts}`;
+        renderAll();
+      } catch (err) {
+        const msg = `<span class="ln-empty" style="color:#f47067;">加载失败: ${escHtml(err.message)}</span>`;
+        masterBlock.innerHTML   = msg;
+        consumerBlock.innerHTML = msg;
+        masterTs.textContent    = "加载失败";
+        consumerTs.textContent  = "加载失败";
+      }
+    }
+
+    /* ── 自动刷新 ── */
+    function startAR() {
+      clearInterval(autoTimer);
+      const sec = parseInt(arInterval.value, 10) || 10;
+      autoTimer = setInterval(load, sec * 1000);
+      indicator.textContent  = `自动刷新中（每 ${sec} 秒）`;
+      indicator.className    = "refresh-indicator active";
+    }
+    function stopAR() {
+      clearInterval(autoTimer);
+      autoTimer = null;
+      indicator.textContent = "未开启自动刷新";
+      indicator.className   = "refresh-indicator";
+    }
+
+    function scrollBottom(id) {
+      const el = document.getElementById(id);
+      if (el) el.scrollTop = el.scrollHeight;
+    }
+
+    /* ── 事件绑定 ── */
+    refreshBtn.addEventListener("click", load);
+    linesSelect.addEventListener("change", load);
+    arToggle.addEventListener("change", () => {
+      arInterval.disabled = !arToggle.checked;
+      arToggle.checked ? startAR() : stopAR();
+    });
+    arInterval.addEventListener("change", () => { if (arToggle.checked) startAR(); });
+
+    masterKw.addEventListener("input",    renderAll);
+    masterLv.addEventListener("change",   renderAll);
+    consumerKw.addEventListener("input",  renderAll);
+    consumerLv.addEventListener("change", renderAll);
+
+    /* ── 初始加载 ── */
+    load();
+  </script>
 </body>
 </html>

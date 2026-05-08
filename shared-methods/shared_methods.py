@@ -70,7 +70,6 @@ DB_CONFIG = {
     'charset': 'utf8mb4',
     'cursorclass': pymysql.cursors.DictCursor
 }
-
 class DatabaseManager:
     """数据库连接管理类（单例模式，线程安全）"""
     _instance = None
