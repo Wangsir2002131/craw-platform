@@ -35,13 +35,13 @@ from platform.config import (  # noqa: E402
     DB_CONFIG,
     DISPATCH_INTERVAL,
     EXECUTE_CRAWLERS,
-    LOG_DIR,
     REDIS_URL,
 )
 from platform.consumers.manager import get_consumer_manager  # noqa: E402
 from platform.dispatcher.master_dispatcher import MasterDispatcher  # noqa: E402
 from platform.heartbeat.health_checker import HealthChecker  # noqa: E402
 from platform.heartbeat.master_heartbeat import MasterHeartbeat  # noqa: E402
+from platform.logging_config import configure_file_logging, route_uvicorn_logs_to_root  # noqa: E402
 from platform.tasks.result_listener import ResultListener  # noqa: E402
 
 
@@ -49,15 +49,8 @@ logger = logging.getLogger(__name__)
 
 
 def configure_logging() -> None:
-    LOG_DIR.mkdir(parents=True, exist_ok=True)
-    logging.basicConfig(
-        level=logging.INFO,
-        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-        handlers=[
-            logging.StreamHandler(),
-            logging.FileHandler(LOG_DIR / "master_server.log", encoding="utf-8"),
-        ],
-    )
+    configure_file_logging("master_server.log", level=logging.INFO, force=True)
+    route_uvicorn_logs_to_root()
 
 
 def build_api_app() -> FastAPI:
@@ -204,7 +197,7 @@ def run_result_listener(
 
 
 def run_api_server(host: str, port: int) -> None:
-    uvicorn.run(app, host=host, port=port, log_level="info")
+    uvicorn.run(app, host=host, port=port, log_level="info", log_config=None, access_log=True)
 
 
 def _build_dispatcher() -> MasterDispatcher:

@@ -15,6 +15,7 @@ from contextlib import contextmanager
 import requests as req
 import threading
 import random
+from pathlib import Path
 
 # ==================== 全局日志配置 ====================
 # 统一日志配置函数
@@ -36,7 +37,9 @@ def setup_global_logger():
     )
 
     # 文件处理器 - 所有日志输出到同一个文件
-    file_handler = logging.FileHandler('model_all.log', encoding='utf-8')
+    log_dir = Path(__file__).resolve().parent.parent / "logs"
+    log_dir.mkdir(parents=True, exist_ok=True)
+    file_handler = logging.FileHandler(log_dir / 'model_all.log', encoding='utf-8')
     file_handler.setFormatter(formatter)
     root_logger.addHandler(file_handler)
 
