@@ -8,7 +8,6 @@ __pycache__/
 pyproject.toml
 dump.rdb
 uv.lock
-model_all.log
 
 爬虫平台架构设计.md
 爬虫平台项目推进流程.md

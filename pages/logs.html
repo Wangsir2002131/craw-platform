@@ -236,11 +236,6 @@
       return s.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");
     }
 
-    // 判断是否为消费者日志行（按 logger 模块名）
-    function isConsumer(line) {
-      return /\s-\s(platform\.consumers|afu_consumer|doubao_consumer|deepseek_consumer|yuanbao_consumer)\b/.test(line);
-    }
-
     // 提取日志级别
     function level(line) {
       const m = line.match(/\s-\s(ERROR|WARNING|WARN|INFO|DEBUG)\s-\s/);
@@ -293,16 +288,24 @@
     }
 
     /* ── 加载日志 ── */
+    async function fetchLogLines(logName, lines) {
+      const resp = await fetch(`/logs/${logName}?lines=${lines}`);
+      if (resp.status === 404) return [];
+      if (!resp.ok) throw new Error(`${logName}: HTTP ${resp.status}`);
+      const data = await resp.json();
+      return (data.lines || []).filter(l => l.trim());
+    }
+
     async function load() {
       const n = parseInt(linesSelect.value, 10) || 200;
       try {
-        const resp = await fetch(`/logs/master_server.log?lines=${n}`);
-        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-        const data = await resp.json();
-        const all  = (data.lines || []).filter(l => l.trim());
+        const [masterLines, consumerLines] = await Promise.all([
+          fetchLogLines("master_server.log", n),
+          fetchLogLines("model_all.log", n),
+        ]);
 
-        DATA.master   = all.filter(l => !isConsumer(l));
-        DATA.consumer = all.filter(l =>  isConsumer(l));
+        DATA.master   = masterLines;
+        DATA.consumer = consumerLines;
 
         const ts = new Date().toLocaleTimeString();
         masterTs.textContent   = `更新: ${ts}`;

@@ -14,6 +14,7 @@ sys.path.insert(0, str(PROJECT_ROOT))
 from platform.config import DB_CONFIG  # noqa: E402
 from platform.consumers.yuanbao_consumer import YuanbaoConsumer  # noqa: E402
 from platform.consumers.supervisor import ConsumerSupervisor  # noqa: E402
+from platform.logging_config import configure_file_logging  # noqa: E402
 from platform.queue.protocol import get_queue_name  # noqa: E402
 
 
@@ -27,10 +28,7 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def configure_logging(level: str) -> None:
-    logging.basicConfig(
-        level=getattr(logging, level.upper(), logging.INFO),
-        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-    )
+    configure_file_logging("model_all.log", level=getattr(logging, level.upper(), logging.INFO), force=True)
 
 
 def main() -> int:
