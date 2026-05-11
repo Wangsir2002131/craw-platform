@@ -4,9 +4,9 @@ from __future__ import annotations
 
 import sys
 
-from platform.alerts.alert_manager import AlertEvent
-from platform.alerts.alert_levels import ALERT_CATEGORY_DISPLAY, ALERT_LEVEL_DISPLAY
-from platform.alerts.notifiers.base import BaseNotifier
+from craw_platform.alerts.alert_manager import AlertEvent
+from craw_platform.alerts.alert_levels import ALERT_CATEGORY_DISPLAY, ALERT_LEVEL_DISPLAY
+from craw_platform.alerts.notifiers.base import BaseNotifier
 
 
 class ConsoleNotifier(BaseNotifier):
