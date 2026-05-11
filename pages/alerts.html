@@ -33,27 +33,37 @@
     }
     .combined-bar {
       display: flex;
-      flex-direction: column;
-      gap: 10px;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      gap: 8px;
       margin-top: 14px;
       width: 100%;
+      align-items: stretch;
     }
     .combined-bar-sep {
-      display: none;
+      display: block;
+      width: 1px;
+      min-width: 1px;
+      background: #dde0e5;
+      align-self: center;
+      height: 36px;
+      flex-shrink: 0;
     }
     .combined-bar .settings-group {
-      width: 100%;
+      flex: 1 1 auto;
+      min-width: 0;
+      width: auto;
+      overflow: hidden;
     }
     .settings-group {
       display: flex;
       align-items: center;
       flex-wrap: nowrap;
-      gap: 10px;
-      padding: 10px 14px;
+      gap: 6px;
+      padding: 10px 12px;
       background: #f8f9fa;
       border: 1px solid #e8eaed;
       border-radius: 10px;
-      overflow: hidden;
     }
     .settings-group-title {
       font-size: 11px;
@@ -64,36 +74,46 @@
       padding-right: 6px;
       border-right: 1px solid #ddd;
       margin-right: 2px;
-      white-space: nowrap;
       align-self: center;
+      flex-shrink: 0;
+      text-align: center;
+      line-height: 1.4;
     }
     .settings-field {
       display: flex;
       flex-direction: column;
       gap: 3px;
+      flex: 1 1 auto;
+      min-width: 0;
+      overflow: hidden;
     }
     .settings-field label {
       font-size: 11px;
       color: #999;
       font-weight: 500;
       white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     .settings-field input[type="number"] {
-      width: 72px;
-      padding: 5px 8px;
+      width: 100%;
+      max-width: 72px;
+      min-width: 0;
+      padding: 5px 6px;
       border: 1px solid #d0d0d0;
       border-radius: 6px;
       font-size: 13px;
       background: #fff;
       color: #333;
       transition: border-color .15s;
+      box-sizing: border-box;
     }
     .settings-field input[type="number"]:focus {
       outline: none;
       border-color: #4a90e2;
     }
     .settings-field select {
-      padding: 5px 28px 5px 8px;
+      padding: 5px 24px 5px 6px;
       border: 1px solid #d0d0d0;
       border-radius: 6px;
       font-size: 13px;
@@ -102,16 +122,19 @@
       appearance: none;
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23999'/%3E%3C/svg%3E");
       background-repeat: no-repeat;
-      background-position: right 8px center;
+      background-position: right 6px center;
       cursor: pointer;
       transition: border-color .15s;
+      width: 100%;
+      min-width: 0;
+      box-sizing: border-box;
     }
     .settings-field select:focus {
       outline: none;
       border-color: #4a90e2;
     }
     .settings-apply-btn {
-      padding: 6px 14px;
+      padding: 5px 10px;
       font-size: 12px;
       font-weight: 600;
       color: #fff;
@@ -120,7 +143,8 @@
       border-radius: 6px;
       cursor: pointer;
       white-space: nowrap;
-      align-self: flex-end;
+      flex-shrink: 0;
+      align-self: center;
       transition: background .15s;
     }
     .settings-apply-btn:hover { background: #357abd; }
@@ -198,29 +222,24 @@
       font-family: Consolas, monospace;
     }
 
-    /* ── Wide screens: horizontal layout ─────────────────────────────── */
-    @media (min-width: 1400px) {
+    /* ── Small screens: stack vertically ──────────────────────────────── */
+    @media (max-width: 760px) {
       .combined-bar {
-        flex-direction: row;
+        flex-direction: column;
         flex-wrap: nowrap;
-        align-items: flex-end;
-        gap: 8px;
+        gap: 10px;
       }
       .combined-bar-sep {
-        display: block;
-        width: 1px;
-        height: 36px;
-        background: #dde0e5;
-        align-self: center;
-        flex-shrink: 0;
+        display: none;
       }
       .combined-bar .settings-group {
-        flex: 1 1 auto;
-        width: auto;
+        flex: none;
+        width: 100%;
+        min-width: auto;
       }
     }
 
-    /* ── Responsive: small screens ──────────────────────────────────── */
+    /* ── Responsive: very small screens ─────────────────────────────── */
     @media (max-width: 640px) {
       .card-header-row {
         flex-direction: column;
@@ -348,7 +367,7 @@
 
         <!-- 队列阈值组 -->
         <div class="settings-group">
-          <span class="settings-group-title">🚦 队列阈值</span>
+          <span class="settings-group-title">队列<br>阈值</span>
           <div class="settings-field">
             <label for="warn-threshold">警告（黄色）</label>
             <input type="number" id="warn-threshold" value="100" min="1" max="9999" />
@@ -362,7 +381,7 @@
 
         <!-- 自动刷新组 -->
         <div class="settings-group">
-          <span class="settings-group-title">⏱ 自动刷新</span>
+          <span class="settings-group-title">自动<br>刷新</span>
           <div class="settings-field">
             <label for="auto-refresh-select">刷新间隔</label>
             <select id="auto-refresh-select">
