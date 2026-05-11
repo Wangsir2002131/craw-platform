@@ -18,7 +18,7 @@ from fastapi.staticfiles import StaticFiles
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from platform.alerts import (  # noqa: E402
+from craw_platform.alerts import (  # noqa: E402
     AccountMonitor,
     ConsoleNotifier,
     LogNotifier,
@@ -27,20 +27,20 @@ from platform.alerts import (  # noqa: E402
     TaskMonitor,
     get_alert_manager,
 )
-from platform.alerts.alert_manager import register_monitor  # noqa: E402
-from platform.alerts.monitors.base import BaseMonitor  # noqa: E402
-from platform.api.routes.account import dashboard_router as dashboard_account_router  # noqa: E402
-from platform.api.routes.account import router as account_router  # noqa: E402
-from platform.api.routes.alert import router as alert_router  # noqa: E402
-from platform.api.routes.control import get_control_state  # noqa: E402
-from platform.api.routes.control import router as control_router  # noqa: E402
-from platform.api.routes.log import router as log_router  # noqa: E402
-from platform.api.routes.queue import dashboard_router as dashboard_queue_router  # noqa: E402
-from platform.api.routes.queue import router as queue_router  # noqa: E402
-from platform.api.routes.stats import router as stats_router  # noqa: E402
-from platform.api.routes.task import dashboard_router as dashboard_task_router  # noqa: E402
-from platform.api.routes.task import router as task_router  # noqa: E402
-from platform.config import (  # noqa: E402
+from craw_platform.alerts.alert_manager import register_monitor  # noqa: E402
+from craw_platform.alerts.monitors.base import BaseMonitor  # noqa: E402
+from craw_platform.api.routes.account import dashboard_router as dashboard_account_router  # noqa: E402
+from craw_platform.api.routes.account import router as account_router  # noqa: E402
+from craw_platform.api.routes.alert import router as alert_router  # noqa: E402
+from craw_platform.api.routes.control import get_control_state  # noqa: E402
+from craw_platform.api.routes.control import router as control_router  # noqa: E402
+from craw_platform.api.routes.log import router as log_router  # noqa: E402
+from craw_platform.api.routes.queue import dashboard_router as dashboard_queue_router  # noqa: E402
+from craw_platform.api.routes.queue import router as queue_router  # noqa: E402
+from craw_platform.api.routes.stats import router as stats_router  # noqa: E402
+from craw_platform.api.routes.task import dashboard_router as dashboard_task_router  # noqa: E402
+from craw_platform.api.routes.task import router as task_router  # noqa: E402
+from craw_platform.config import (  # noqa: E402
     BATCH_SIZE,
     CRAWLER_MODULES,
     DB_CONFIG,
@@ -48,12 +48,12 @@ from platform.config import (  # noqa: E402
     EXECUTE_CRAWLERS,
     REDIS_URL,
 )
-from platform.consumers.manager import get_consumer_manager  # noqa: E402
-from platform.dispatcher.master_dispatcher import MasterDispatcher  # noqa: E402
-from platform.heartbeat.health_checker import HealthChecker  # noqa: E402
-from platform.heartbeat.master_heartbeat import MasterHeartbeat  # noqa: E402
-from platform.logging_config import configure_file_logging, route_uvicorn_logs_to_root  # noqa: E402
-from platform.tasks.result_listener import ResultListener  # noqa: E402
+from craw_platform.consumers.manager import get_consumer_manager  # noqa: E402
+from craw_platform.dispatcher.master_dispatcher import MasterDispatcher  # noqa: E402
+from craw_platform.heartbeat.health_checker import HealthChecker  # noqa: E402
+from craw_platform.heartbeat.master_heartbeat import MasterHeartbeat  # noqa: E402
+from craw_platform.logging_config import configure_file_logging, route_uvicorn_logs_to_root  # noqa: E402
+from craw_platform.tasks.result_listener import ResultListener  # noqa: E402
 
 
 logger = logging.getLogger(__name__)
@@ -220,7 +220,10 @@ def _build_dispatcher() -> MasterDispatcher:
 
 
 def _start_alert_monitors() -> list[BaseMonitor]:
-    """Initialize AlertManager notifiers and start all alert monitors."""
+    """Initialize AlertManager notifiers and start all alert monitors.
+
+    Returns the list of started monitors so callers can stop them gracefully.
+    """
     alert_manager = get_alert_manager()
     alert_manager.register_notifier(LogNotifier())
     alert_manager.register_notifier(ConsoleNotifier())
@@ -236,14 +239,6 @@ def _start_alert_monitors() -> list[BaseMonitor]:
         monitor.start()
     logger.info("alert monitors started: %s", [m.monitor_name for m in monitors])
     return monitors
-
-
-def _stop_alert_monitors(monitors: list[BaseMonitor]) -> None:
-    for monitor in monitors:
-        try:
-            monitor.stop(timeout=2.0)
-        except Exception:
-            logger.exception("failed to stop monitor %s", monitor.monitor_name)
 
 
 def _start_background_threads(
@@ -328,7 +323,11 @@ def main(argv: list[str] | None = None) -> int:
         try:
             run_api_server(args.host, args.port)
         finally:
-            _stop_alert_monitors(monitors)
+            for monitor in monitors:
+                try:
+                    monitor.stop(timeout=2.0)
+                except Exception:
+                    logger.exception("failed to stop monitor %s", monitor.monitor_name)
         return 0
 
     if not args.forever and not args.dispatcher_only:
@@ -362,7 +361,11 @@ def main(argv: list[str] | None = None) -> int:
         stop_event.set()
         for thread in threads:
             thread.join(timeout=2)
-        _stop_alert_monitors(monitors)
+        for monitor in monitors:
+            try:
+                monitor.stop(timeout=2.0)
+            except Exception:
+                logger.exception("failed to stop monitor %s", monitor.monitor_name)
         get_consumer_manager().shutdown()
 
     return 0
