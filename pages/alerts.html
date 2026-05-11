@@ -202,6 +202,94 @@
       word-break: break-all;
       font-family: Consolas, monospace;
     }
+
+    /* ── Responsive: medium screens ─────────────────────────────────── */
+    @media (max-width: 1100px) {
+      .combined-bar {
+        flex-direction: column;
+        gap: 10px;
+      }
+      .combined-bar-sep {
+        display: none;
+      }
+      .combined-bar .settings-group {
+        flex: none;
+        width: 100%;
+      }
+    }
+
+    /* ── Responsive: small screens ──────────────────────────────────── */
+    @media (max-width: 760px) {
+      .card-header-row {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .header-actions {
+        justify-content: flex-end;
+        padding-top: 0;
+      }
+      .settings-group {
+        flex-wrap: wrap;
+      }
+      .event-count-wrap {
+        border-left: none;
+        padding-left: 0;
+        margin-left: 0;
+        border-top: 1px solid #e0e3e8;
+        padding-top: 8px;
+        margin-top: 4px;
+        flex-direction: row;
+        gap: 8px;
+      }
+      .list-head {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+      }
+      .list-head strong {
+        font-size: 15px;
+      }
+      .detail-kv {
+        flex-direction: column;
+        gap: 2px;
+      }
+      .detail-kv .dk {
+        min-width: 0;
+      }
+    }
+
+    /* ── Responsive: extra small screens ────────────────────────────── */
+    @media (max-width: 480px) {
+      .settings-group {
+        padding: 8px 10px;
+        gap: 8px;
+      }
+      .settings-group-title {
+        border-right: none;
+        padding-right: 0;
+        margin-right: 0;
+        width: 100%;
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 6px;
+        margin-bottom: 2px;
+      }
+      .settings-field input[type="number"] {
+        width: 60px;
+      }
+      .settings-field select {
+        min-width: 0;
+        max-width: 100%;
+      }
+      .settings-apply-btn {
+        width: 100%;
+      }
+      .event-count-badge {
+        font-size: 18px;
+      }
+      .list-item {
+        padding: 12px;
+      }
+    }
   </style>
 </head>
 <body>
