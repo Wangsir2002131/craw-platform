@@ -253,6 +253,7 @@ def list_accounts(
 def list_dashboard_accounts(
     page: int = Query(default=1, ge=1),
     page_size: int = Query(default=5, ge=1, le=100),
+    account_filter: str = Query(default="", alias="account"),
     crawler_filter: str = Query(default="", alias="crawler"),
     status_filter: str = Query(default="", alias="status"),
     account_type_filter: str = Query(default="", alias="account_type"),
@@ -260,6 +261,7 @@ def list_dashboard_accounts(
 ) -> dict[str, Any]:
     account_service = service
     all_items = account_service.list_dashboard_accounts()
+    normalized_account_filter = account_filter.strip().lower()
 
     crawler_options = sorted({item["crawler"] for item in all_items if item["crawler"] and item["crawler"] != "-"})
     status_options = sorted({item["status"] for item in all_items if item["status"] and item["status"] != "-"})
@@ -268,6 +270,13 @@ def list_dashboard_accounts(
     )
 
     filtered_items = all_items
+    if normalized_account_filter:
+        filtered_items = [
+            item
+            for item in filtered_items
+            if normalized_account_filter in str(item.get("account") or "").lower()
+            or normalized_account_filter in str(item.get("id") or "").lower()
+        ]
     if crawler_filter:
         filtered_items = [item for item in filtered_items if item["crawler"] == crawler_filter]
     if status_filter:
@@ -299,6 +308,7 @@ def list_dashboard_accounts(
             "statusOptions": status_options,
             "accountTypeOptions": account_type_options,
             "selected": {
+                "account": account_filter,
                 "crawler": crawler_filter,
                 "status": status_filter,
                 "accountType": account_type_filter,

@@ -3,7 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>爬虫平台</title>
+  <meta http-equiv="Cache-Control" content="no-store" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <title>GeoSpider</title>
   <style>
     :root {
       --bg: #f5f6f8;
@@ -148,7 +151,7 @@
 <body>
   <div class="app-shell">
     <aside class="sidebar">
-      <div class="brand">爬虫平台</div>
+      <div class="brand">GeoSpider</div>
       <nav class="nav" aria-label="主导航">
         <button class="nav-item" data-page="tasks" type="button">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6h11"></path><path d="M9 12h11"></path><path d="M9 18h11"></path><path d="M4 6h.01"></path><path d="M4 12h.01"></path><path d="M4 18h.01"></path></svg>
@@ -210,9 +213,9 @@
       const target = pages[pageKey] ? pageKey : "tasks";
       const activeItem = Array.from(navItems).find((item) => item.dataset.page === target);
       const targetUrl = pages[target];
-      const currentBase = frame.src.split('?')[0];
-      const targetBase = location.origin + '/' + targetUrl.split('?')[0];
-      if (currentBase !== targetBase) {
+      const currentUrl = new URL(frame.src, location.href);
+      const targetAbsoluteUrl = new URL(targetUrl, location.href);
+      if (currentUrl.href !== targetAbsoluteUrl.href) {
         frame.src = targetUrl;
       }
       navItems.forEach((item) => {
