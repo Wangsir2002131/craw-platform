@@ -20,8 +20,6 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from craw_platform.alerts import (  # noqa: E402
     AccountMonitor,
-    ConsoleNotifier,
-    LogNotifier,
     QueueMonitor,
     SystemMonitor,
     TaskMonitor,
@@ -34,6 +32,7 @@ from craw_platform.api.routes.account import router as account_router  # noqa: E
 from craw_platform.api.routes.alert import router as alert_router  # noqa: E402
 from craw_platform.api.routes.control import get_control_state  # noqa: E402
 from craw_platform.api.routes.control import router as control_router  # noqa: E402
+from craw_platform.api.routes.health_status import router as health_status_router  # noqa: E402
 from craw_platform.api.routes.log import router as log_router  # noqa: E402
 from craw_platform.api.routes.queue import dashboard_router as dashboard_queue_router  # noqa: E402
 from craw_platform.api.routes.queue import router as queue_router  # noqa: E402
@@ -75,6 +74,7 @@ def build_api_app() -> FastAPI:
     app.include_router(account_router)
     app.include_router(alert_router)
     app.include_router(control_router)
+    app.include_router(health_status_router)
     app.include_router(log_router)
     app.include_router(stats_router)
     app.include_router(dashboard_account_router)
@@ -220,13 +220,8 @@ def _build_dispatcher() -> MasterDispatcher:
 
 
 def _start_alert_monitors() -> list[BaseMonitor]:
-    """Initialize AlertManager notifiers and start all alert monitors.
-
-    Returns the list of started monitors so callers can stop them gracefully.
-    """
+    """Initialize and start all alert monitors."""
     alert_manager = get_alert_manager()
-    alert_manager.register_notifier(LogNotifier())
-    alert_manager.register_notifier(ConsoleNotifier())
 
     monitors: list[BaseMonitor] = [
         QueueMonitor(alert_manager=alert_manager, interval=30),
