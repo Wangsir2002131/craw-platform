@@ -152,6 +152,8 @@ def force_check_alerts(
     manager: AlertManager = Depends(get_manager),
 ) -> dict[str, Any]:
     from craw_platform.alerts.alert_manager import get_monitors
+    from craw_platform.alerts.notifiers.console_notifier import ConsoleNotifier
+
     manager.clear_events()
     monitors = get_monitors()
     failed_monitors = []
@@ -162,6 +164,12 @@ def force_check_alerts(
             logger.exception("force_check failed for %s", monitor.__class__.__name__)
             failed_monitors.append({"monitor": monitor.__class__.__name__, "error": str(e)})
     events = manager.list_events(limit=limit)
+    console_notifier = ConsoleNotifier()
+    for event in reversed(events):
+        try:
+            console_notifier.notify(event)
+        except Exception:
+            logger.exception("console output failed for alert event %s", event.id)
     summary = manager.get_summary()
     return {
         "cleared": True,

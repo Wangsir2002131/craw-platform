@@ -65,12 +65,12 @@ logger = logging.getLogger(__name__)
 #     'cursorclass': pymysql.cursors.DictCursor
 # }
 DB_CONFIG = {
-    'host': '127.0.0.1',
+    'host':'127.0.0.1',
     'port': 3306,
-    'user': 'root',
-    'password': 'root',
+    'user':'root',
+    'password':'123456',
     'db': 'geo',
-    'charset': 'utf8mb4',
+    'charset':'utf8mb4',
     'cursorclass': pymysql.cursors.DictCursor
 }
 class DatabaseManager:

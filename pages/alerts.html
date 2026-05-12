@@ -660,13 +660,6 @@
     applyThresholdBtn.addEventListener("click", applyThresholds);
     autoRefreshSelect.addEventListener("change", scheduleAutoRefresh);
 
-    // Wrap renderEvents to cache last events for filter re-renders
-    const _origRenderEvents = renderEvents;
-    window.renderEvents = function(events) {
-      window._lastEvents = events;
-      _origRenderEvents(events);
-    };
-
     // ── Init ──────────────────────────────────────────────────────────────
     scheduleAutoRefresh();
     doForceCheck();
@@ -674,3 +667,9 @@
 </body>
 </html>
 
+    // Wrap renderEvents to cache last events for filter re-renders
+    const _origRenderEvents = renderEvents;
+    window.renderEvents = function(events) {
+      window._lastEvents = events;
+      _origRenderEvents(events);
+    };

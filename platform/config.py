@@ -12,7 +12,7 @@ DB_CONFIG = {
     "host": os.getenv("DB_HOST", "127.0.0.1"),
     "port": int(os.getenv("DB_PORT", "3306")),
     "user": os.getenv("DB_USER", "root"),
-    "password": os.getenv("DB_PASSWORD", "root"),
+    "password": os.getenv("DB_PASSWORD", "123456"),
     "database": os.getenv("DB_NAME", "geo"),
 }
 REDIS_URL = os.getenv("REDIS_URL", "redis://127.0.0.1:6379/0")

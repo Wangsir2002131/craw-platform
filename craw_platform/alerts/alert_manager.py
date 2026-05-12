@@ -146,7 +146,7 @@ class AlertManager:
             self._last_triggered_at[name] = now
             self._alert_counters[name] = self._alert_counters.get(name, 0) + 1
 
-        logger.warning(
+        logger.debug(
             "%s [%s] %s: %s",
             ALERT_LEVEL_DISPLAY.get(level, level.value),
             ALERT_CATEGORY_DISPLAY.get(category, category.value),
