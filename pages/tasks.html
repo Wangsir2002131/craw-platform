@@ -9,7 +9,7 @@
 <body>
   <section class="page-head">
     <h1>任务</h1>
-    <p>查看真实任务数据，并按状态、模型、服务器进行筛选。</p>
+    <p>查看真实任务数据，并按模型 ID、状态、模型、服务器进行筛选。</p>
   </section>
 
   <section class="layout-grid split">
@@ -18,7 +18,11 @@
         <h2>任务列表</h2>
         <p>每页展示 5 条数据，任务服务器按模型固定映射。</p>
       </div>
-      <div class="toolbar">
+      <div class="toolbar task-filters">
+        <div class="field wide search-field">
+          <label for="model-id-filter">模型ID</label>
+          <input id="model-id-filter" class="filter-input" type="search" placeholder="输入模型 ID" />
+        </div>
         <div class="field">
           <label for="status-filter">状态</label>
           <select id="status-filter">
@@ -56,7 +60,14 @@
         </table>
       </div>
       <div class="pagination">
-        <div class="pagination-info" id="pagination-info">-</div>
+        <div class="pagination-left">
+          <div class="pagination-info" id="pagination-info">-</div>
+          <form class="page-jump" id="page-jump-form">
+            <label for="page-jump-input">跳转</label>
+            <input id="page-jump-input" class="page-jump-input" type="number" min="1" step="1" />
+            <button id="page-jump-button" type="submit">页</button>
+          </form>
+        </div>
         <div class="pagination-actions">
           <button id="prev-page" type="button">上一页</button>
           <button id="next-page" type="button" class="dark">下一页</button>
@@ -77,18 +88,23 @@
     const state = {
       page: 1,
       pageSize: 5,
+      modelId: "",
       status: "",
       model: "",
       server: "",
       totalPages: 1
     };
 
+    const modelIdFilter = document.getElementById("model-id-filter");
     const statusFilter = document.getElementById("status-filter");
     const modelFilter = document.getElementById("model-filter");
     const serverFilter = document.getElementById("server-filter");
     const tableBody = document.getElementById("task-table-body");
     const statsContainer = document.getElementById("task-stats");
     const paginationInfo = document.getElementById("pagination-info");
+    const pageJumpForm = document.getElementById("page-jump-form");
+    const pageJumpInput = document.getElementById("page-jump-input");
+    const pageJumpButton = document.getElementById("page-jump-button");
     const prevButton = document.getElementById("prev-page");
     const nextButton = document.getElementById("next-page");
 
@@ -141,12 +157,17 @@
     function renderPagination(pagination) {
       state.totalPages = pagination.totalPages;
       paginationInfo.textContent = `第 ${pagination.page} / ${pagination.totalPages} 页，共 ${pagination.total} 条`;
+      pageJumpInput.value = String(pagination.page);
+      pageJumpInput.max = String(pagination.totalPages);
+      pageJumpInput.disabled = pagination.totalPages <= 1;
+      pageJumpButton.disabled = pagination.totalPages <= 1;
       prevButton.disabled = !pagination.hasPrev;
       nextButton.disabled = !pagination.hasNext;
     }
 
     async function loadTasks() {
       tableBody.innerHTML = '<tr><td colspan="4" class="table-state">正在加载任务数据...</td></tr>';
+      state.modelId = modelIdFilter.value.trim();
 
       const params = new URLSearchParams({
         page: String(state.page),
@@ -155,6 +176,7 @@
       if (state.status) params.set("status", state.status);
       if (state.model) params.set("model", state.model);
       if (state.server) params.set("server", state.server);
+      if (state.modelId) params.set("model_id", state.modelId);
 
       try {
         const response = await fetch(`/api/tasks?${params.toString()}`);
@@ -163,6 +185,7 @@
         }
 
         const data = await response.json();
+        modelIdFilter.value = data.filters.selected.modelId || state.modelId;
         fillSelectOptions(statusFilter, data.filters.statusOptions, data.filters.selected.status, "全部状态");
         fillSelectOptions(modelFilter, data.filters.modelOptions, data.filters.selected.model, "全部模型");
         fillSelectOptions(serverFilter, data.filters.serverOptions, data.filters.selected.server, "全部服务器");
@@ -174,10 +197,22 @@
         tableBody.innerHTML = `<tr><td colspan="4" class="table-state">加载失败：${error.message}</td></tr>`;
         statsContainer.innerHTML = "";
         paginationInfo.textContent = "接口未连接";
+        pageJumpInput.disabled = true;
+        pageJumpButton.disabled = true;
         prevButton.disabled = true;
         nextButton.disabled = true;
       }
     }
+
+    let modelIdDebounce = null;
+    modelIdFilter.addEventListener("input", () => {
+      window.clearTimeout(modelIdDebounce);
+      modelIdDebounce = window.setTimeout(() => {
+        state.modelId = modelIdFilter.value.trim();
+        state.page = 1;
+        loadTasks();
+      }, 300);
+    });
 
     statusFilter.addEventListener("change", () => {
       state.status = statusFilter.value;
@@ -194,6 +229,17 @@
     serverFilter.addEventListener("change", () => {
       state.server = serverFilter.value;
       state.page = 1;
+      loadTasks();
+    });
+
+    pageJumpForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const targetPage = Number.parseInt(pageJumpInput.value, 10);
+      if (!Number.isFinite(targetPage) || targetPage < 1) {
+        pageJumpInput.value = String(state.page);
+        return;
+      }
+      state.page = Math.min(targetPage, state.totalPages || 1);
       loadTasks();
     });
 

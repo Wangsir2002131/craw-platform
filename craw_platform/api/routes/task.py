@@ -116,9 +116,11 @@ def list_dashboard_tasks(
     status_filter: str = Query(default="", alias="status"),
     model_filter: str = Query(default="", alias="model"),
     server_filter: str = Query(default="", alias="server"),
+    model_id_filter: str = Query(default="", alias="model_id"),
     store: TaskMasterStatusStore = Depends(get_task_store),
 ) -> dict[str, Any]:
     all_items = _build_dashboard_rows(store)
+    normalized_model_id_filter = model_id_filter.strip().lower()
 
     status_options = sorted({item["status"] for item in all_items if item["status"] and item["status"] != "-"})
     model_options = sorted({item["model"] for item in all_items if item["model"] and item["model"] != "-"})
@@ -131,6 +133,12 @@ def list_dashboard_tasks(
         filtered_items = [item for item in filtered_items if item["model"] == model_filter]
     if server_filter:
         filtered_items = [item for item in filtered_items if item["server"] == server_filter]
+    if normalized_model_id_filter:
+        filtered_items = [
+            item
+            for item in filtered_items
+            if normalized_model_id_filter in str(item.get("id") or "").lower()
+        ]
 
     total = len(filtered_items)
     total_pages = max(1, ceil(total / page_size)) if total else 1
@@ -159,6 +167,7 @@ def list_dashboard_tasks(
                 "status": status_filter,
                 "model": model_filter,
                 "server": server_filter,
+                "modelId": model_id_filter,
             },
         },
         "pagination": {

@@ -180,6 +180,60 @@
     }
     .event-count-badge.has-alerts { color: #e53935; }
     .event-count-badge.no-alerts  { color: #2e7d32; }
+    .alert-filters {
+      margin-top: 14px;
+      margin-bottom: 12px;
+    }
+    .alert-filters .event-count-wrap {
+      align-self: stretch;
+      justify-content: center;
+      min-width: 96px;
+    }
+    .alert-settings-bar {
+      margin-top: 0;
+    }
+    .alert-table-wrap th:nth-child(1),
+    .alert-table-wrap td:nth-child(1) {
+      width: 168px;
+      white-space: nowrap;
+    }
+    .alert-table-wrap th:nth-child(2),
+    .alert-table-wrap td:nth-child(2) {
+      width: 92px;
+      white-space: nowrap;
+    }
+    .alert-table-wrap th:nth-child(3),
+    .alert-table-wrap td:nth-child(3) {
+      width: 92px;
+      white-space: nowrap;
+    }
+    .alert-table-wrap th:nth-child(5),
+    .alert-table-wrap td:nth-child(5) {
+      width: 80px;
+      white-space: nowrap;
+    }
+    .alert-event-name {
+      font-weight: 700;
+      color: var(--strong);
+    }
+    .alert-event-message {
+      display: block;
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+      word-break: break-word;
+    }
+    .alert-detail-row {
+      display: none;
+    }
+    .alert-detail-row.open {
+      display: table-row;
+    }
+    .alert-detail-cell {
+      padding-top: 0;
+      background: #fafbfc;
+    }
     .detail-toggle {
       font-size: 12px;
       color: #4a90e2;
@@ -193,6 +247,25 @@
       gap: 4px;
     }
     .detail-toggle:hover { color: #357abd; }
+    .detail-action-btn {
+      min-width: 58px;
+      height: 32px;
+      padding: 6px 10px;
+      border-radius: 10px;
+      border: 1px solid #101010;
+      background: #101010;
+      color: #ffffff;
+      font-size: 13px;
+      line-height: 1;
+      white-space: nowrap;
+    }
+    .detail-action-btn[disabled] {
+      cursor: not-allowed;
+      opacity: 0.42;
+      border-color: #d8dbe2;
+      background: #f3f4f6;
+      color: #68707d;
+    }
     .detail-panel {
       display: none;
       margin-top: 8px;
@@ -204,6 +277,10 @@
       line-height: 1.8;
     }
     .detail-panel.open { display: block; }
+    .alert-detail-row .detail-panel {
+      display: block;
+      margin-top: 0;
+    }
     .detail-kv {
       display: flex;
       gap: 8px;
@@ -334,37 +411,33 @@
         </div>
       </div>
 
-      <!-- 筛选 + 设置合并行 -->
-      <div class="combined-bar">
-        <!-- 筛选组 -->
-        <div class="settings-group">
-          <div class="settings-field">
-            <label for="category-filter">分类</label>
-            <select id="category-filter">
-              <option value="">全部分类</option>
-              <option value="task">任务告警</option>
-              <option value="queue">队列告警</option>
-              <option value="account">账号告警</option>
-              <option value="system">系统告警</option>
-            </select>
-          </div>
-          <div class="settings-field">
-            <label for="level-filter">级别</label>
-            <select id="level-filter">
-              <option value="">全部级别</option>
-              <option value="yellow">🟡 黄色</option>
-              <option value="red">🔴 红色</option>
-              <option value="error">❌ 错误</option>
-            </select>
-          </div>
-          <div class="event-count-wrap">
-            <span class="event-count-label">当前告警</span>
-            <span id="event-count-badge" class="event-count-badge">-</span>
-          </div>
+      <div class="toolbar task-filters alert-filters">
+        <div class="field">
+          <label for="category-filter">分类</label>
+          <select id="category-filter">
+            <option value="">全部分类</option>
+            <option value="task">任务告警</option>
+            <option value="queue">队列告警</option>
+            <option value="account">账号告警</option>
+            <option value="system">系统告警</option>
+          </select>
         </div>
+        <div class="field">
+          <label for="level-filter">级别</label>
+          <select id="level-filter">
+            <option value="">全部级别</option>
+            <option value="yellow">黄色</option>
+            <option value="red">红色</option>
+            <option value="error">错误</option>
+          </select>
+        </div>
+        <div class="event-count-wrap">
+          <span class="event-count-label">当前告警</span>
+          <span id="event-count-badge" class="event-count-badge">-</span>
+        </div>
+      </div>
 
-        <div class="combined-bar-sep"></div>
-
+      <div class="combined-bar alert-settings-bar">
         <!-- 队列阈值组 -->
         <div class="settings-group">
           <span class="settings-group-title">队列<br>阈值</span>
@@ -378,6 +451,8 @@
           </div>
           <button id="apply-threshold-btn" class="settings-apply-btn">应用</button>
         </div>
+
+        <div class="combined-bar-sep"></div>
 
         <!-- 自动刷新组 -->
         <div class="settings-group">
@@ -397,8 +472,38 @@
 
       <div class="auto-refresh-status" id="auto-refresh-status"></div>
 
-      <div class="list" id="alert-event-list" style="margin-top:14px;">
-        <div class="table-state">点击刷新加载当前告警...</div>
+      <div class="table-wrap alert-table-wrap" style="margin-top:14px;">
+        <table>
+          <thead>
+            <tr>
+              <th>时间</th>
+              <th>分类</th>
+              <th>级别</th>
+              <th>事件</th>
+              <th>详情</th>
+            </tr>
+          </thead>
+          <tbody id="alert-event-body">
+            <tr>
+              <td colspan="5" class="table-state">点击刷新加载当前告警...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="pagination">
+        <div class="pagination-left">
+          <div class="pagination-info" id="alert-pagination-info">-</div>
+          <form class="page-jump" id="alert-page-jump-form">
+            <label for="alert-page-jump-input">跳转</label>
+            <input id="alert-page-jump-input" class="page-jump-input" type="number" min="1" step="1" />
+            <button id="alert-page-jump-button" type="submit">页</button>
+          </form>
+        </div>
+        <div class="pagination-actions">
+          <button id="alert-prev-page" type="button">上一页</button>
+          <button id="alert-next-page" type="button" class="dark">下一页</button>
+        </div>
       </div>
     </article>
 
@@ -421,13 +526,25 @@
   </section>
 
   <script>
-    const state = { category: "", level: "" };
+    const state = {
+      category: "",
+      level: "",
+      page: 1,
+      pageSize: 5,
+      totalPages: 1
+    };
 
     // ── DOM refs ──────────────────────────────────────────────────────────
     const categoryFilter    = document.getElementById("category-filter");
     const levelFilter       = document.getElementById("level-filter");
-    const eventList         = document.getElementById("alert-event-list");
+    const eventBody         = document.getElementById("alert-event-body");
     const eventCountBadge   = document.getElementById("event-count-badge");
+    const paginationInfo    = document.getElementById("alert-pagination-info");
+    const pageJumpForm      = document.getElementById("alert-page-jump-form");
+    const pageJumpInput     = document.getElementById("alert-page-jump-input");
+    const pageJumpButton    = document.getElementById("alert-page-jump-button");
+    const prevButton        = document.getElementById("alert-prev-page");
+    const nextButton        = document.getElementById("alert-next-page");
     const refreshBtn        = document.getElementById("refresh-btn");
     const feedbackBanner    = document.getElementById("alert-feedback");
     const alertTimeline     = document.getElementById("alert-timeline");
@@ -458,10 +575,63 @@
       return "badge";
     }
     function getLevelLabel(level) {
-      if (level === "yellow") return "🟡 黄色";
-      if (level === "red")    return "🔴 红色";
-      if (level === "error")  return "❌ 错误";
+      if (level === "yellow") return "黄色";
+      if (level === "red")    return "红色";
+      if (level === "error")  return "错误";
       return level;
+    }
+    function escapeHtml(value) {
+      return String(value ?? "").replace(/[&<>"']/g, (char) => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        "\"": "&quot;",
+        "'": "&#39;"
+      }[char]));
+    }
+    function getDetailLabel(key) {
+      return {
+        id: "事件 ID",
+        name: "事件名称",
+        category: "分类",
+        level: "级别",
+        message: "消息",
+        triggered_at: "触发时间",
+        acknowledged: "处理状态",
+        acknowledged_at: "处理时间",
+        acknowledged_by: "处理人",
+        task_id: "任务 ID",
+        question_id: "问题 ID",
+        question_name: "问题内容",
+        round_num: "执行轮次",
+        queue_name: "队列",
+        elapsed_seconds: "已运行秒数",
+        platform_name: "平台",
+        account_id: "账号 ID",
+        account_name: "账号",
+        account_status: "账号状态",
+        disabled_reason: "停用原因",
+        model_key: "模型",
+        length: "队列长度",
+        threshold: "阈值",
+        error: "错误",
+        failure_count: "失败次数",
+        db_host: "数据库主机",
+        db_name: "数据库",
+        total: "总数",
+        failed: "失败数",
+        errors: "错误数",
+        failure_rate: "失败率",
+        error_rate: "错误率",
+        lookback_seconds: "统计窗口秒数"
+      }[key] || key;
+    }
+    function formatDetailValue(value) {
+      if (value === true) return "已处理";
+      if (value === false) return "未处理";
+      if (value == null || value === "") return "-";
+      if (typeof value === "object") return JSON.stringify(value);
+      return String(value);
     }
     function formatMeta(meta) {
       if (!meta || !Object.keys(meta).length) return "";
@@ -492,42 +662,74 @@
     }
 
     function renderEvents(events) {
-      const filtered = filterEvents(events);
-      // 更新告警事件计数强调显示
+      const sourceEvents = Array.isArray(events) ? events : [];
+      window._lastEvents = sourceEvents;
+      const filtered = filterEvents(sourceEvents);
       eventCountBadge.textContent = filtered.length;
       eventCountBadge.className = "event-count-badge " + (filtered.length > 0 ? "has-alerts" : "no-alerts");
+
+      const total = filtered.length;
+      state.totalPages = total ? Math.ceil(total / state.pageSize) : 1;
+      state.page = Math.min(Math.max(1, state.page), state.totalPages);
+
       if (!filtered.length) {
-        eventList.innerHTML = '<div class="table-state">当前没有告警事件 ✅</div>';
+        eventBody.innerHTML = '<tr><td colspan="5" class="table-state">当前筛选条件下没有告警事件</td></tr>';
+        renderPagination(0);
         return;
       }
-      eventList.innerHTML = filtered.map((e) => {
+
+      const start = (state.page - 1) * state.pageSize;
+      const paged = filtered.slice(start, start + state.pageSize);
+      eventBody.innerHTML = paged.map((e) => {
         const meta = e.metadata || {};
         const detailId = `detail-${(e.id || Math.random().toString(36).slice(2)).replace(/[^a-z0-9]/gi, "-")}`;
-        const detailRows = [
-          meta.task_id        ? `<div class="detail-kv"><span class="dk">任务 ID</span><span class="dv">${meta.task_id}</span></div>` : "",
-          meta.question_id    ? `<div class="detail-kv"><span class="dk">问题 ID</span><span class="dv">${meta.question_id}</span></div>` : "",
-          meta.question_name  ? `<div class="detail-kv"><span class="dk">问题内容</span><span class="dv">${meta.question_name}</span></div>` : "",
-          meta.round_num != null ? `<div class="detail-kv"><span class="dk">执行轮次</span><span class="dv">第 ${meta.round_num} 轮</span></div>` : "",
-          meta.queue_name     ? `<div class="detail-kv"><span class="dk">队列</span><span class="dv">${meta.queue_name}</span></div>` : "",
-          meta.elapsed_seconds != null ? `<div class="detail-kv"><span class="dk">已运行</span><span class="dv">${meta.elapsed_seconds} 秒</span></div>` : "",
-        ].filter(Boolean).join("");
-        const hasDetail = detailRows.length > 0;
+        const baseDetails = {
+          id: e.id,
+          name: e.name,
+          category: getCategoryDisplay(e.category),
+          level: getLevelLabel(e.level),
+          triggered_at: formatTime(e.triggered_at),
+          message: e.message,
+          acknowledged: e.acknowledged,
+          acknowledged_at: e.acknowledged_at ? formatTime(e.acknowledged_at) : "",
+          acknowledged_by: e.acknowledged_by || ""
+        };
+        const detailRows = Object.entries({ ...baseDetails, ...meta })
+          .filter(([, value]) => value !== undefined && value !== null && value !== "")
+          .map(([key, value]) => {
+            return `<div class="detail-kv"><span class="dk">${escapeHtml(getDetailLabel(key))}</span><span class="dv">${escapeHtml(formatDetailValue(value))}</span></div>`;
+          })
+          .join("");
         return `
-          <div class="list-item">
-            <div class="list-head">
-              <strong>${getCategoryDisplay(e.category)} · ${e.name}</strong>
-              <span class="${getLevelBadge(e.level)}">${getLevelLabel(e.level)}</span>
-            </div>
-            <div class="kv-grid">
-              <div class="kv"><span>时间</span><strong style="font-size:13px;">${formatTime(e.triggered_at)}</strong></div>
-            </div>
-            <p>${e.message}</p>
-            ${hasDetail ? `
-              <button class="detail-toggle" onclick="var p=document.getElementById('${detailId}');p.classList.toggle('open');this.textContent=p.classList.contains('open')?'▲ 收起详情':'▼ 查看详情'">▼ 查看详情</button>
-              <div class="detail-panel" id="${detailId}">${detailRows}</div>
-            ` : ""}
-          </div>`;
+          <tr>
+            <td>${escapeHtml(formatTime(e.triggered_at))}</td>
+            <td>${escapeHtml(getCategoryDisplay(e.category))}</td>
+            <td><span class="${getLevelBadge(e.level)}">${escapeHtml(getLevelLabel(e.level))}</span></td>
+            <td>
+              <span class="alert-event-name">${escapeHtml(e.name || "-")}</span>
+              <span class="alert-event-message">${escapeHtml(e.message || "-")}</span>
+            </td>
+            <td>
+              <button class="detail-action-btn" type="button" onclick="var p=document.getElementById('${detailId}');p.classList.toggle('open');this.textContent=p.classList.contains('open')?'收起':'查看'">查看</button>
+            </td>
+          </tr>
+          <tr class="alert-detail-row" id="${detailId}">
+            <td colspan="5" class="alert-detail-cell">
+              <div class="detail-panel">${detailRows}</div>
+            </td>
+          </tr>`;
       }).join("");
+      renderPagination(total);
+    }
+
+    function renderPagination(total) {
+      paginationInfo.textContent = `第 ${state.page} / ${state.totalPages} 页，共 ${total} 条`;
+      pageJumpInput.value = String(state.page);
+      pageJumpInput.max = String(state.totalPages);
+      pageJumpInput.disabled = state.totalPages <= 1;
+      pageJumpButton.disabled = state.totalPages <= 1;
+      prevButton.disabled = state.page <= 1;
+      nextButton.disabled = state.page >= state.totalPages;
     }
 
     function renderTimeline(events) {
@@ -600,18 +802,24 @@
     async function doForceCheck() {
       refreshBtn.disabled = true;
       refreshBtn.textContent = "检测中...";
-      eventList.innerHTML = '<div class="table-state">正在重新检测系统状态...</div>';
+      eventBody.innerHTML = '<tr><td colspan="5" class="table-state">正在重新检测系统状态...</td></tr>';
       try {
         const res = await fetch("/alerts/force-check", { method: "POST" });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
+        state.page = 1;
         renderEvents(data.events);
         renderTimeline(data.events);
         renderStats(data.summary);
         updateLastRefreshLabel();
         showFeedback(`检测完成，发现 ${data.events.length} 条告警`, data.events.length ? "warn" : "success");
       } catch (err) {
-        eventList.innerHTML = `<div class="table-state">刷新失败：${err.message}</div>`;
+        eventBody.innerHTML = `<tr><td colspan="5" class="table-state">刷新失败：${escapeHtml(err.message)}</td></tr>`;
+        paginationInfo.textContent = "接口未连接";
+        pageJumpInput.disabled = true;
+        pageJumpButton.disabled = true;
+        prevButton.disabled = true;
+        nextButton.disabled = true;
         showFeedback(`刷新失败：${err.message}`, "error");
       } finally {
         refreshBtn.disabled = false;
@@ -646,12 +854,35 @@
     // ── Event listeners ───────────────────────────────────────────────────
     categoryFilter.addEventListener("change", () => {
       state.category = categoryFilter.value;
-      // Re-render from last data if available
+      state.page = 1;
       if (window._lastEvents) renderEvents(window._lastEvents);
     });
     levelFilter.addEventListener("change", () => {
       state.level = levelFilter.value;
+      state.page = 1;
       if (window._lastEvents) renderEvents(window._lastEvents);
+    });
+    pageJumpForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const targetPage = Number.parseInt(pageJumpInput.value, 10);
+      if (!Number.isFinite(targetPage) || targetPage < 1) {
+        pageJumpInput.value = String(state.page);
+        return;
+      }
+      state.page = Math.min(targetPage, state.totalPages || 1);
+      renderEvents(window._lastEvents || []);
+    });
+    prevButton.addEventListener("click", () => {
+      if (state.page > 1) {
+        state.page -= 1;
+        renderEvents(window._lastEvents || []);
+      }
+    });
+    nextButton.addEventListener("click", () => {
+      if (state.page < state.totalPages) {
+        state.page += 1;
+        renderEvents(window._lastEvents || []);
+      }
     });
     refreshBtn.addEventListener("click", () => {
       doForceCheck();
@@ -666,10 +897,3 @@
   </script>
 </body>
 </html>
-
-    // Wrap renderEvents to cache last events for filter re-renders
-    const _origRenderEvents = renderEvents;
-    window.renderEvents = function(events) {
-      window._lastEvents = events;
-      _origRenderEvents(events);
-    };

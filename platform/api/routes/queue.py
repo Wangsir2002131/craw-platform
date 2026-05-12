@@ -160,15 +160,11 @@ def _resolve_queue_state(
     *,
     backlog: int,
     consumers: int,
-    stale_consumers: int,
-    wait_seconds: int,
 ) -> tuple[str, str]:
-    if stale_consumers > 0 or (backlog > 0 and consumers == 0):
+    if backlog >= 100 or consumers == 0:
         return "异常", "high"
-    if backlog >= 50 or wait_seconds >= 600:
+    if backlog >= 50 or consumers == 1:
         return "积压", "medium"
-    if backlog == 0 and consumers == 0:
-        return "空闲", "low"
     return "正常", "low"
 
 
@@ -218,8 +214,6 @@ def list_dashboard_queues(
         state_label, risk_level = _resolve_queue_state(
             backlog=backlog,
             consumers=display_consumers,
-            stale_consumers=len(stale_consumers),
-            wait_seconds=wait_seconds,
         )
         items.append(
             {

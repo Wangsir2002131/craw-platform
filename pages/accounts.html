@@ -9,7 +9,7 @@
 <body>
   <section class="page-head">
     <h1>账号</h1>
-    <p>查看真实账号池数据，并按爬虫、状态、账号类型进行筛选。</p>
+    <p>查看真实账号池数据，并按账号、爬虫、状态、账号类型进行筛选。</p>
   </section>
 
   <section class="layout-grid split">
@@ -18,7 +18,11 @@
         <h2>账号列表</h2>
         <p>每页展示 5 条真实账号数据。</p>
       </div>
-      <div class="toolbar">
+      <div class="toolbar task-filters account-filters">
+        <div class="field wide search-field account-search-field">
+          <label for="account-filter">账号/ID</label>
+          <input id="account-filter" class="filter-input" type="search" placeholder="输入账号或 ID" />
+        </div>
         <div class="field">
           <label for="crawler-filter">爬虫</label>
           <select id="crawler-filter">
@@ -57,7 +61,14 @@
         </table>
       </div>
       <div class="pagination">
-        <div class="pagination-info" id="pagination-info">-</div>
+        <div class="pagination-left">
+          <div class="pagination-info" id="pagination-info">-</div>
+          <form class="page-jump" id="page-jump-form">
+            <label for="page-jump-input">跳转</label>
+            <input id="page-jump-input" class="page-jump-input" type="number" min="1" step="1" />
+            <button id="page-jump-button" type="submit">页</button>
+          </form>
+        </div>
         <div class="pagination-actions">
           <button id="prev-page" type="button">上一页</button>
           <button id="next-page" type="button" class="dark">下一页</button>
@@ -78,18 +89,23 @@
     const state = {
       page: 1,
       pageSize: 5,
+      account: "",
       crawler: "",
       status: "",
       accountType: "",
       totalPages: 1
     };
 
+    const accountFilter = document.getElementById("account-filter");
     const crawlerFilter = document.getElementById("crawler-filter");
     const statusFilter = document.getElementById("status-filter");
     const typeFilter = document.getElementById("type-filter");
     const tableBody = document.getElementById("account-table-body");
     const statsContainer = document.getElementById("account-stats");
     const paginationInfo = document.getElementById("pagination-info");
+    const pageJumpForm = document.getElementById("page-jump-form");
+    const pageJumpInput = document.getElementById("page-jump-input");
+    const pageJumpButton = document.getElementById("page-jump-button");
     const prevButton = document.getElementById("prev-page");
     const nextButton = document.getElementById("next-page");
 
@@ -148,17 +164,23 @@
     function renderPagination(pagination) {
       state.totalPages = pagination.totalPages;
       paginationInfo.textContent = `第 ${pagination.page} / ${pagination.totalPages} 页，共 ${pagination.total} 条`;
+      pageJumpInput.value = String(pagination.page);
+      pageJumpInput.max = String(pagination.totalPages);
+      pageJumpInput.disabled = pagination.totalPages <= 1;
+      pageJumpButton.disabled = pagination.totalPages <= 1;
       prevButton.disabled = !pagination.hasPrev;
       nextButton.disabled = !pagination.hasNext;
     }
 
     async function loadAccounts() {
       tableBody.innerHTML = '<tr><td colspan="5" class="table-state">正在加载账号数据...</td></tr>';
+      state.account = accountFilter.value.trim();
 
       const params = new URLSearchParams({
         page: String(state.page),
         page_size: String(state.pageSize)
       });
+      if (state.account) params.set("account", state.account);
       if (state.crawler) params.set("crawler", state.crawler);
       if (state.status) params.set("status", state.status);
       if (state.accountType) params.set("account_type", state.accountType);
@@ -170,6 +192,7 @@
         }
 
         const data = await response.json();
+        accountFilter.value = data.filters.selected.account || state.account;
         fillSelectOptions(crawlerFilter, data.filters.crawlerOptions, data.filters.selected.crawler, "全部爬虫");
         fillSelectOptions(statusFilter, data.filters.statusOptions, data.filters.selected.status, "全部状态");
         fillSelectOptions(typeFilter, data.filters.accountTypeOptions, data.filters.selected.accountType, "全部类型");
@@ -181,10 +204,22 @@
         tableBody.innerHTML = `<tr><td colspan="5" class="table-state">加载失败：${error.message}</td></tr>`;
         statsContainer.innerHTML = "";
         paginationInfo.textContent = "接口未连接";
+        pageJumpInput.disabled = true;
+        pageJumpButton.disabled = true;
         prevButton.disabled = true;
         nextButton.disabled = true;
       }
     }
+
+    let accountDebounce = null;
+    accountFilter.addEventListener("input", () => {
+      window.clearTimeout(accountDebounce);
+      accountDebounce = window.setTimeout(() => {
+        state.account = accountFilter.value.trim();
+        state.page = 1;
+        loadAccounts();
+      }, 300);
+    });
 
     crawlerFilter.addEventListener("change", () => {
       state.crawler = crawlerFilter.value;
@@ -201,6 +236,17 @@
     typeFilter.addEventListener("change", () => {
       state.accountType = typeFilter.value;
       state.page = 1;
+      loadAccounts();
+    });
+
+    pageJumpForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const targetPage = Number.parseInt(pageJumpInput.value, 10);
+      if (!Number.isFinite(targetPage) || targetPage < 1) {
+        pageJumpInput.value = String(state.page);
+        return;
+      }
+      state.page = Math.min(targetPage, state.totalPages || 1);
       loadAccounts();
     });
 

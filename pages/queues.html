@@ -5,6 +5,405 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>队列</title>
   <link rel="stylesheet" href="shared.css" />
+  <style>
+    .queue-layout {
+      grid-template-columns: minmax(0, 1.45fr) minmax(340px, 0.75fr);
+    }
+
+    .queue-card-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .queue-card-head .card-title {
+      margin-bottom: 0;
+    }
+
+    .queue-toolbar {
+      margin-bottom: 0;
+      align-items: end;
+      flex: 0 0 170px;
+      justify-content: flex-end;
+    }
+
+    .queue-toolbar .field {
+      min-width: 170px;
+    }
+
+    .queue-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .queue-overview {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .queue-overview-item {
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #ffffff;
+    }
+
+    .queue-overview-item span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .queue-overview-item strong {
+      display: block;
+      margin-top: 6px;
+      color: var(--strong);
+      font-size: 24px;
+      line-height: 1;
+    }
+
+    .queue-item {
+      position: relative;
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: linear-gradient(180deg, #ffffff 0%, #fafafa 100%);
+      overflow: hidden;
+    }
+
+    .queue-item::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+      background: #d8dbe2;
+    }
+
+    .queue-item.risk-high {
+      border-color: #fecaca;
+      background: linear-gradient(180deg, #fffefe 0%, #fff7f7 100%);
+    }
+
+    .queue-item.risk-high::before {
+      background: var(--danger);
+    }
+
+    .queue-item.risk-medium {
+      border-color: #fde68a;
+      background: linear-gradient(180deg, #ffffff 0%, #fffbeb 100%);
+    }
+
+    .queue-item.risk-medium::before {
+      background: var(--warning);
+    }
+
+    .queue-item.risk-low::before {
+      background: #111111;
+    }
+
+    .queue-item-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    .queue-name {
+      display: grid;
+      gap: 4px;
+      min-width: 0;
+    }
+
+    .queue-name strong {
+      font-size: 17px;
+      color: var(--strong);
+      word-break: break-all;
+    }
+
+    .queue-name span {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .queue-head-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .queue-mode {
+      padding: 5px 9px;
+      border-radius: 999px;
+      background: #f3f4f6;
+      color: var(--muted);
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .queue-metrics {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .queue-metric {
+      padding: 12px;
+      border-radius: 12px;
+      background: var(--surface-alt);
+      min-width: 0;
+    }
+
+    .queue-metric.primary {
+      background: #101010;
+      color: #ffffff;
+    }
+
+    .queue-metric.primary span,
+    .queue-metric.primary strong {
+      color: #ffffff;
+    }
+
+    .queue-metric span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .queue-metric strong {
+      display: block;
+      margin-top: 5px;
+      color: var(--strong);
+      font-size: 20px;
+      line-height: 1;
+      word-break: break-word;
+    }
+
+    .queue-detail-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .queue-detail {
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: #f3f4f6;
+      min-width: 0;
+    }
+
+    .queue-detail span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .queue-detail strong {
+      display: block;
+      margin-top: 5px;
+      color: var(--strong);
+      font-size: 13px;
+      line-height: 1.35;
+      word-break: break-word;
+    }
+
+    .queue-actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 10px;
+      padding-top: 12px;
+      border-top: 1px solid var(--line);
+    }
+
+    .queue-action-note {
+      margin-right: auto;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .queue-actions button {
+      min-width: 84px;
+      height: 38px;
+      padding: 8px 12px;
+    }
+
+    .queue-risk-table td:first-child {
+      font-weight: 700;
+    }
+
+    .allocation-summary {
+      display: grid;
+      gap: 14px;
+    }
+
+    .allocation-score {
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: linear-gradient(180deg, #ffffff 0%, #f8f8f9 100%);
+    }
+
+    .allocation-score-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .allocation-score-head span {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .allocation-score-head strong {
+      font-size: 28px;
+      line-height: 1;
+      color: var(--strong);
+    }
+
+    .allocation-breakdown {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .allocation-breakdown-item {
+      padding: 10px;
+      border-radius: 12px;
+      background: #f3f4f6;
+    }
+
+    .allocation-breakdown-item span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .allocation-breakdown-item strong {
+      display: block;
+      margin-top: 4px;
+      color: var(--strong);
+      font-size: 18px;
+      line-height: 1;
+    }
+
+    .allocation-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .allocation-item {
+      display: grid;
+      gap: 10px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #ffffff;
+    }
+
+    .allocation-item-head,
+    .allocation-item-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .allocation-item-head strong {
+      font-size: 15px;
+      color: var(--strong);
+    }
+
+    .allocation-item-meta {
+      flex-wrap: wrap;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .allocation-item-meta span {
+      padding: 5px 8px;
+      border-radius: 999px;
+      background: #f3f4f6;
+      white-space: nowrap;
+    }
+
+    .allocation-empty {
+      padding: 28px 16px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #fafafa;
+      color: var(--muted);
+      text-align: center;
+      font-size: 14px;
+    }
+
+    @media (max-width: 1100px) {
+      .queue-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .queue-card-head,
+      .queue-item-head {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .queue-toolbar,
+      .queue-toolbar .field {
+        flex: 1 1 auto;
+        min-width: 0;
+        width: 100%;
+      }
+
+      .queue-metrics {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .queue-overview,
+      .queue-detail-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .queue-actions {
+        justify-content: stretch;
+        flex-wrap: wrap;
+      }
+
+      .queue-action-note {
+        flex: 1 1 100%;
+      }
+
+      .queue-actions button {
+        flex: 1;
+      }
+
+      .allocation-breakdown {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .queue-overview,
+      .queue-detail-grid,
+      .queue-metrics {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 </head>
 <body>
   <section class="page-head">
@@ -14,25 +413,40 @@
 
   <div id="queue-feedback" class="feedback-modal" hidden></div>
 
-  <section class="layout-grid split">
+  <section class="layout-grid split queue-layout">
     <article class="card">
-      <div class="card-title">
-        <h2>队列状态</h2>
-        <p>数据来源于 Redis 队列长度、消费者心跳和最近 1 分钟处理记录。</p>
-      </div>
-      <div class="toolbar">
-        <div class="field">
-          <label for="state-filter">状态</label>
-          <select id="state-filter">
-            <option value="">全部状态</option>
-          </select>
+      <div class="queue-card-head">
+        <div class="card-title">
+          <h2>队列状态</h2>
+          <p>数据来源于 Redis 队列长度、消费者心跳和最近 1 分钟处理记录。</p>
+        </div>
+        <div class="toolbar queue-toolbar">
+          <div class="field">
+            <label for="state-filter">状态</label>
+            <select id="state-filter">
+              <option value="">全部状态</option>
+            </select>
+          </div>
         </div>
       </div>
-      <div class="list" id="queue-list">
+      <div class="queue-overview" id="queue-overview">
+        <div class="queue-overview-item"><span>当前页堆积</span><strong>-</strong></div>
+        <div class="queue-overview-item"><span>消费者</span><strong>-</strong></div>
+        <div class="queue-overview-item"><span>处理速率</span><strong>-</strong></div>
+        <div class="queue-overview-item"><span>异常消费者</span><strong>-</strong></div>
+      </div>
+      <div class="queue-list" id="queue-list">
         <div class="table-state">正在加载队列数据...</div>
       </div>
       <div class="pagination">
-        <div class="pagination-info" id="pagination-info">-</div>
+        <div class="pagination-left">
+          <div class="pagination-info" id="pagination-info">-</div>
+          <form class="page-jump" id="page-jump-form">
+            <label for="page-jump-input">跳转</label>
+            <input id="page-jump-input" class="page-jump-input" type="number" min="1" step="1" />
+            <button id="page-jump-button" type="submit">页</button>
+          </form>
+        </div>
         <div class="pagination-actions">
           <button id="prev-page" type="button">上一页</button>
           <button id="next-page" type="button" class="dark">下一页</button>
@@ -45,23 +459,21 @@
         <h2>分配概况</h2>
         <p>根据实时队列状态自动判定风险等级。</p>
       </div>
-      <div class="metric-row" id="queue-stats"></div>
-      <div class="table-wrap" style="margin-top: 18px;">
-        <table>
-          <thead>
-            <tr>
-              <th>队列</th>
-              <th>策略</th>
-              <th>风险</th>
-              <th>异常消费者</th>
-            </tr>
-          </thead>
-          <tbody id="queue-risk-body">
-            <tr>
-              <td colspan="4" class="table-state">正在加载队列数据...</td>
-            </tr>
-          </tbody>
-        </table>
+      <div class="allocation-summary">
+        <div class="allocation-score" id="allocation-score">
+          <div class="allocation-score-head">
+            <span>风险队列</span>
+            <strong>-</strong>
+          </div>
+          <div class="allocation-breakdown">
+            <div class="allocation-breakdown-item"><span>高风险</span><strong>-</strong></div>
+            <div class="allocation-breakdown-item"><span>中风险</span><strong>-</strong></div>
+            <div class="allocation-breakdown-item"><span>低风险</span><strong>-</strong></div>
+          </div>
+        </div>
+        <div class="allocation-list" id="allocation-list">
+          <div class="allocation-empty">正在加载队列数据...</div>
+        </div>
       </div>
     </article>
   </section>
@@ -75,11 +487,15 @@
     };
 
     const stateFilter = document.getElementById("state-filter");
+    const queueOverview = document.getElementById("queue-overview");
     const queueList = document.getElementById("queue-list");
-    const queueStats = document.getElementById("queue-stats");
-    const queueRiskBody = document.getElementById("queue-risk-body");
+    const allocationScore = document.getElementById("allocation-score");
+    const allocationList = document.getElementById("allocation-list");
     const feedbackBanner = document.getElementById("queue-feedback");
     const paginationInfo = document.getElementById("pagination-info");
+    const pageJumpForm = document.getElementById("page-jump-form");
+    const pageJumpInput = document.getElementById("page-jump-input");
+    const pageJumpButton = document.getElementById("page-jump-button");
     const prevButton = document.getElementById("prev-page");
     const nextButton = document.getElementById("next-page");
     let feedbackTimer = null;
@@ -123,28 +539,71 @@
       }, 2600);
     }
 
+    function getQueueModeLabel(item) {
+      if (item.managedEnabled) return "主服务托管";
+      if (item.externalSupervisorRunning) return "脚本主管进程";
+      return "未启用缩放";
+    }
+
+    function renderOverview(items) {
+      const totals = items.reduce((acc, item) => {
+        acc.backlog += Number(item.backlog || 0);
+        acc.consumers += Number(item.consumers || 0);
+        acc.throughput += Number(item.throughputPerMinute || 0);
+        acc.stale += Number(item.staleConsumers || 0);
+        return acc;
+      }, { backlog: 0, consumers: 0, throughput: 0, stale: 0 });
+
+      queueOverview.innerHTML = `
+        <div class="queue-overview-item"><span>当前页堆积</span><strong>${totals.backlog}</strong></div>
+        <div class="queue-overview-item"><span>消费者</span><strong>${totals.consumers}</strong></div>
+        <div class="queue-overview-item"><span>处理速率</span><strong>${totals.throughput}/分</strong></div>
+        <div class="queue-overview-item"><span>异常消费者</span><strong>${totals.stale}</strong></div>
+      `;
+    }
+
     function renderQueueList(items) {
       if (!items.length) {
+        renderOverview([]);
         queueList.innerHTML = '<div class="table-state">当前筛选条件下没有数据</div>';
         return;
       }
 
+      renderOverview(items);
       queueList.innerHTML = items.map((item) => `
-        <div class="list-item">
-          <div class="list-head">
-            <strong>${item.queueName}</strong>
-            <span class="${getBadgeClass(item.state)}">${item.state}</span>
+        <div class="queue-item risk-${item.riskLevel}">
+          <div class="queue-item-head">
+            <div class="queue-name">
+              <strong>${item.model}</strong>
+              <span>${item.queueName}</span>
+            </div>
+            <div class="queue-head-meta">
+              <span class="queue-mode">${getQueueModeLabel(item)}</span>
+              <span class="${getBadgeClass(item.state)}">${item.state}</span>
+            </div>
           </div>
-          <div class="kv-grid">
-            <div class="kv"><span>堆积</span><strong>${item.backlog}</strong></div>
-            <div class="kv"><span>消费者</span><strong>${item.consumers}</strong></div>
-            <div class="kv"><span>目标实例</span><strong>${item.desiredConsumers}</strong></div>
-            <div class="kv"><span>托管实例</span><strong>${item.managedActiveConsumers}</strong></div>
-            <div class="kv"><span>脚本实例</span><strong>${item.externalActiveConsumers}</strong></div>
-            <div class="kv"><span>处理速率</span><strong>${item.throughputPerMinute}/分</strong></div>
-            <div class="kv"><span>等待</span><strong>${item.waitLabel}</strong></div>
+          <div class="queue-metrics">
+            <div class="queue-metric primary"><span>堆积</span><strong>${item.backlog}</strong></div>
+            <div class="queue-metric"><span>消费者</span><strong>${item.consumers}</strong></div>
+            <div class="queue-metric"><span>处理速率</span><strong>${item.throughputPerMinute}/分</strong></div>
+            <div class="queue-metric"><span>等待</span><strong>${item.waitLabel}</strong></div>
           </div>
-          <div class="toolbar" style="margin-top: 14px;">
+          <div class="queue-detail-grid">
+            <div class="queue-detail">
+              <span>队列构成</span>
+              <strong>普通 ${item.normalLength ?? Math.max(0, item.listLength - item.priorityLength)} / 优先 ${item.priorityLength} / 总计 ${item.listLength}</strong>
+            </div>
+            <div class="queue-detail">
+              <span>实例分配</span>
+              <strong>目标 ${item.desiredConsumers} / 托管 ${item.managedActiveConsumers} / 脚本 ${item.externalActiveConsumers}</strong>
+            </div>
+            <div class="queue-detail">
+              <span>消费者状态</span>
+              <strong>异常 ${item.staleConsumers} / 退场 ${item.drainingConsumers}</strong>
+            </div>
+          </div>
+          <div class="queue-actions">
+            <span class="queue-action-note">策略：${item.strategy}</span>
             <button
               type="button"
               data-model="${item.model}"
@@ -152,7 +611,7 @@
               data-external-running="${item.externalSupervisorRunning}"
               data-managed-enabled="${item.managedEnabled}"
               data-desired-consumers="${item.desiredConsumers}"
-            >- 减一个</button>
+            >减少</button>
             <button
               type="button"
               class="dark"
@@ -161,57 +620,81 @@
               data-external-running="${item.externalSupervisorRunning}"
               data-managed-enabled="${item.managedEnabled}"
               data-desired-consumers="${item.desiredConsumers}"
-            >+ 加一个</button>
+            >增加</button>
           </div>
-          <p>普通队列 ${item.normalLength ?? Math.max(0, item.listLength - item.priorityLength)}，优先队列 ${item.priorityLength}，总队列 ${item.listLength}，异常消费者 ${item.staleConsumers}，退场中 ${item.drainingConsumers}，页面缩放 ${item.managedEnabled ? "主服务托管" : (item.externalSupervisorRunning ? "脚本主管进程" : "未启用")}</p>
         </div>
       `).join("");
     }
 
-    function renderStats(stats) {
-      if (!stats.length) {
-        queueStats.innerHTML = '<div class="table-state">暂无统计数据</div>';
-        return;
-      }
-
-      const total = stats.reduce((sum, item) => sum + item.count, 0);
-      queueStats.innerHTML = stats.map((item) => {
-        const percent = total ? Math.round((item.count / total) * 100) : 0;
-        return `
-          <div class="metric-item">
-            <div class="metric-head"><span>${item.label}</span><strong>${item.count}</strong></div>
-            <div class="metric-track"><div class="metric-fill" style="width: ${percent}%;"></div></div>
+    function renderAllocationSummary(items) {
+      if (!items.length) {
+        allocationScore.innerHTML = `
+          <div class="allocation-score-head">
+            <span>风险队列</span>
+            <strong>0</strong>
+          </div>
+          <div class="allocation-breakdown">
+            <div class="allocation-breakdown-item"><span>高风险</span><strong>0</strong></div>
+            <div class="allocation-breakdown-item"><span>中风险</span><strong>0</strong></div>
+            <div class="allocation-breakdown-item"><span>低风险</span><strong>0</strong></div>
           </div>
         `;
-      }).join("");
-    }
-
-    function renderRiskTable(items) {
-      if (!items.length) {
-        queueRiskBody.innerHTML = '<tr><td colspan="4" class="table-state">当前筛选条件下没有数据</td></tr>';
+        allocationList.innerHTML = '<div class="allocation-empty">当前筛选条件下没有数据</div>';
         return;
       }
 
-      queueRiskBody.innerHTML = items.map((item) => `
-        <tr>
-          <td>${item.model}</td>
-          <td>${item.strategy}</td>
-          <td><span class="${getRiskBadge(item.riskLevel)}">${getRiskLabel(item.riskLevel)}</span></td>
-          <td>${item.staleConsumers}</td>
-        </tr>
+      const counts = items.reduce((acc, item) => {
+        acc[item.riskLevel] = (acc[item.riskLevel] || 0) + 1;
+        return acc;
+      }, { high: 0, medium: 0, low: 0 });
+      const riskTotal = counts.high + counts.medium;
+      allocationScore.innerHTML = `
+        <div class="allocation-score-head">
+          <span>风险队列</span>
+          <strong>${riskTotal}</strong>
+        </div>
+        <div class="allocation-breakdown">
+          <div class="allocation-breakdown-item"><span>高风险</span><strong>${counts.high}</strong></div>
+          <div class="allocation-breakdown-item"><span>中风险</span><strong>${counts.medium}</strong></div>
+          <div class="allocation-breakdown-item"><span>低风险</span><strong>${counts.low}</strong></div>
+        </div>
+      `;
+
+      const sorted = [...items].sort((a, b) => {
+        const order = { high: 0, medium: 1, low: 2 };
+        return (order[a.riskLevel] ?? 9) - (order[b.riskLevel] ?? 9) || b.backlog - a.backlog;
+      });
+      allocationList.innerHTML = sorted.map((item) => `
+        <div class="allocation-item">
+          <div class="allocation-item-head">
+            <strong>${item.model}</strong>
+            <span class="${getRiskBadge(item.riskLevel)}">${getRiskLabel(item.riskLevel)}风险</span>
+          </div>
+          <div class="allocation-item-meta">
+            <span>策略 ${item.strategy}</span>
+            <span>堆积 ${item.backlog}</span>
+            <span>消费者 ${item.consumers}</span>
+            <span>异常 ${item.staleConsumers}</span>
+          </div>
+        </div>
       `).join("");
     }
 
     function renderPagination(pagination) {
       state.totalPages = pagination.totalPages;
       paginationInfo.textContent = `第 ${pagination.page} / ${pagination.totalPages} 页，共 ${pagination.total} 条`;
+      pageJumpInput.value = String(pagination.page);
+      pageJumpInput.max = String(pagination.totalPages);
+      pageJumpInput.disabled = pagination.totalPages <= 1;
+      pageJumpButton.disabled = pagination.totalPages <= 1;
       prevButton.disabled = !pagination.hasPrev;
       nextButton.disabled = !pagination.hasNext;
     }
 
     async function loadQueues() {
+      renderOverview([]);
       queueList.innerHTML = '<div class="table-state">正在加载队列数据...</div>';
-      queueRiskBody.innerHTML = '<tr><td colspan="4" class="table-state">正在加载队列数据...</td></tr>';
+      allocationList.innerHTML = '<div class="allocation-empty">正在加载队列数据...</div>';
 
       const params = new URLSearchParams({
         page: String(state.page),
@@ -228,14 +711,15 @@
         const data = await response.json();
         fillSelectOptions(stateFilter, data.filters.stateOptions, data.filters.selected.state, "全部状态");
         renderQueueList(data.items);
-        renderStats(data.stats);
-        renderRiskTable(data.items);
+        renderAllocationSummary(data.items);
         renderPagination(data.pagination);
       } catch (error) {
         queueList.innerHTML = `<div class="table-state">加载失败：${error.message}</div>`;
-        queueStats.innerHTML = "";
-        queueRiskBody.innerHTML = `<tr><td colspan="4" class="table-state">加载失败：${error.message}</td></tr>`;
+        renderAllocationSummary([]);
+        allocationList.innerHTML = `<div class="allocation-empty">加载失败：${error.message}</div>`;
         paginationInfo.textContent = "接口未连接";
+        pageJumpInput.disabled = true;
+        pageJumpButton.disabled = true;
         prevButton.disabled = true;
         nextButton.disabled = true;
       }
@@ -259,6 +743,17 @@
     stateFilter.addEventListener("change", () => {
       state.queueState = stateFilter.value;
       state.page = 1;
+      loadQueues();
+    });
+
+    pageJumpForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const targetPage = Number.parseInt(pageJumpInput.value, 10);
+      if (!Number.isFinite(targetPage) || targetPage < 1) {
+        pageJumpInput.value = String(state.page);
+        return;
+      }
+      state.page = Math.min(targetPage, state.totalPages || 1);
       loadQueues();
     });
 
