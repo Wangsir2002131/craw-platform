@@ -12,9 +12,9 @@ class AccountStateMachine:
     TRANSITIONS = {
         "available": {"allocated", "cooling", "disabled", "error"},
         "allocated": {"available", "cooling", "disabled", "error"},
-        "cooling": {"available", "disabled", "error"},
+        "cooling": {"available", "allocated", "disabled", "error"},
         "disabled": {"available"},
-        "error": {"available", "disabled", "cooling"},
+        "error": {"available", "allocated", "disabled", "cooling"},
     }
 
     def __init__(self, cursor: Any | None = None, operator: str = "account_state_machine") -> None:

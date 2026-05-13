@@ -207,6 +207,7 @@ class DeepSeekDP:
         self.total_errors = 0  # 错误计数器
         self.total_errors_num = 0  # 错误计数器
         self.current_round = 1  # 默认轮次为1
+        self.disable_local_account_switch = False
 
     def get_loginFile(self, cookie_file):
         """获取 cookie 文件路径"""
@@ -456,8 +457,13 @@ class DeepSeekDP:
         current_cookie = self.cookie_file or 'cookies1.json'
         if current_cookie in all_cookie_files:
             cookie_files_to_try.append(current_cookie)
-        cookie_files_to_try.extend([f for f in all_cookie_files if f != current_cookie])
 
+        if getattr(self, "disable_local_account_switch", False):
+            cookie_files_to_try = cookie_files_to_try or [current_cookie]
+        else:
+            cookie_files_to_try.extend([f for f in all_cookie_files if f != current_cookie])
+
+        failed_cookies = []
         for idx, cookie_to_try in enumerate(cookie_files_to_try):
             logger.info(f"尝试使用 Cookie 文件 [{idx + 1}/{len(cookie_files_to_try)}]: {cookie_to_try}")
             if idx == 0:
@@ -468,7 +474,8 @@ class DeepSeekDP:
                     self.total_errors_num = 0
                     return
                 except Exception as e:
-                    logger.error(f"❌ 使用当前浏览器回答失败 [ID: {question_id}]: {e}")
+                    failed_cookies.append(cookie_to_try)
+                    logger.error(f"❌ Cookie {cookie_to_try} 回答失败 [ID: {question_id}]: {e}")
             else:
                 with _cookie_lock:
                     if cookie_to_try in _cookies_in_use:
@@ -484,18 +491,25 @@ class DeepSeekDP:
                         self.total_errors = 0
                         self.total_errors_num = 0
                         return
-                    logger.error(f"❌ 使用新 Cookie 回答失败 [ID: {question_id}]: {cookie_to_try}")
+                    logger.error(f"❌ Cookie {cookie_to_try} 回答失败 [ID: {question_id}]: {cookie_to_try}")
+                    failed_cookies.append(cookie_to_try)
                 except Exception as e:
                     logger.error(f"❌ 使用新 Cookie 回答异常 [ID: {question_id}]: {e}")
                 finally:
                     with _cookie_lock:
                         _cookies_in_use.discard(cookie_to_try)
 
-        logger.error(f"❌ 所有 Cookie 文件都尝试失败 [ID: {question_id}]: {question_name}")
+        if len(cookie_files_to_try) == 1:
+            failed_label = failed_cookies[0] if failed_cookies else current_cookie
+            logger.error(f"❌ Cookie {failed_label} 尝试失败 [ID: {question_id}]: {question_name}")
+            error_message = f"Cookie {failed_label} 尝试失败，问题：{question_name}"
+        else:
+            logger.error(f"❌ 所有 Cookie 文件都尝试失败 [ID: {question_id}]: {question_name}")
+            error_message = f"所有 Cookie 都尝试失败，问题：{question_name}"
         logger.info("🔄 重置错误计数器，准备处理下一个问题")
         self.total_errors = 0
         self.total_errors_num = 0
-        raise Exception(f"所有 Cookie 都尝试失败，问题：{question_name}")
+        raise Exception(error_message)
 
     def _ask_one_question_core(self, question_id: str, question_name: str):
         self._interact_with_page_core(question_id, question_name)
@@ -978,6 +992,37 @@ def process_cookie_task(cookie_file: str, question: Dict[str, Any], round_num: i
         return False
 
 
+def _filter_available_cookie_files(platform_name: str, cookie_files: List[str]) -> List[str]:
+    if not cookie_files or pymysql is None or not DB_CONFIG:
+        return cookie_files
+    try:
+        conn = pymysql.connect(**DB_CONFIG)
+        cursor = conn.cursor(pymysql.cursors.DictCursor)
+        account_keys = [os.path.splitext(cookie_file)[0].replace("cookies", "", 1) for cookie_file in cookie_files]
+        placeholders = ", ".join(["%s"] * len(account_keys))
+        cursor.execute(
+            f"""
+            SELECT account_key
+            FROM account_master
+            WHERE platform_name = %s
+              AND account_status = 'available'
+              AND account_key IN ({placeholders})
+            """,
+            (platform_name, *account_keys),
+        )
+        available = {str(row["account_key"]) for row in cursor.fetchall() or []}
+        cursor.close()
+        conn.close()
+        return [
+            cookie_file
+            for cookie_file in cookie_files
+            if os.path.splitext(cookie_file)[0].replace("cookies", "", 1) in available
+        ]
+    except Exception as e:
+        logger.error(f"筛选可用 cookie 账号失败: {e}")
+        return cookie_files
+
+
 def run_concurrent(max_workers: int = 2, proxy_api: Optional[Callable] = None, questions: Optional[List[Dict[str, Any]]] = None):
     """
     并发运行多个cookie文件处理任务 (循环轮询模式)
@@ -994,6 +1039,7 @@ def run_concurrent(max_workers: int = 2, proxy_api: Optional[Callable] = None, q
     """
     deep_seek_dp = DeepSeekDP()
     cookie_files = DeepSeekDP.get_available_cookie_files(deep_seek_dp.currentPath, "deepseek_cookie_file")
+    cookie_files = _filter_available_cookie_files("deepseek", cookie_files)
     random.shuffle(cookie_files)
     logger.info(f"🎲 Cookie 文件顺序已随机打乱：{cookie_files}")
 
@@ -1104,9 +1150,9 @@ def _select_cookie_file(task_info: dict) -> str:
     return "cookies1.json"
 
 
-def _allocate_account_for_task(task_info: dict) -> tuple[str, dict, object]:
+def _allocate_account_for_task(task_info: dict, exclude_account_ids: set[int] | None = None) -> tuple[str, dict, object]:
     account_info = task_info.get("account_info") or {}
-    if account_info:
+    if account_info and not exclude_account_ids:
         return _select_cookie_file(task_info), account_info, None
     if (task_info.get("dry_run") or os.getenv("CRAWLER_EXECUTE_DRY_RUN") == "1") and not task_info.get("account_allocator"):
         return _select_cookie_file(task_info), {}, None
@@ -1114,7 +1160,7 @@ def _allocate_account_for_task(task_info: dict) -> tuple[str, dict, object]:
         return _select_cookie_file(task_info), {}, None
 
     allocator = task_info.get("account_allocator") or AccountAllocator()
-    allocated = allocator.allocate("deepseek", task_id=task_info.get("task_id"))
+    allocated = allocator.allocate("deepseek", task_id=task_info.get("task_id"), exclude_account_ids=exclude_account_ids)
     task_info["account_info"] = allocated
     return _select_cookie_file(task_info), allocated, allocator
 
@@ -1124,10 +1170,9 @@ def execute_task(task_info: dict, account_info: dict = None) -> dict:
     if account_info:
         task_info = {**task_info, "account_info": account_info}
 
-    cookie_file, allocated_account, allocator = _allocate_account_for_task(task_info)
-    selected_account = allocated_account.get("account_id") or (task_info.get("account_info") or {}).get("account_id")
-
     if task_info.get("dry_run") or os.getenv("CRAWLER_EXECUTE_DRY_RUN") == "1":
+        cookie_file, allocated_account, allocator = _allocate_account_for_task(task_info)
+        selected_account = allocated_account.get("account_id") or (task_info.get("account_info") or {}).get("account_id")
         if allocator:
             allocator.release(allocated_account, success=True, task_id=task_info.get("task_id"))
         return {"success": True, "answer": "", "error": "", "account_id": selected_account or cookie_file}
@@ -1135,17 +1180,36 @@ def execute_task(task_info: dict, account_info: dict = None) -> dict:
     if sync_playwright is None:
         raise RuntimeError("playwright is required to execute DeepSeek tasks")
 
-    try:
-        dp = DeepSeekDP(cookie_file=cookie_file)
-        dp.run(questions=[_build_question_tuple(task_info)])
-        if allocator:
-            allocator.release(allocated_account, success=True, task_id=task_info.get("task_id"))
-        return {"success": True, "answer": "", "error": "", "account_id": selected_account or cookie_file}
-    except Exception as exc:
-        logger.exception("DeepSeek execute_task failed")
-        if allocator:
-            allocator.release(allocated_account, success=False, task_id=task_info.get("task_id"), reason=str(exc))
-        return {"success": False, "answer": "", "error": str(exc), "account_id": selected_account or cookie_file}
+    excluded_account_ids: set[int] = set()
+    last_error = ""
+
+    while True:
+        try:
+            cookie_file, allocated_account, allocator = _allocate_account_for_task(task_info, excluded_account_ids)
+        except Exception as exc:
+            logger.exception("DeepSeek account allocation failed")
+            return {"success": False, "answer": "", "error": str(exc), "account_id": ""}
+
+        selected_account = allocated_account.get("account_id") or cookie_file
+        account_master_id = allocated_account.get("account_master_id") or allocated_account.get("id")
+
+        try:
+            dp = DeepSeekDP(cookie_file=cookie_file)
+            dp.disable_local_account_switch = allocator is not None
+            dp.run(questions=[_build_question_tuple(task_info)])
+            if allocator:
+                allocator.release(allocated_account, success=True, task_id=task_info.get("task_id"))
+            return {"success": True, "answer": "", "error": "", "account_id": selected_account}
+        except Exception as exc:
+            last_error = str(exc)
+            logger.exception("DeepSeek execute_task failed for account %s", selected_account)
+            if allocator:
+                allocator.release(allocated_account, success=False, task_id=task_info.get("task_id"), reason=last_error)
+                if account_master_id:
+                    excluded_account_ids.add(int(account_master_id))
+                task_info.pop("account_info", None)
+                continue
+            return {"success": False, "answer": "", "error": last_error, "account_id": selected_account}
 
 
 if __name__ == '__main__':

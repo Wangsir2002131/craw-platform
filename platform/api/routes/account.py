@@ -11,6 +11,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 from pydantic import BaseModel
 
 from platform.account.account_state_machine import AccountStateMachine
+from platform.account.real_account_sync import sync_real_accounts
 from platform.config import DB_CONFIG
 
 
@@ -58,18 +59,31 @@ class AccountQueryService:
             cursor.execute(sql, tuple(params))
             return list(cursor.fetchall() or [])
 
-    def list_dashboard_accounts(self) -> list[dict[str, Any]]:
+    def list_dashboard_accounts(self, *, refresh: bool = True) -> list[dict[str, Any]]:
+        if refresh:
+            sync_real_accounts(self.db_config)
+
         sql = """
         SELECT
             id,
-            account,
-            crawler,
-            account_type,
-            status,
+            account_name AS account,
+            platform_name AS crawler,
+            CASE
+                WHEN account_key REGEXP '^[0-9]+$' AND CAST(account_key AS UNSIGNED) BETWEEN 1 AND 100 THEN '主账号'
+                ELSE '备用账号'
+            END AS account_type,
+            CASE account_status
+                WHEN 'available' THEN '正常'
+                WHEN 'disabled' THEN '已停用'
+                WHEN 'cooling' THEN '可疑'
+                WHEN 'error' THEN '异常'
+                WHEN 'allocated' THEN '占用中'
+                ELSE account_status
+            END AS status,
             fail_count,
             created_at
-        FROM tep_data_accounts
-        ORDER BY created_at DESC, id DESC
+        FROM account_master
+        ORDER BY platform_name ASC, CAST(account_key AS UNSIGNED) ASC, account_key ASC, id ASC
         """
         with self.cursor() as cursor:
             cursor.execute(sql)
@@ -94,32 +108,36 @@ class AccountQueryService:
             )
 
         with self.cursor() as cursor:
-            cursor.execute("SELECT * FROM tep_data_accounts WHERE id = %s FOR UPDATE", (account_id,))
+            cursor.execute("SELECT * FROM account_master WHERE id = %s FOR UPDATE", (account_id,))
             account = cursor.fetchone()
             if not account:
                 raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="dashboard account not found")
 
             cursor.execute(
                 """
-                UPDATE tep_data_accounts
-                SET status = %s
+                UPDATE account_master
+                SET account_status = %s,
+                    fail_count = %s,
+                    disabled_reason = %s,
+                    updated_at = CURRENT_TIMESTAMP
                 WHERE id = %s
                 """,
-                (new_status, account_id),
-            )
-
-            master_status = "disabled" if new_status == "已停用" else "available"
-            master_rows_updated = self._sync_account_master_status(
-                cursor,
-                account,
-                master_status=master_status,
-                reason=reason or f"dashboard:{new_status}",
+                (
+                    "disabled" if new_status == "已停用" else "available",
+                    0 if new_status == "正常" else int(account.get("fail_count") or 0),
+                    reason if new_status == "已停用" else None,
+                    account_id,
+                ),
             )
 
             updated = dict(account)
+            updated["account"] = updated.get("account_name")
+            updated["crawler"] = updated.get("platform_name")
+            updated["account_type"] = "主账号" if str(updated.get("account_key") or "").isdigit() and int(updated["account_key"]) <= 100 else "备用账号"
             updated["status"] = new_status
+            updated["fail_count"] = 0 if new_status == "正常" else int(account.get("fail_count") or 0)
             item = self._format_dashboard_account(updated)
-            item["masterRowsUpdated"] = master_rows_updated
+            item["masterRowsUpdated"] = 1
             return item
 
     def _format_dashboard_account(self, row: dict[str, Any]) -> dict[str, Any]:
@@ -131,8 +149,8 @@ class AccountQueryService:
             "status": row.get("status") or "-",
             "failCount": int(row.get("fail_count") or 0),
             "createdAt": row.get("created_at").isoformat() if row.get("created_at") else None,
-            "dataMode": "tep_data_accounts",
-            "statusSource": "tep_data_accounts.status",
+            "dataMode": "account_master",
+            "statusSource": "account_master.account_status",
         }
 
     def _sync_account_master_status(
@@ -275,7 +293,6 @@ def list_dashboard_accounts(
             item
             for item in filtered_items
             if normalized_account_filter in str(item.get("account") or "").lower()
-            or normalized_account_filter in str(item.get("id") or "").lower()
         ]
     if crawler_filter:
         filtered_items = [item for item in filtered_items if item["crawler"] == crawler_filter]
@@ -323,8 +340,8 @@ def list_dashboard_accounts(
             "hasNext": page < total_pages,
         },
         "meta": {
-            "dataMode": "tep_data_accounts",
-            "statusSource": "tep_data_accounts.status",
+            "dataMode": "account_master",
+            "statusSource": "account_master.account_status",
         },
     }
 
