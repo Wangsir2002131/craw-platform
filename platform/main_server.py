@@ -224,6 +224,10 @@ def _start_alert_monitors() -> list[BaseMonitor]:
     """Initialize and start all alert monitors."""
     alert_manager = get_alert_manager()
 
+    # 不注册 LogNotifier：后台周期检测产生的告警静默存入内存，
+    # 终端输出仅由 force_check API 的 ConsoleNotifier 按需触发，
+    # 避免服务启动后大量告警信息直接刷屏终端。
+
     monitors: list[BaseMonitor] = [
         QueueMonitor(alert_manager=alert_manager, interval=30),
         TaskMonitor(alert_manager=alert_manager, interval=60),

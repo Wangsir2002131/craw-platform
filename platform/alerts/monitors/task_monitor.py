@@ -78,19 +78,22 @@ class TaskMonitor(BaseMonitor):
                 )
                 timed_out_rows = cursor.fetchall()
 
-            current_timed_out_ids = {row["product_llm_task_id"] for row in timed_out_rows}
+            current_timed_out_ids = set()
 
             # 新增超时任务：首次超过阈值才触发一次告警
             for row in timed_out_rows:
                 task_id = row["product_llm_task_id"]
-                if task_id not in self._timed_out_task_ids:
+                question_id = row.get("question_id") or ""
+                round_num = row.get("round_num")
+                # 用 task_id + question_id + round_num 组合做去重 key，避免同一 task 不同题目丢失告警
+                dedup_key = f"{task_id}:{question_id}:{round_num}"
+                current_timed_out_ids.add(dedup_key)
+                if dedup_key not in self._timed_out_task_ids:
                     elapsed = int(row["elapsed_seconds"])
                     queue = row.get("queue_name", "unknown")
-                    question_id = row.get("question_id") or ""
                     question_name = row.get("question_name") or "未获取到问题内容"
-                    round_num = row.get("round_num")
                     self.alert_manager.trigger(
-                        name=f"task_timeout:{task_id}",
+                        name=f"task_timeout:{dedup_key}",
                         level=AlertLevel.YELLOW,
                         category=AlertCategory.TASK,
                         message=(
@@ -107,7 +110,7 @@ class TaskMonitor(BaseMonitor):
                             "timeout_seconds": self.timeout_seconds,
                         },
                     )
-                    self._timed_out_task_ids.add(task_id)
+                    self._timed_out_task_ids.add(dedup_key)
 
             # 任务已完成/失败的，从跟踪集合移除，下次重新运行可再计时
             self._timed_out_task_ids &= current_timed_out_ids

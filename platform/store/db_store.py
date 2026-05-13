@@ -264,6 +264,7 @@ class TaskMasterStatusStore:
             raise
         finally:
             cursor.close()
+            connection.close()
 
     def _connect(self) -> Any:
         if self.connection_factory is not None:

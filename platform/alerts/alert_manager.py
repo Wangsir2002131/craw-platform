@@ -77,6 +77,7 @@ class AlertManager:
         self._events: list[AlertEvent] = []
         self._lock = threading.RLock()
         self._max_events: int = 1000
+        self._max_tracking_entries: int = 2000
         self._alert_counters: dict[str, int] = {}
         self._suppress_intervals: dict[str, int] = {}
         self._last_triggered_at: dict[str, datetime] = {}
@@ -146,8 +147,17 @@ class AlertManager:
             self._last_triggered_at[name] = now
             self._alert_counters[name] = self._alert_counters.get(name, 0) + 1
 
+            # 防止 _last_triggered_at 和 _alert_counters 无限增长
+            if len(self._last_triggered_at) > self._max_tracking_entries:
+                # 保留最近触发的条目，淘汰最旧的
+                sorted_items = sorted(self._last_triggered_at.items(), key=lambda x: x[1])
+                to_remove = sorted_items[: len(sorted_items) - self._max_tracking_entries]
+                for key, _ in to_remove:
+                    del self._last_triggered_at[key]
+                    self._alert_counters.pop(key, None)
+
         logger.debug(
-            "%s [%s] %s: %s",
+            "alert triggered: %s [%s] %s: %s",
             ALERT_LEVEL_DISPLAY.get(level, level.value),
             ALERT_CATEGORY_DISPLAY.get(category, category.value),
             name,

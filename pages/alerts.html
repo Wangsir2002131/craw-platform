@@ -804,7 +804,7 @@
       refreshBtn.textContent = "检测中...";
       eventBody.innerHTML = '<tr><td colspan="5" class="table-state">正在重新检测系统状态...</td></tr>';
       try {
-        const res = await fetch("/alerts/force-check", { method: "POST" });
+        const res = await fetch("/alerts/force-check?clear_history=false", { method: "POST" });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
         state.page = 1;

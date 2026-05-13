@@ -380,11 +380,15 @@ ent_data_product_llm_task (业务任务)
 
 **核心功能**：
 - 告警配置管理（启用/禁用）
-- 告警抑制（相同告警间隔控制）
+- 告警抑制（相同告警间隔控制，`suppress_seconds` 参数）
 - 通知器注册与分发
 - 告警事件存储（最多 1000 条）
 - 告警确认（单条/批量）
 - 统计汇总
+
+**日志行为**：
+- 后台周期巡检触发的告警**不输出终端日志**（`AlertManager.trigger()` 使用 `DEBUG` 级别，`LogNotifier` 不注册到全局 `AlertManager`）
+- 告警仅静默写入内存事件列表，通过 UI 轮询或手动刷新查看
 
 #### 监控器
 
@@ -394,6 +398,36 @@ ent_data_product_llm_task (业务任务)
 | `TaskMonitor` | 任务超时、长时间 running | 60s |
 | `AccountMonitor` | 账号可用性、错误率 | 60s |
 | `SystemMonitor` | 系统资源（CPU/内存/磁盘） | 60s |
+
+#### BaseMonitor — `force_check` 与 `reset_states` 解耦
+
+`BaseMonitor` 提供两个独立操作，职责明确分离：
+
+| 方法 | 作用 |
+|------|------|
+| `check()` | 执行一次监控检查，触发告警（由后台定时器调用） |
+| `reset_states()` | 清空监控器内部去重状态（由调用方显式决定何时执行） |
+| `force_check()` | 立即执行 `check()`，**不自动重置状态** |
+
+**`/alerts/force-check` API 的 `clear_history` 参数行为**：
+
+| `clear_history` | 行为 |
+|----------------|------|
+| `false`（默认） | 保留历史事件，在现有事件基础上增量追加；监控器状态不重置，不会对同一告警重复触发 |
+| `true` | 先调用 `monitor.reset_states()` 清空内部去重状态，再执行 `check()`，同时清空历史事件列表 |
+
+> **设计原因**：原始设计中 `force_check()` 内部调用 `reset_states()`，导致前端使用 `clear_history=false` 刷新时，
+> `QueueMonitor` / `AccountMonitor` 状态被清空，`check()` 重新将当前状态评估为新告警，产生大量重复事件。
+> 现将两者解耦，由 API 层根据 `clear_history` 参数显式控制是否重置状态。
+
+#### TaskMonitor — 多轮次超时告警去重
+
+`TaskMonitor` 使用 `_timed_out_task_ids`（`set`）对超时任务进行**轮次级别**去重：
+
+- 去重键格式：`"{task_id}:{question_id}:{round_num}"`
+- 同一任务的不同问题、不同轮次各自产生独立告警
+- 已触发告警的轮次不会重复触发，直到该轮次从 `running` 列表消失（任务完成或失败）
+- `reset_states()` 会清空该集合，仅在 `clear_history=true` 的强制刷新时触发
 
 #### 告警等级
 
