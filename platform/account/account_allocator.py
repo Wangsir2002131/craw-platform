@@ -81,31 +81,71 @@ class AccountAllocator:
         if not account_id:
             return
 
-        new_status = "available" if success else "error"
         with self.cursor() as cursor:
+            self._ensure_fail_count_column(cursor)
             cursor.execute("SELECT * FROM account_master WHERE id = %s FOR UPDATE", (account_id,))
             account = cursor.fetchone()
             if not account:
                 return
 
             current_count = max(int(account.get("current_task_count") or 0) - 1, 0)
+            fail_count = 0 if success else int(account.get("fail_count") or 0) + 1
+            new_status = self._release_status(success, fail_count)
+            safe_reason = self._safe_reason(reason)
+            disabled_reason = None if success else safe_reason
             cursor.execute(
                 """
                 UPDATE account_master
                 SET current_task_count = %s,
                     account_status = %s,
+                    fail_count = %s,
                     last_released_at = CURRENT_TIMESTAMP,
                     disabled_reason = %s,
                     updated_at = CURRENT_TIMESTAMP
                 WHERE id = %s
                 """,
-                (current_count, new_status, None if success else reason, account_id),
+                (current_count, new_status, fail_count, disabled_reason, account_id),
             )
             AccountStateMachine(cursor, self.operator).transition(
                 account,
                 new_status,
-                reason=reason or ("released" if success else "execution_failed"),
+                reason=safe_reason or ("released" if success else f"execution_failed_{fail_count}"),
                 task_id=task_id,
+            )
+
+    @staticmethod
+    def _safe_reason(reason: str | None) -> str | None:
+        if reason is None:
+            return None
+        return str(reason).replace("\r", " ").replace("\n", " ")[:255]
+
+    def _release_status(self, success: bool, fail_count: int) -> str:
+        if success:
+            return "available"
+        if fail_count == 1:
+            return "cooling"
+        if fail_count == 2:
+            return "error"
+        return "disabled"
+
+    def _ensure_fail_count_column(self, cursor: Any) -> None:
+        cursor.execute(
+            """
+            SELECT COUNT(*) AS count
+            FROM information_schema.COLUMNS
+            WHERE TABLE_SCHEMA = DATABASE()
+              AND TABLE_NAME = 'account_master'
+              AND COLUMN_NAME = 'fail_count'
+            """
+        )
+        row = cursor.fetchone() or {}
+        if int(row.get("count") or 0) == 0:
+            cursor.execute(
+                """
+                ALTER TABLE account_master
+                ADD COLUMN fail_count INT NOT NULL DEFAULT 0 COMMENT 'Consecutive execution failure count'
+                AFTER current_task_count
+                """
             )
 
     @contextmanager
@@ -139,10 +179,10 @@ class AccountAllocator:
             SELECT *
             FROM account_master
             WHERE platform_name = %s
-                AND account_status = 'available'
+                AND account_status IN ('available', 'cooling', 'error')
                 AND current_task_count < max_concurrent_tasks
                 {exclude_sql}
-            ORDER BY priority DESC, last_allocated_at ASC, id ASC
+            ORDER BY priority DESC, id ASC
             LIMIT 1
             FOR UPDATE
             """,

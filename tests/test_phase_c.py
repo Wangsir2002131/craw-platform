@@ -138,10 +138,39 @@ class TestPhaseC(unittest.TestCase):
         self.assertTrue(any("last_allocated_at" in sql for sql, _ in connection.cursor_obj.executed))
         self.assertTrue(any("last_released_at" in sql for sql, _ in connection.cursor_obj.executed))
 
+    def test_allocator_prefers_lowest_id_non_disabled_account(self):
+        connection = FakeConnection()
+        allocator = AccountAllocator(connection_factory=lambda: connection)
+
+        allocator.allocate("afu", task_id=9)
+
+        select_sql = next(sql for sql, _ in connection.cursor_obj.executed if "FOR UPDATE" in sql)
+        self.assertIn("account_status IN ('available', 'cooling', 'error')", select_sql)
+        self.assertIn("ORDER BY priority DESC, id ASC", select_sql)
+
+    def test_allocator_failure_release_truncates_long_error_reason(self):
+        connection = FakeConnection()
+        allocator = AccountAllocator(connection_factory=lambda: connection)
+        long_reason = "browser closed\n" + ("x" * 400)
+
+        allocator.release({"account_master_id": 1}, success=False, task_id=9, reason=long_reason)
+
+        update_params = next(
+            params
+            for sql, params in connection.cursor_obj.executed
+            if "UPDATE account_master SET current_task_count" in sql
+        )
+        self.assertEqual("cooling", update_params[1])
+        self.assertEqual(1, update_params[2])
+        self.assertLessEqual(len(update_params[3]), 255)
+        self.assertNotIn("\n", update_params[3])
+
     def test_state_machine_rejects_invalid_transition(self):
         machine = AccountStateMachine()
 
         self.assertTrue(machine.can_transition("available", "allocated"))
+        self.assertTrue(machine.can_transition("cooling", "allocated"))
+        self.assertTrue(machine.can_transition("error", "allocated"))
         self.assertFalse(machine.can_transition("disabled", "allocated"))
         with self.assertRaises(ValueError):
             machine.transition({"id": 1, "account_status": "disabled"}, "allocated")
