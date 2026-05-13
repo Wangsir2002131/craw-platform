@@ -116,6 +116,7 @@ class AFu:
         self.total_errors = 0
         self.total_errors_num = 0
         self.background_threads = []
+        self.disable_local_account_switch = False
         self._stop_monitor = False
 
     def _start_streamchat_monitor(self):
@@ -358,9 +359,13 @@ class AFu:
         current_profile = f"account_{self.account_id}"
         if current_profile in all_profiles:
             profiles_to_try.append(current_profile)
-        profiles_to_try.extend([p for p in all_profiles if p != current_profile])
 
-        # 最多重试所有可用的 profiles
+        if getattr(self, "disable_local_account_switch", False):
+            profiles_to_try = profiles_to_try or [current_profile]
+        else:
+            profiles_to_try.extend([p for p in all_profiles if p != current_profile])
+
+        failed_profiles = []
         for idx, profile_name in enumerate(profiles_to_try):
             # 跳过其他任务正在占用的 profile（当前任务自身的 profile 除外）
             if idx > 0:
@@ -382,7 +387,8 @@ class AFu:
                     self.total_errors_num = 0
                     return  # 成功则直接返回
                 except Exception as e:
-                    logger.error(f"❌ 使用当前浏览器回答失败 [ID: {question_id}]: {e}")
+                    failed_profiles.append(profile_name)
+                    logger.error(f"❌ Profile {profile_name} 回答失败 [ID: {question_id}]: {e}")
                     # 关闭当前浏览器，准备切换 profile
                     try:
                         if self.driver:
@@ -402,14 +408,20 @@ class AFu:
                         self.total_errors_num = 0
                         return  # 成功则直接返回
                     else:
-                        logger.error(f"❌ 使用新 Profile 回答失败 [ID: {question_id}]: {profile_name}")
+                        logger.error(f"❌ Profile {profile_name} 回答失败 [ID: {question_id}]: {profile_name}")
+                        failed_profiles.append(profile_name)
                 except Exception as e:
-                    logger.error(f"❌ 使用新 Profile 回答异常 [ID: {question_id}]: {e}")
+                    failed_profiles.append(profile_name)
+                    logger.error(f"❌ Profile {profile_name} 回答异常 [ID: {question_id}]: {e}")
                 finally:
                     with _profile_lock:
                         _profiles_in_use.discard(profile_name)
 
-        # 所有 profile 都失败后，抛出异常
+        if len(profiles_to_try) == 1:
+            failed_label = failed_profiles[0] if failed_profiles else current_profile
+            logger.error(f"❌ Profile {failed_label} 尝试失败 [ID: {question_id}]: {question_name}")
+            raise Exception(f"Profile {failed_label} 尝试失败，问题：{question_name}")
+
         logger.error(f"❌ 所有 Profile 文件都尝试失败 [ID: {question_id}]: {question_name}")
         raise Exception(f"所有 Profile 都尝试失败，问题：{question_name}")
 
@@ -738,6 +750,32 @@ def get_questions_from_db() -> List[dict]:
         return []
 
 
+def _filter_available_account_ids(platform_name: str, account_ids: List[str]) -> List[str]:
+    if not account_ids or pymysql is None or not DB_CONFIG:
+        return account_ids
+    try:
+        conn = pymysql.connect(**DB_CONFIG)
+        cursor = conn.cursor(pymysql.cursors.DictCursor)
+        placeholders = ", ".join(["%s"] * len(account_ids))
+        cursor.execute(
+            f"""
+            SELECT account_key
+            FROM account_master
+            WHERE platform_name = %s
+              AND account_status = 'available'
+              AND account_key IN ({placeholders})
+            """,
+            (platform_name, *account_ids),
+        )
+        available = {str(row["account_key"]) for row in cursor.fetchall() or []}
+        cursor.close()
+        conn.close()
+        return [account_id for account_id in account_ids if account_id in available]
+    except Exception as e:
+        logger.error(f"筛选可用账号失败: {e}")
+        return account_ids
+
+
 def run_concurrent(max_workers: int = 1, use_proxy: bool = True, executable_path: Optional[str] = None):
     """
     循环并发运行多个账号的任务
@@ -747,6 +785,7 @@ def run_concurrent(max_workers: int = 1, use_proxy: bool = True, executable_path
     if not os.path.exists(profile_base):
         os.makedirs(profile_base)
     account_ids = [d.replace('account_', '') for d in os.listdir(profile_base) if d.startswith('account_')]
+    account_ids = _filter_available_account_ids("afu", account_ids)
     # 🔥 随机打乱账号顺序，避免每次都用同一个账号开头
     random.shuffle(account_ids)
     logger.info(f"🎲 账号顺序已随机打乱：{account_ids}")
@@ -843,9 +882,9 @@ def _select_account_id(task_info: dict, profile_base: str) -> str:
     return "1"
 
 
-def _allocate_account_for_task(task_info: dict) -> tuple[str, dict, object]:
+def _allocate_account_for_task(task_info: dict, exclude_account_ids: set[int] | None = None) -> tuple[str, dict, object]:
     account_info = task_info.get("account_info") or {}
-    if account_info:
+    if account_info and not exclude_account_ids:
         return _select_account_id(task_info, r"D:/afu_real_profiles"), account_info, None
     if (task_info.get("dry_run") or os.getenv("CRAWLER_EXECUTE_DRY_RUN") == "1") and not task_info.get("account_allocator"):
         return _select_account_id(task_info, r"D:/afu_real_profiles"), {}, None
@@ -853,36 +892,58 @@ def _allocate_account_for_task(task_info: dict) -> tuple[str, dict, object]:
         return _select_account_id(task_info, r"D:/afu_real_profiles"), {}, None
 
     allocator = task_info.get("account_allocator") or AccountAllocator()
-    allocated = allocator.allocate("afu", task_id=task_info.get("task_id"))
+    allocated = allocator.allocate("afu", task_id=task_info.get("task_id"), exclude_account_ids=exclude_account_ids)
     task_info["account_info"] = allocated
     return str(allocated["account_id"]), allocated, allocator
 
 
 def execute_task(task_info: dict) -> dict:
     """Execute one AFu question task for the master dispatcher."""
-    account_id, account_info, allocator = _allocate_account_for_task(task_info)
     question = _build_question_from_task(task_info)
     round_num = int(task_info.get("round_num") or task_info.get("RoundNum") or 1)
 
     if task_info.get("dry_run") or os.getenv("CRAWLER_EXECUTE_DRY_RUN") == "1":
+        account_id, account_info, allocator = _allocate_account_for_task(task_info)
         if allocator:
             allocator.release(account_info, success=True, task_id=task_info.get("task_id"))
         return {"success": True, "answer": "", "error": "", "account_id": account_id}
 
     if webdriver is None:
-        raise RuntimeError("selenium is required to execute AFu tasks")
+        return {
+            "success": False,
+            "answer": "",
+            "error": "selenium is required to execute AFu tasks; install selenium first",
+            "account_id": "",
+        }
 
-    try:
-        afu = AFu(account_id=account_id, use_proxy=task_info.get("use_proxy", True))
-        afu.run_single(question, round_num)
-        if allocator:
-            allocator.release(account_info, success=True, task_id=task_info.get("task_id"))
-        return {"success": True, "answer": "", "error": "", "account_id": account_id}
-    except Exception as exc:
-        logger.exception("AFu execute_task failed")
-        if allocator:
-            allocator.release(account_info, success=False, task_id=task_info.get("task_id"), reason=str(exc))
-        return {"success": False, "answer": "", "error": str(exc), "account_id": account_id}
+    excluded_account_ids: set[int] = set()
+
+    while True:
+        try:
+            account_id, account_info, allocator = _allocate_account_for_task(task_info, excluded_account_ids)
+        except Exception as exc:
+            logger.exception("AFu account allocation failed")
+            return {"success": False, "answer": "", "error": str(exc), "account_id": ""}
+
+        account_master_id = account_info.get("account_master_id") or account_info.get("id")
+
+        try:
+            afu = AFu(account_id=account_id, use_proxy=task_info.get("use_proxy", True))
+            afu.disable_local_account_switch = allocator is not None
+            afu.run_single(question, round_num)
+            if allocator:
+                allocator.release(account_info, success=True, task_id=task_info.get("task_id"))
+            return {"success": True, "answer": "", "error": "", "account_id": account_id}
+        except Exception as exc:
+            error = str(exc)
+            logger.exception("AFu execute_task failed for account %s", account_id)
+            if allocator:
+                allocator.release(account_info, success=False, task_id=task_info.get("task_id"), reason=error)
+                if account_master_id:
+                    excluded_account_ids.add(int(account_master_id))
+                task_info.pop("account_info", None)
+                continue
+            return {"success": False, "answer": "", "error": error, "account_id": account_id}
 
 
 if __name__ == "__main__":

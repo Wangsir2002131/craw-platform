@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS account_master (
     priority INT NOT NULL DEFAULT 50 COMMENT 'Allocation priority from 0 to 100',
     max_concurrent_tasks INT NOT NULL DEFAULT 1 COMMENT 'Maximum concurrent tasks for this account',
     current_task_count INT NOT NULL DEFAULT 0 COMMENT 'Current allocated task count',
+    fail_count INT NOT NULL DEFAULT 0 COMMENT 'Consecutive execution failure count',
     last_allocated_at DATETIME NULL COMMENT 'Last allocation time',
     last_released_at DATETIME NULL COMMENT 'Last release time',
     disabled_reason VARCHAR(255) NULL COMMENT 'Reason when account is disabled or unavailable',

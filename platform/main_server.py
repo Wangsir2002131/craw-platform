@@ -18,6 +18,7 @@ from fastapi.staticfiles import StaticFiles
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
+from platform.account.real_account_sync import sync_real_accounts  # noqa: E402
 from platform.alerts import (  # noqa: E402
     AccountMonitor,
     QueueMonitor,
@@ -312,6 +313,11 @@ def _start_background_threads(
     return stop_event, threads, monitors
 
 
+def sync_accounts_on_startup() -> None:
+    count = sync_real_accounts(DB_CONFIG)
+    logger.info("real account sync completed: %s accounts", count)
+
+
 def main(argv: list[str] | None = None) -> int:
     configure_logging()
     args = build_parser().parse_args(argv)
@@ -319,6 +325,12 @@ def main(argv: list[str] | None = None) -> int:
     if args.api_only and args.dispatcher_only:
         logger.error("--api-only and --dispatcher-only cannot be used together")
         return 2
+
+    try:
+        sync_accounts_on_startup()
+    except Exception:
+        logger.exception("real account sync failed on startup")
+        return 1
 
     if args.api_only:
         logger.info("starting API server only on %s:%s", args.host, args.port)
