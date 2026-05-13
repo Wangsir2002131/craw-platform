@@ -48,11 +48,13 @@ class BaseMonitor(ABC):
         """
 
     def force_check(self) -> None:
-        """Reset state tracking and run check() immediately.
+        """Run check() immediately without resetting state.
 
-        Used by the force-check API to reflect the current system state.
+        Whether to reset state before checking is the caller's responsibility
+        (e.g. the force-check API resets states explicitly when clear_history=True).
+        Decoupling the two operations prevents duplicate alerts when history is
+        preserved across refreshes (clear_history=False).
         """
-        self.reset_states()
         if self.enabled:
             self.check()
 

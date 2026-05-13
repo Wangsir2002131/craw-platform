@@ -149,16 +149,21 @@ def acknowledge_all_alerts(
 @router.post("/force-check", status_code=status.HTTP_200_OK)
 def force_check_alerts(
     limit: int = Query(100, ge=1, le=500),
+    clear_history: bool = Query(True, description="Whether to clear existing events before re-checking"),
     manager: AlertManager = Depends(get_manager),
 ) -> dict[str, Any]:
     from platform.alerts.alert_manager import get_monitors
     from platform.alerts.notifiers.console_notifier import ConsoleNotifier
 
-    manager.clear_events()
+    cleared_count = 0
+    if clear_history:
+        cleared_count = manager.clear_events()
     monitors = get_monitors()
     failed_monitors = []
     for monitor in monitors:
         try:
+            if clear_history:
+                monitor.reset_states()
             monitor.force_check()
         except Exception as e:
             logger.exception("force_check failed for %s", monitor.__class__.__name__)
@@ -172,7 +177,8 @@ def force_check_alerts(
             logger.exception("console output failed for alert event %s", event.id)
     summary = manager.get_summary()
     return {
-        "cleared": True,
+        "cleared": clear_history,
+        "cleared_count": cleared_count,
         "monitors_checked": len(monitors),
         "monitors_failed": failed_monitors,
         "events": [e.to_dict() for e in events],
