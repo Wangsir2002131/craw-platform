@@ -28,6 +28,7 @@ from platform.alerts import (  # noqa: E402
 )
 from platform.alerts.alert_manager import register_monitor  # noqa: E402
 from platform.alerts.monitors.base import BaseMonitor  # noqa: E402
+from platform.store.alert_event_store import AlertEventStore  # noqa: E402
 from platform.api.routes.account import dashboard_router as dashboard_account_router  # noqa: E402
 from platform.api.routes.account import router as account_router  # noqa: E402
 from platform.api.routes.alert import router as alert_router  # noqa: E402
@@ -223,6 +224,13 @@ def _build_dispatcher() -> MasterDispatcher:
 def _start_alert_monitors() -> list[BaseMonitor]:
     """Initialize and start all alert monitors."""
     alert_manager = get_alert_manager()
+
+    # 配置数据库持久化存储：告警事件写入 MySQL，避免内存挥发
+    try:
+        event_store = AlertEventStore(DB_CONFIG)
+        alert_manager.configure_event_store(event_store)
+    except Exception:
+        logger.exception("failed to configure alert event store, falling back to in-memory storage")
 
     # 不注册 LogNotifier：后台周期检测产生的告警静默存入内存，
     # 终端输出仅由 force_check API 的 ConsoleNotifier 按需触发，

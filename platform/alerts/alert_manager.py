@@ -18,6 +18,7 @@ from platform.alerts.alert_levels import (
 
 if TYPE_CHECKING:
     from platform.alerts.notifiers.base import BaseNotifier
+    from platform.store.alert_event_store import AlertEventStore
 
 logger = logging.getLogger(__name__)
 
@@ -70,9 +71,11 @@ class AlertManager:
         *,
         client: Any | None = None,
         client_factory: Callable[[], Any] | None = None,
+        event_store: AlertEventStore | None = None,
     ) -> None:
         self._client = client
         self._client_factory = client_factory
+        self._event_store = event_store
         self._configs: dict[str, dict[str, Any]] = {}
         self._events: list[AlertEvent] = []
         self._lock = threading.RLock()
@@ -82,6 +85,16 @@ class AlertManager:
         self._suppress_intervals: dict[str, int] = {}
         self._last_triggered_at: dict[str, datetime] = {}
         self._notifiers: list[BaseNotifier] = []
+
+    def configure_event_store(self, event_store: AlertEventStore) -> None:
+        """Set the database-backed event store for persistent alert storage."""
+        self._event_store = event_store
+        # 确保表存在
+        try:
+            event_store.ensure_table()
+            logger.info("alert event store configured and table ensured")
+        except Exception:
+            logger.exception("failed to ensure alert_events table")
 
     def register_config(self, name: str, *, enabled: bool = True, params: dict[str, Any] | None = None) -> None:
         """Register or update an alert configuration."""
@@ -141,6 +154,14 @@ class AlertManager:
                 metadata=dict(metadata or {}),
             )
 
+            # 写入数据库（持久化存储）
+            if self._event_store is not None:
+                try:
+                    self._event_store.insert_alert_event(event.to_dict())
+                except Exception:
+                    logger.exception("failed to persist alert event %s to database", event.id)
+
+            # 保留内存缓存作为降级方案（兼容无数据库场景）
             self._events.append(event)
             if len(self._events) > self._max_events:
                 self._events = self._events[-self._max_events :]
@@ -220,6 +241,17 @@ class AlertManager:
         acknowledged_by: str = "system",
     ) -> bool:
         """Acknowledge an alert event by ID. Returns True if found and acknowledged."""
+        # 优先使用数据库
+        if self._event_store is not None:
+            try:
+                ok = self._event_store.acknowledge_alert_event(event_id, acknowledged_by)
+                if ok:
+                    logger.info("alert acknowledged: id=%s by=%s", event_id, acknowledged_by)
+                return ok
+            except Exception:
+                logger.exception("failed to acknowledge alert event %s via database", event_id)
+
+        # 降级：内存查找
         with self._lock:
             for event in reversed(self._events):
                 if event.id == event_id:
@@ -240,6 +272,21 @@ class AlertManager:
         acknowledged_by: str = "system",
     ) -> int:
         """Acknowledge all matching unacknowledged alerts. Returns count acknowledged."""
+        # 优先使用数据库
+        if self._event_store is not None:
+            try:
+                count = self._event_store.acknowledge_alert_events(
+                    category=category.value if category else None,
+                    level=level.value if level else None,
+                    acknowledged_by=acknowledged_by,
+                )
+                if count:
+                    logger.info("acknowledged %d alerts", count)
+                return count
+            except Exception:
+                logger.exception("failed to acknowledge all alert events via database")
+
+        # 降级：内存遍历
         count = 0
         with self._lock:
             for event in reversed(self._events):
@@ -257,6 +304,24 @@ class AlertManager:
             logger.info("acknowledged %d alerts", count)
         return count
 
+    def delete_event(self, event_id: str) -> bool:
+        """Delete an alert event by ID from both DB and memory. Returns True if deleted."""
+        deleted = False
+        # 优先从数据库删除
+        if self._event_store is not None:
+            try:
+                deleted = self._event_store.delete_alert_event(event_id)
+                if deleted:
+                    logger.info("alert deleted: id=%s", event_id)
+            except Exception:
+                logger.exception("failed to delete alert event %s via database", event_id)
+
+        # 同步清除内存缓存
+        with self._lock:
+            self._events = [e for e in self._events if e.id != event_id]
+
+        return deleted
+
     def list_events(
         self,
         *,
@@ -266,6 +331,20 @@ class AlertManager:
         limit: int = 100,
     ) -> list[AlertEvent]:
         """List alert events with optional filters (most recent first)."""
+        # 优先从数据库读取
+        if self._event_store is not None:
+            try:
+                rows = self._event_store.list_alert_events(
+                    category=category.value if category else None,
+                    level=level.value if level else None,
+                    acknowledged=acknowledged,
+                    limit=limit,
+                )
+                return [self._row_to_event(row) for row in rows]
+            except Exception:
+                logger.exception("failed to list alert events from database, falling back to memory")
+
+        # 降级：内存读取
         with self._lock:
             events = list(reversed(self._events))
 
@@ -278,6 +357,22 @@ class AlertManager:
 
         return events[:limit]
 
+    @staticmethod
+    def _row_to_event(row: dict[str, Any]) -> AlertEvent:
+        """Convert a database row dict to an AlertEvent."""
+        return AlertEvent(
+            id=row["id"],
+            name=row["name"],
+            level=AlertLevel(row["level"]),
+            category=AlertCategory(row["category"]),
+            message=row["message"],
+            triggered_at=row["triggered_at"],
+            metadata=row.get("metadata", {}),
+            acknowledged=row.get("acknowledged", False),
+            acknowledged_at=row.get("acknowledged_at"),
+            acknowledged_by=row.get("acknowledged_by"),
+        )
+
     def get_unacknowledged_count(
             self,
             *,
@@ -285,14 +380,41 @@ class AlertManager:
             level: AlertLevel | None = None,
     ) -> int:
         """Get count of unacknowledged alerts matching filters."""
+        if self._event_store is not None:
+            try:
+                return self._event_store.count_unacknowledged_alert_events(
+                    category=category.value if category else None,
+                    level=level.value if level else None,
+                )
+            except Exception:
+                logger.exception("failed to count unacknowledged alert events from database")
         return len(self.list_events(category=category, level=level, acknowledged=False, limit=self._max_events))
 
     def get_counter(self, name: str) -> int:
         """Get trigger count for a specific alert name."""
+        if self._event_store is not None:
+            try:
+                return self._event_store.count_alert_events_by_name(name)
+            except Exception:
+                logger.exception("failed to get alert counter from database for %s", name)
         return self._alert_counters.get(name, 0)
 
     def get_summary(self) -> dict[str, Any]:
         """Get alert summary for dashboard display."""
+        # 优先从数据库读取
+        if self._event_store is not None:
+            try:
+                summary = self._event_store.get_alert_event_summary(latest_limit=10)
+                # 将 latest_events 中的 dict 转换为 AlertEvent.to_dict 兼容格式
+                if "latest_events" in summary:
+                    summary["latest_events"] = [
+                        self._row_to_event(row).to_dict() for row in summary["latest_events"]
+                    ]
+                return summary
+            except Exception:
+                logger.exception("failed to get alert summary from database, falling back to memory")
+
+        # 降级：内存统计
         with self._lock:
             total = len(self._events)
             unacked = sum(1 for e in self._events if not e.acknowledged)
@@ -317,15 +439,24 @@ class AlertManager:
 
     def clear_events(self, *, before: datetime | None = None) -> int:
         """Clear old alert events. If before is None, clears all."""
+        # 优先从数据库清除
+        db_cleared = 0
+        if self._event_store is not None:
+            try:
+                db_cleared = self._event_store.clear_alert_events(before=before)
+            except Exception:
+                logger.exception("failed to clear alert events from database")
+
+        # 同步清除内存缓存
         with self._lock:
             if before is None:
                 cleared = len(self._events)
                 self._events.clear()
-                return cleared
+                return max(cleared, db_cleared)
 
             original = len(self._events)
             self._events = [e for e in self._events if e.triggered_at >= before.isoformat()]
-            return original - len(self._events)
+            return max(original - len(self._events), db_cleared)
 
 
 _alert_manager = AlertManager()

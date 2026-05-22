@@ -163,7 +163,7 @@ def _resolve_queue_state(
 ) -> tuple[str, str]:
     if backlog >= 100 or consumers == 0:
         return "异常", "high"
-    if backlog >= 50 or consumers == 1:
+    if backlog >= 50:
         return "积压", "medium"
     return "正常", "low"
 
