@@ -37,6 +37,9 @@ class AlertEvent:
     acknowledged: bool = False
     acknowledged_at: str | None = None
     acknowledged_by: str | None = None
+    resolved: bool = False
+    resolved_at: str | None = None
+    resolved_by: str | None = None
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -52,6 +55,9 @@ class AlertEvent:
             "acknowledged": self.acknowledged,
             "acknowledged_at": self.acknowledged_at,
             "acknowledged_by": self.acknowledged_by,
+            "resolved": self.resolved,
+            "resolved_at": self.resolved_at,
+            "resolved_by": self.resolved_by,
         }
 
 
@@ -113,6 +119,15 @@ class AlertManager:
         """Get all alert configurations."""
         return dict(self._configs)
 
+    def _get_matching_config(self, name: str) -> dict[str, Any] | None:
+        config = self._configs.get(name)
+        if config is not None:
+            return config
+        base_name = name.split(":", 1)[0]
+        if base_name != name:
+            return self._configs.get(base_name)
+        return None
+
     def set_suppress_interval(self, name: str, seconds: int) -> None:
         """Set minimum interval between repeated alerts of the same name."""
         with self._lock:
@@ -128,38 +143,67 @@ class AlertManager:
         metadata: dict[str, Any] | None = None,
         suppress_seconds: int | None = None,
     ) -> AlertEvent | None:
-        config = self._configs.get(name)
+        """触发告警事件。同一名称的告警重复触发时更新现有事件而非新增。
+
+        合并规则：
+        - 若已存在同名且同 category/job 的未确认事件，则原地更新 triggered_at、message、metadata
+        - suppress_seconds 控制最小触发间隔，避免刷屏
+        - 抑制期内调用不更新事件时间但可更新 metadata（静默刷新）
+        """
+        config = self._get_matching_config(name)
         if config is not None and not config.get("enabled", True):
             return None
 
         now = datetime.now(timezone.utc)
         suppress_secs = suppress_seconds or self._suppress_intervals.get(name, 0)
+        meta = dict(metadata or {})
 
         with self._lock:
+            # ---- 抑制检查 ----
             if suppress_secs > 0:
                 last_triggered = self._last_triggered_at.get(name)
                 if last_triggered is not None:
                     elapsed = (now - last_triggered).total_seconds()
                     if elapsed < suppress_secs:
+                        # 抑制期内：静默更新已有事件的 metadata（仅内存），不修改时间
+                        self._merge_metadata_to_existing(name, category, meta)
                         logger.debug("alert %s suppressed, elapsed=%.1fs < suppress=%ds", name, elapsed, suppress_secs)
                         return None
 
+            # ---- 去重合并：查找同名未确认事件 ----
+            existing = self._find_existing_event(name, category)
+            if existing is not None:
+                existing.message = message
+                existing.metadata = {**existing.metadata, **meta}
+                existing.triggered_at = now.isoformat()
+                self._last_triggered_at[name] = now
+                self._alert_counters[name] = self._alert_counters.get(name, 0) + 1
+
+                # 同步更新数据库
+                self._update_event_in_store(existing)
+
+                logger.debug(
+                    "alert updated: %s [%s] %s: %s",
+                    ALERT_LEVEL_DISPLAY.get(level, level.value),
+                    ALERT_CATEGORY_DISPLAY.get(category, category.value),
+                    name, message,
+                )
+                self._notify_all(existing)
+                return existing
+
+            # ---- 新建告警事件 ----
             event = AlertEvent(
                 id=str(uuid.uuid4()),
                 name=name,
                 level=level,
                 category=category,
                 message=message,
-                triggered_at=datetime.now(timezone.utc).isoformat(),
-                metadata=dict(metadata or {}),
+                triggered_at=now.isoformat(),
+                metadata=meta,
             )
 
             # 写入数据库（持久化存储）
-            if self._event_store is not None:
-                try:
-                    self._event_store.insert_alert_event(event.to_dict())
-                except Exception:
-                    logger.exception("failed to persist alert event %s to database", event.id)
+            self._insert_event_to_store(event)
 
             # 保留内存缓存作为降级方案（兼容无数据库场景）
             self._events.append(event)
@@ -169,25 +213,82 @@ class AlertManager:
             self._alert_counters[name] = self._alert_counters.get(name, 0) + 1
 
             # 防止 _last_triggered_at 和 _alert_counters 无限增长
-            if len(self._last_triggered_at) > self._max_tracking_entries:
-                # 保留最近触发的条目，淘汰最旧的
-                sorted_items = sorted(self._last_triggered_at.items(), key=lambda x: x[1])
-                to_remove = sorted_items[: len(sorted_items) - self._max_tracking_entries]
-                for key, _ in to_remove:
-                    del self._last_triggered_at[key]
-                    self._alert_counters.pop(key, None)
+            self._trim_tracking_entries()
 
         logger.debug(
             "alert triggered: %s [%s] %s: %s",
             ALERT_LEVEL_DISPLAY.get(level, level.value),
             ALERT_CATEGORY_DISPLAY.get(category, category.value),
-            name,
-            message,
+            name, message,
         )
 
         self._notify_all(event)
-
         return event
+
+    # ------------------------------------------------------------------
+    #  Internal helpers for trigger() merge logic
+    # ------------------------------------------------------------------
+
+    def _find_existing_event(self, name: str, category: AlertCategory) -> AlertEvent | None:
+        """查找同名、同类别的未确认告警事件 — 优先查数据库，内存作为降级方案。
+
+        服务重启后内存为空，必须从数据库查询才能正确去重，避免重复入库。
+        """
+        # 优先从数据库查找
+        if self._event_store is not None:
+            try:
+                row = self._event_store.find_unacknowledged_by_name(
+                    name, category.value
+                )
+                if row and row.get("id"):
+                    return self._row_to_event(row)
+            except Exception:
+                logger.exception("failed to find existing event in database, falling back to memory")
+
+        # 降级：内存查找
+        for event in reversed(self._events):
+            if event.name == name and event.category == category and not event.resolved:
+                return event
+        return None
+
+    def _merge_metadata_to_existing(
+        self, name: str, category: AlertCategory, meta: dict[str, Any]
+    ) -> None:
+        """抑制期内静默合并 metadata 到已有事件（内存 + 数据库同步更新）。"""
+        existing = self._find_existing_event(name, category)
+        if existing is not None and meta:
+            existing.metadata = {**existing.metadata, **meta}
+            # 同步更新数据库
+            if self._event_store is not None:
+                try:
+                    self._event_store.update_alert_event(existing.to_dict())
+                except Exception:
+                    logger.exception("failed to update metadata in database during suppression")
+
+    def _insert_event_to_store(self, event: AlertEvent) -> None:
+        """持久化新建事件到数据库。"""
+        if self._event_store is not None:
+            try:
+                self._event_store.insert_alert_event(event.to_dict())
+            except Exception:
+                logger.exception("failed to persist alert event %s to database", event.id)
+
+    def _update_event_in_store(self, event: AlertEvent) -> None:
+        """持久化更新已有事件到数据库。"""
+        if self._event_store is not None:
+            try:
+                self._event_store.update_alert_event(event.to_dict())
+            except Exception:
+                logger.exception("failed to update alert event %s in database", event.id)
+
+    def _trim_tracking_entries(self) -> None:
+        """淘汰最旧的追踪条目，防止内存泄漏。"""
+        if len(self._last_triggered_at) > self._max_tracking_entries:
+            sorted_items = sorted(self._last_triggered_at.items(), key=lambda x: x[1])
+            to_remove = sorted_items[: len(sorted_items) - self._max_tracking_entries]
+            for key, _ in to_remove:
+                del self._last_triggered_at[key]
+                self._alert_counters.pop(key, None)
 
     # ------------------------------------------------------------------
     #  Notifier management
@@ -322,6 +423,47 @@ class AlertManager:
 
         return deleted
 
+    def auto_resolve(self, name: str) -> int:
+        """自动恢复指定名称的告警（精确匹配+前缀匹配）。"""
+        resolved = 0
+        if self._event_store is not None:
+            try:
+                resolved = self._event_store.auto_resolve_by_name(name)
+            except Exception:
+                logger.exception("failed to auto-resolve alert by name '%s' via database", name)
+
+        now = datetime.now(timezone.utc).isoformat()
+        with self._lock:
+            memory_resolved = 0
+            for event in self._events:
+                if event.resolved:
+                    continue
+                if event.name == name or event.name.startswith(name + ":"):
+                    event.resolved = True
+                    event.resolved_at = now
+                    event.resolved_by = "system"
+                    memory_resolved += 1
+            resolved = max(resolved, memory_resolved)
+
+        if resolved:
+            logger.info("auto-resolved %d alert(s) matching prefix '%s'", resolved, name)
+        return resolved
+
+    def has_active_alert(self, name: str) -> bool:
+        """Return True if an unresolved alert exists for the exact name or prefix."""
+        if self._event_store is not None:
+            try:
+                return bool(self._event_store.has_active_alert_event(name))
+            except Exception:
+                logger.exception("failed to check active alert by name '%s' via database", name)
+        with self._lock:
+            return any(not e.resolved and (e.name == name or e.name.startswith(name + ":")) for e in self._events)
+
+    def resolve_alerts(self, name: str) -> int:
+        """Backward-compatible alias for auto_resolve()."""
+        return self.auto_resolve(name)
+
+
     def list_events(
         self,
         *,
@@ -359,11 +501,17 @@ class AlertManager:
 
     @staticmethod
     def _row_to_event(row: dict[str, Any]) -> AlertEvent:
-        """Convert a database row dict to an AlertEvent."""
+        """Convert a database row dict to an AlertEvent.
+
+        Backward compatibility: legacy 'error' level (pre-merge) is mapped to 'red'.
+        """
+        level_str = row["level"]
+        if level_str == "error":
+            level_str = "red"
         return AlertEvent(
             id=row["id"],
             name=row["name"],
-            level=AlertLevel(row["level"]),
+            level=AlertLevel(level_str),
             category=AlertCategory(row["category"]),
             message=row["message"],
             triggered_at=row["triggered_at"],
@@ -371,6 +519,9 @@ class AlertManager:
             acknowledged=row.get("acknowledged", False),
             acknowledged_at=row.get("acknowledged_at"),
             acknowledged_by=row.get("acknowledged_by"),
+            resolved=row.get("resolved", False),
+            resolved_at=row.get("resolved_at"),
+            resolved_by=row.get("resolved_by"),
         )
 
     def get_unacknowledged_count(

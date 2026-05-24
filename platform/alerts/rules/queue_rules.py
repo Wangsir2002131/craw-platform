@@ -44,13 +44,3 @@ class QueueAlertRule(BaseAlertRule):
             params={},
             description="Redis Ping 无响应或连接中断时触发红色告警",
         )
-
-    @staticmethod
-    def redis_connection_failure_rule() -> QueueAlertRule:
-        """Redis 连接失败告警规则（错误级别）"""
-        return QueueAlertRule(
-            name="redis_connection_failure",
-            level=AlertLevel.ERROR,
-            params={},
-            description="Redis 连续失败超过 3 次时升级为错误告警",
-        )

@@ -27,10 +27,10 @@ class SystemAlertRule(BaseAlertRule):
 
     @staticmethod
     def db_connection_failure_rule() -> SystemAlertRule:
-        """数据库连接失败告警规则（错误级别）"""
+        """数据库连接失败告警规则（红色级别，原错误告警已合并）"""
         return SystemAlertRule(
             name="database_connection_failure",
-            level=AlertLevel.ERROR,
+            level=AlertLevel.RED,
             params={},
-            description="数据库 SELECT 1 探测失败时触发错误告警",
+            description="数据库 SELECT 1 探测失败时触发红色告警",
         )

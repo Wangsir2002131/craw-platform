@@ -7,18 +7,16 @@ from typing import Final
 
 
 class AlertLevel(str, Enum):
-    """Alert severity levels in ascending order."""
+    """Alert severity levels in ascending order — ERROR merged into RED."""
 
     YELLOW = "yellow"
     RED = "red"
-    ERROR = "error"
 
     def priority(self) -> int:
         """Return numeric priority for sorting (higher = more severe)."""
         return {
             AlertLevel.YELLOW: 1,
             AlertLevel.RED: 2,
-            AlertLevel.ERROR: 3,
         }.get(self, 0)
 
 
@@ -34,7 +32,6 @@ class AlertCategory(str, Enum):
 ALERT_LEVELS: Final[tuple[AlertLevel, ...]] = (
     AlertLevel.YELLOW,
     AlertLevel.RED,
-    AlertLevel.ERROR,
 )
 
 ALERT_CATEGORY_DISPLAY: Final[dict[AlertCategory, str]] = {
@@ -46,12 +43,10 @@ ALERT_CATEGORY_DISPLAY: Final[dict[AlertCategory, str]] = {
 
 ALERT_LEVEL_DISPLAY: Final[dict[AlertLevel, str]] = {
     AlertLevel.YELLOW: "🟡 黄色告警",
-    AlertLevel.RED: "🔴 红色告警",
-    AlertLevel.ERROR: "❌ 错误告警",
+    AlertLevel.RED: "🔴 红色告警（含错误告警）",
 }
 
 ALERT_LEVEL_WEIGHT: Final[dict[AlertLevel, int]] = {
     AlertLevel.YELLOW: 1,
     AlertLevel.RED: 2,
-    AlertLevel.ERROR: 3,
 }

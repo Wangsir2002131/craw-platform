@@ -40,10 +40,10 @@ class TaskAlertRule(BaseAlertRule):
 
     @staticmethod
     def error_rate_rule(threshold: float = 0.3) -> TaskAlertRule:
-        """任务错误率预警规则（错误级别），默认 30%"""
+        """任务错误率预警规则（红色级别，原错误告警已合并），默认 30%"""
         return TaskAlertRule(
             name="task_error_rate",
-            level=AlertLevel.ERROR,
+            level=AlertLevel.RED,
             params={"error_rate_threshold": threshold},
-            description=f"任务错误率超过 {threshold:.0%} 时触发错误告警",
+            description=f"任务错误率超过 {threshold:.0%} 时触发红色告警",
         )

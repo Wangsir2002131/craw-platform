@@ -33,15 +33,34 @@ class AlertEventStore:
             acknowledged TINYINT(1) NOT NULL DEFAULT 0 COMMENT 'Whether acknowledged',
             acknowledged_at DATETIME(3) DEFAULT NULL COMMENT 'When acknowledged',
             acknowledged_by VARCHAR(64) DEFAULT NULL COMMENT 'Who acknowledged',
+            resolved TINYINT(1) NOT NULL DEFAULT 0 COMMENT 'Whether resolved',
+            resolved_at DATETIME(3) DEFAULT NULL COMMENT 'When resolved',
+            resolved_by VARCHAR(64) DEFAULT NULL COMMENT 'Who resolved',
             INDEX idx_alert_name (name),
             INDEX idx_alert_category (category),
             INDEX idx_alert_level (level),
             INDEX idx_alert_acknowledged (acknowledged),
+            INDEX idx_alert_resolved (resolved),
             INDEX idx_alert_triggered_at (triggered_at)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Alert events table'
         """
         with self.cursor() as cursor:
             cursor.execute(sql)
+            self._ensure_resolved_columns(cursor)
+
+    def _ensure_resolved_columns(self, cursor: Any) -> None:
+        columns = {
+            "resolved": "ALTER TABLE alert_events ADD COLUMN resolved TINYINT(1) NOT NULL DEFAULT 0 COMMENT 'Whether resolved' AFTER acknowledged_by",
+            "resolved_at": "ALTER TABLE alert_events ADD COLUMN resolved_at DATETIME(3) DEFAULT NULL COMMENT 'When resolved' AFTER resolved",
+            "resolved_by": "ALTER TABLE alert_events ADD COLUMN resolved_by VARCHAR(64) DEFAULT NULL COMMENT 'Who resolved' AFTER resolved_at",
+        }
+        cursor.execute("SHOW COLUMNS FROM alert_events")
+        existing = {str(row.get("Field")) for row in cursor.fetchall() or []}
+        for column, sql in columns.items():
+            if column not in existing:
+                cursor.execute(sql)
+        if "resolved" not in existing:
+            cursor.execute("CREATE INDEX idx_alert_resolved ON alert_events (resolved)")
 
     # ------------------------------------------------------------------
     #  Insert
@@ -52,8 +71,9 @@ class AlertEventStore:
         sql = """
         INSERT INTO alert_events (
             id, name, level, category, message, metadata_json,
-            triggered_at, acknowledged, acknowledged_at, acknowledged_by
-        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            triggered_at, acknowledged, acknowledged_at, acknowledged_by,
+            resolved, resolved_at, resolved_by
+        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         """
         metadata_value = event.get("metadata")
         if metadata_value is not None and isinstance(metadata_value, dict):
@@ -166,6 +186,30 @@ class AlertEventStore:
         return value
 
     # ------------------------------------------------------------------
+    #  Upsert helper (dedup before insert)
+    # ------------------------------------------------------------------
+
+    def find_unacknowledged_by_name(self, name: str, category: str) -> dict[str, Any] | None:
+        """Find an unacknowledged alert event by name and category.
+
+        Used by AlertManager.trigger() for dedup: if a matching event exists
+        in the database, it should be updated rather than duplicated.
+        Returns the decoded row dict or None.
+        """
+        sql = """
+        SELECT id, name, level, category, message, metadata_json,
+               triggered_at, acknowledged, acknowledged_at, acknowledged_by
+        FROM alert_events
+        WHERE name = %s AND category = %s AND acknowledged = 0
+        ORDER BY triggered_at DESC
+        LIMIT 1
+        """
+        with self.cursor() as cursor:
+            cursor.execute(sql, (name, category))
+            row = cursor.fetchone()
+        return self._decode_row(row) if row else None
+
+    # ------------------------------------------------------------------
     #  Acknowledgement
     # ------------------------------------------------------------------
 
@@ -261,8 +305,50 @@ class AlertEventStore:
         }
 
     # ------------------------------------------------------------------
-    #  Clear
+    #  Update (for event merge / upsert)
     # ------------------------------------------------------------------
+
+    def update_alert_event(self, event: dict[str, Any]) -> bool:
+        """Update an existing alert event in-place by ID. Returns True if updated."""
+        sql = """
+        UPDATE alert_events
+        SET message = %s, metadata_json = %s, triggered_at = %s,
+            level = %s, acknowledged = %s, acknowledged_at = %s, acknowledged_by = %s
+        WHERE id = %s
+        """
+        metadata_value = event.get("metadata")
+        if metadata_value is not None and isinstance(metadata_value, dict):
+            metadata_json = json.dumps(metadata_value, ensure_ascii=False, separators=(",", ":"))
+        elif metadata_value is not None:
+            metadata_json = json.dumps(metadata_value, ensure_ascii=False, separators=(",", ":"))
+        else:
+            metadata_json = None
+
+        params = (
+            event["message"],
+            metadata_json,
+            event.get("triggered_at"),
+            event["level"],
+            1 if event.get("acknowledged") else 0,
+            event.get("acknowledged_at"),
+            event.get("acknowledged_by"),
+            event["id"],
+        )
+        with self.cursor() as cursor:
+            cursor.execute(sql, params)
+            return int(getattr(cursor, "rowcount", 0) or 0) > 0
+
+    def auto_resolve_by_name(self, name: str) -> int:
+        """Auto-resolve (delete) alerts whose name starts with the given prefix.
+
+        This is used by monitors to clean up alerts when a condition recovers
+        (e.g. queue back to normal, task completed, Redis reconnected).
+        Returns count of deleted events.
+        """
+        sql = "DELETE FROM alert_events WHERE name = %s OR name LIKE %s"
+        with self.cursor() as cursor:
+            cursor.execute(sql, (name, name + ":%"))
+            return int(getattr(cursor, "rowcount", 0) or 0)
 
     def clear_alert_events(self, *, before: datetime | None = None) -> int:
         """Clear old alert events. If before is None, clears all."""

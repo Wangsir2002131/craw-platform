@@ -66,7 +66,7 @@ def save_alert_config(
 @router.get("/events")
 def list_alert_events(
     category: str | None = Query(None, description="Filter by: task / queue / account / system"),
-    level: str | None = Query(None, description="Filter by: yellow / red / error"),
+    level: str | None = Query(None, description="Filter by: yellow / red (error merged into red)"),
     acknowledged: bool | None = Query(None, description="True=only acknowledged, False=only unacknowledged"),
     limit: int = Query(100, ge=1, le=500, description="Max events to return"),
     manager: AlertManager = Depends(get_manager),
@@ -74,7 +74,11 @@ def list_alert_events(
     """List alert events with optional filters (newest first)."""
     try:
         cat = AlertCategory(category) if category else None
-        lvl = AlertLevel(level) if level else None
+        raw_level = level.strip().lower() if level else None
+        # 向后兼容：error 级别已合并到 red，自动映射
+        if raw_level == "error":
+            raw_level = "red"
+        lvl = AlertLevel(raw_level) if raw_level else None
     except ValueError:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -153,7 +157,6 @@ def force_check_alerts(
     manager: AlertManager = Depends(get_manager),
 ) -> dict[str, Any]:
     from platform.alerts.alert_manager import get_monitors
-    from platform.alerts.notifiers.console_notifier import ConsoleNotifier
 
     cleared_count = 0
     if clear_history:
@@ -169,12 +172,6 @@ def force_check_alerts(
             logger.exception("force_check failed for %s", monitor.__class__.__name__)
             failed_monitors.append({"monitor": monitor.__class__.__name__, "error": str(e)})
     events = manager.list_events(limit=limit)
-    console_notifier = ConsoleNotifier()
-    for event in reversed(events):
-        try:
-            console_notifier.notify(event)
-        except Exception:
-            logger.exception("console output failed for alert event %s", event.id)
     summary = manager.get_summary()
     return {
         "cleared": clear_history,
