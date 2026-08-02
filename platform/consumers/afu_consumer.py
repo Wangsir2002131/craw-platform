@@ -7,7 +7,9 @@ from typing import Any
 from platform.consumers.base import BaseQueueConsumer
 from platform.dispatcher.time_window import TimeWindowController
 from platform.queue.protocol import get_queue_name
+from platform.queue.redis_store import RedisQueueStore
 from platform.queue.strategy_store import QueueStrategyStore
+from platform.store import TaskMasterStatusStore
 
 
 class AfuConsumer(BaseQueueConsumer):
